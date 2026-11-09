@@ -78,4 +78,25 @@ describe('invocation context', () => {
     expect(stderr).toBe('env: prod\n')
     expect(existsSync(join(home, '.aletheia', 'prod.sqlite'))).toBe(true)
   })
+
+  it('INV-01 under vitest the contexts have no data folder, so named envs are refused', async () => {
+    const vars = { VITEST: 'true' }
+    const repoRoot = tempDir('aletheia-repo-')
+    const source = sourceContext({ repoRoot, vars, home: '/h' })
+    const refusal = (from: string) =>
+      `error: named environments are disabled here (${from}); set ALETHEIA_DB to a temporary file\n`
+
+    expect(source.dataDir).toBeNull()
+    expect(releasedContext(released(vars)).dataDir).toBeNull()
+    expect(await runCli(['backup'], source)).toEqual({
+      code: 1,
+      stdout: '',
+      stderr: refusal('default: test'),
+    })
+    expect((await runCli(['--env', 'prod', 'backup'], source)).stderr).toBe(refusal('--env: prod'))
+    expect(
+      (await runCli(['backup'], { ...source, vars: { ...vars, ALETHEIA_ENV: 'x' } })).stderr,
+    ).toBe(refusal('ALETHEIA_ENV: x'))
+    expect(existsSync(join(repoRoot, 'data'))).toBe(false)
+  })
 })
