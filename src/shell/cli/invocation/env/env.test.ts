@@ -27,6 +27,27 @@ describe('resolveEnv', () => {
     expect(resolveEnv({ ...base, flag: 'x' }).dbPath).toBe('/d/x.sqlite')
   })
 
+  it('000-US1-AS4 an env name that is not lowercase letters, digits and dashes is refused', () => {
+    expect(() => resolveEnv({ ...base, flag: 'Prod' })).toThrow(
+      'invalid --env "Prod": use lowercase letters, digits and dashes',
+    )
+    expect(() => resolveEnv({ ...base, vars: { ALETHEIA_ENV: 'a b' } })).toThrow(
+      'invalid ALETHEIA_ENV "a b": use lowercase letters, digits and dashes',
+    )
+  })
+
+  it('000-US1-AS4 custom is refused unless it comes from ALETHEIA_DB', () => {
+    expect(() => resolveEnv({ ...base, flag: 'custom' })).toThrow(
+      'invalid --env "custom": custom is reserved for ALETHEIA_DB',
+    )
+  })
+
+  it('000-US1-AS4 a relative ALETHEIA_DB is refused', () => {
+    expect(() => resolveEnv({ ...base, vars: { ALETHEIA_DB: 'rel/x.sqlite' } })).toThrow(
+      'invalid ALETHEIA_DB "rel/x.sqlite": must be an absolute path',
+    )
+  })
+
   it('INV-01 with no data folder a named env is refused naming where it came from', () => {
     const noData = { ...base, dataDir: null }
     const refusal = (source: string) =>
