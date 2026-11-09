@@ -1,8 +1,9 @@
-import { sql } from 'drizzle-orm'
-import { readMigrationFiles } from 'drizzle-orm/migrator'
+import { DrizzleQueryError, sql } from 'drizzle-orm'
+import { type MigrationMeta, readMigrationFiles } from 'drizzle-orm/migrator'
 import { migrate } from 'drizzle-orm/node-sqlite/migrator'
 import type { Database } from '../database/database.types.ts'
 import { MIGRATIONS_TABLE } from './migrations.constants.ts'
+import { MigrationFailedError } from './migrations.errors.ts'
 import type { AppliedMigration } from './migrations.types.ts'
 
 function hasMigrationsTable(db: Database): boolean {
@@ -18,13 +19,29 @@ function appliedMigrations(db: Database): Set<string> {
   return new Set(rows.map(({ name }) => name))
 }
 
-export function pendingMigrations(db: Database, migrationsDir: string): string[] {
+function pendingMigrationFiles(db: Database, migrationsDir: string): MigrationMeta[] {
   const applied = appliedMigrations(db)
-  return readMigrationFiles({ migrationsFolder: migrationsDir })
-    .map(({ name }) => name)
-    .filter((name) => !applied.has(name))
+  return readMigrationFiles({ migrationsFolder: migrationsDir }).filter(
+    ({ name }) => !applied.has(name),
+  )
+}
+
+export function pendingMigrations(db: Database, migrationsDir: string): string[] {
+  return pendingMigrationFiles(db, migrationsDir).map(({ name }) => name)
+}
+
+function failedMigration(error: unknown, pending: MigrationMeta[]): MigrationFailedError | null {
+  if (!(error instanceof DrizzleQueryError) || error.cause === undefined) return null
+  const { query, cause } = error
+  const migration = pending.find((candidate) => candidate.sql.includes(query))
+  return migration === undefined ? null : new MigrationFailedError(migration.name, cause)
 }
 
 export function applyMigrations(db: Database, migrationsDir: string): void {
-  migrate(db, { migrationsFolder: migrationsDir, migrationsTable: MIGRATIONS_TABLE })
+  const pending = pendingMigrationFiles(db, migrationsDir)
+  try {
+    migrate(db, { migrationsFolder: migrationsDir, migrationsTable: MIGRATIONS_TABLE })
+  } catch (error) {
+    throw failedMigration(error, pending) ?? error
+  }
 }

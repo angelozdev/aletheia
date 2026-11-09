@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
+  FAILING_MIGRATIONS,
   FIXTURE_MIGRATIONS,
   MIGRATION_FILE,
   SHIPPED_MIGRATIONS,
@@ -41,6 +42,22 @@ describe('migrations', () => {
       '20261108000000_first',
       '20261108000100_second',
     ])
+  })
+
+  it('000-US4-AS4 a failing migration keeps none of the pending ones', async () => {
+    const path = join(tempDir('aletheia-store-'), 'store.sqlite')
+    const migrationsDir = writeMigrations(tempDir('aletheia-migrations-'), FAILING_MIGRATIONS)
+
+    await expect(openTestStore(path, migrationsDir)).rejects.toThrow(
+      /^migration 20261108000100_second failed: .+$/,
+    )
+    expect(
+      firstColumn(
+        path,
+        "select name from sqlite_master where type = 'table' and name like 'fixture_%'",
+      ),
+    ).toEqual([])
+    expect(firstColumn(path, 'select name from __drizzle_migrations')).toEqual([])
   })
 
   it('the shipped migrations folder opens a store with every shipped migration applied', async () => {
