@@ -1,6 +1,10 @@
 import { DatabaseSync } from 'node:sqlite'
 import { drizzle } from 'drizzle-orm/node-sqlite'
-import { applyMigrations, pendingMigrations } from '../migrations/migrations.ts'
+import {
+  applyMigrations,
+  pendingMigrations,
+  refuseUnknownMigrations,
+} from '../migrations/migrations.ts'
 import type { Database, Store, StoreRequest } from './database.types.ts'
 
 function asStore(db: Database): Store {
@@ -18,6 +22,7 @@ export async function openStore({
   onMigrated,
 }: StoreRequest): Promise<Store> {
   const db = drizzle({ client: new DatabaseSync(path) })
+  refuseUnknownMigrations(db, migrationsDir)
   const pending = pendingMigrations(db, migrationsDir)
   await beforeMigrating(asStore(db), pending)
   applyMigrations(db, migrationsDir)

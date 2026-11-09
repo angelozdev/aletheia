@@ -3,7 +3,7 @@ import { type MigrationMeta, readMigrationFiles } from 'drizzle-orm/migrator'
 import { migrate } from 'drizzle-orm/node-sqlite/migrator'
 import type { Database } from '../database/database.types.ts'
 import { MIGRATIONS_TABLE } from './migrations.constants.ts'
-import { MigrationFailedError } from './migrations.errors.ts'
+import { MigrationFailedError, UnknownMigrationsError } from './migrations.errors.ts'
 import type { AppliedMigration } from './migrations.types.ts'
 
 function hasMigrationsTable(db: Database): boolean {
@@ -17,6 +17,18 @@ function appliedMigrations(db: Database): Set<string> {
   if (!hasMigrationsTable(db)) return new Set()
   const rows = db.all<AppliedMigration>(sql`select name from ${sql.identifier(MIGRATIONS_TABLE)}`)
   return new Set(rows.map(({ name }) => name))
+}
+
+function unknownMigrations(db: Database, migrationsDir: string): string[] {
+  const shipped = new Set(
+    readMigrationFiles({ migrationsFolder: migrationsDir }).map(({ name }) => name),
+  )
+  return [...appliedMigrations(db)].filter((name) => !shipped.has(name)).toSorted()
+}
+
+export function refuseUnknownMigrations(db: Database, migrationsDir: string): void {
+  const unknown = unknownMigrations(db, migrationsDir)
+  if (unknown.length > 0) throw new UnknownMigrationsError(unknown)
 }
 
 function pendingMigrationFiles(db: Database, migrationsDir: string): MigrationMeta[] {

@@ -245,6 +245,29 @@ describe('aletheia backup', () => {
     expect(fixtureTables(join(dataDir, 'prod.sqlite'))).toEqual([])
   })
 
+  it('000-US4-AS5 a store with migrations this code does not know is refused unchanged', async () => {
+    const store = join(dataDir, 'prod.sqlite')
+    closeStore(await openTestStore(store, fixtureMigrations()))
+    const before = sha256(store)
+
+    const { code, stdout, stderr } = await runCli(['--env', 'prod', 'backup'], {
+      dataDir,
+      migrationsDir: fixtureMigrations({
+        '20261108000000_first': FIXTURE_MIGRATIONS['20261108000000_first'],
+        '20261108000200_third': 'CREATE TABLE fixture_c (id integer primary key);',
+      }),
+      clock: advancingClock(),
+    })
+
+    expect(code).toBe(1)
+    expect(stderr).toBe(
+      'env: prod\nerror: the store has migrations this code does not know: 20261108000100_second\n',
+    )
+    expect(stdout).toBe('')
+    expect(sha256(store)).toBe(before)
+    expect(existsSync(join(dataDir, 'backups'))).toBe(false)
+  })
+
   it('000-US4-AS3 a current store takes no backup and reports nothing about schema', async () => {
     const folder = join(dataDir, 'backups')
     const prod = { dataDir, migrationsDir: fixtureMigrations(), clock: advancingClock() }

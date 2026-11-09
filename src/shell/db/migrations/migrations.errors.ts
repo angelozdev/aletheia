@@ -7,3 +7,13 @@ export class MigrationFailedError extends Error {
     this.migration = migration
   }
 }
+
+export class UnknownMigrationsError extends Error {
+  readonly migrations: string[]
+
+  constructor(migrations: string[]) {
+    super(`the store has migrations this code does not know: ${migrations.join(', ')}`)
+    this.name = new.target.name
+    this.migrations = migrations
+  }
+}
