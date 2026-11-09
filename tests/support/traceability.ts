@@ -5,6 +5,7 @@ function idsIn(text: string): string[] {
 }
 
 export function missingIds({ specs, tests }: { specs: string[]; tests: string[] }): string[] {
+  const covered = new Set(tests.flatMap(idsIn))
   const defined = new Set(specs.flatMap(idsIn))
-  return [...defined].filter((id) => !tests.some((test) => test.includes(id))).sort()
+  return [...defined].filter((id) => !covered.has(id)).sort()
 }
