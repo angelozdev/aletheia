@@ -130,7 +130,7 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
   Tests use `:memory:`; evals copy fixtures to a temp path. Neither may reach `prod.sqlite`.
 - The CLI performs no network calls.
 - Only `az-aletheia-add` is a global skill: its source lives in this repo, `pnpm release`
-  copies it into `~/.aletheia/skills/` next to the binary it installs, and
+  copies it into `~/.aletheia/skills/`, and
   `~/.claude/skills/az-aletheia-add` is a symlink to that copy, created once. It calls the
   installed binary so it works from any working directory, and both come from the same
   release. Review, stats and prune are project-local skills in `.claude/skills/`.
@@ -165,4 +165,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.4.1 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
+**Version**: 1.4.2 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
