@@ -38,7 +38,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 4. **001-US2-AS4** Given a card just graded Again and nothing else due, When the due list is asked again, Then the card is in it while its short relearning step ends within 20 minutes.
 5. **001-US2-AS5** Given nothing due, When the due list is asked, Then it is empty and names when the next card is due.
 6. **001-US2-AS6** Given an unknown card id, a grade outside the four, or a missing answer or rationale, When a review is recorded, Then it exits 1 naming the problem, and neither the log nor the card's schedule changes.
-7. **001-US2-AS7** Given the review skill file, When it is read, Then its description carries its Spanish triggers ("repasemos", "vamos a repasar", "¿qué tengo para hoy?").
+7. **001-US2-AS7** Given the review skill file, When it is read, Then its description carries its Spanish triggers ("repasemos", "vamos a repasar", "¿qué tengo para hoy?") and it calls the installed `aletheia`, never `pnpm aletheia`, `--env` or a store path.
 
 ### Edge Cases
 
@@ -57,7 +57,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **FR-004**: The due list MUST hold new cards, studied cards whose due date is on or before Angelo's local today, and (re)learning cards whose instant has passed or, when nothing else is due, ends within 20 minutes.
 - **FR-005**: Recording a grade MUST append a review (card, grade, instant, Angelo's answer, Claude's rationale, changed-after-dispute) and reschedule the card with FSRS, short-term steps on.
 - **FR-006**: `az-aletheia-add` MUST show every draft before saving, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
-- **FR-007**: The review skill MUST ask the CLI for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, and record Angelo's final grade; then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
+- **FR-007**: The review skill MUST work on `prod` through the installed `aletheia`, ask it for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, and record Angelo's final grade; then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
 - **FR-008**: Every question about a card or what is due MUST be answered by running `aletheia` (constitution VIII).
 - **FR-009**: `pnpm release` MUST copy `az-aletheia-add` from the released commit into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy and writing nothing under `~/.claude/`; INV-01 holds, so tests point it at a temp folder.
 

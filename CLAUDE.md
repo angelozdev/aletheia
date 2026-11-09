@@ -12,7 +12,9 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
 
 - `pnpm aletheia <command>` runs the sources against `data/test.sqlite` (`ALETHEIA_ENV=test`).
   Develop and try changes with it, never with the installed `aletheia`: that is the release,
-  and it defaults to `prod` in `~/.aletheia/`.
+  and it defaults to `prod` in `~/.aletheia/`. Aletheia's own skills (review, stats,
+  prune) are the exception: they call the installed `aletheia`, because that is use, not
+  development.
 - `pnpm test` runs vitest. `pnpm check` runs test, lint, format:check, typecheck, dead-code
   and duplication; it passes before a task is closed. `pnpm format` fixes formatting.
 - `pnpm release` is Angelo's: he runs it from a clean `main` after a merge. Give him the
