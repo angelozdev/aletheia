@@ -20,9 +20,13 @@ const tempDir = '/t'
 const tarball = '/r/.release/aletheia-0.0.0.tgz'
 const packedBin = '/t/package/dist/aletheia.js'
 const released = '0.0.0 (2033257)'
+const packedWithoutMigrations = ['package/package.json', 'package/dist/aletheia.js']
 const onGreenMain = {
   ...onCleanMain,
   'git rev-parse --short HEAD': { stdout: '2033257\n' },
+  [`tar -tzf ${tarball}`]: {
+    stdout: `${[...packedWithoutMigrations, 'package/migrations/.gitkeep'].join('\n')}\n`,
+  },
   [`node ${packedBin} --version`]: { stdout: `${released}\n` },
   'aletheia --version': { stdout: `${released}\n` },
 }
@@ -114,6 +118,7 @@ describe('release from a clean green main', () => {
     expect(result.build).toHaveBeenCalledWith({ version: '0.0.0', commit: '2033257', repoRoot })
     expect(result.calls.slice(result.callsBeforeBuild)).toEqual([
       step('pnpm pack --pack-destination .release', repoRoot),
+      step(`tar -tzf ${tarball}`),
       step(`tar -xzf ${tarball} -C ${tempDir}`),
       step(`node ${packedBin} --help`, tempDir),
       step(`node ${packedBin} --version`, tempDir),
@@ -125,6 +130,20 @@ describe('release from a clean green main', () => {
       stdout: `release: ${released} installed\n`,
       stderr: '',
     })
+  })
+
+  it('refuses before installing when the package has no migrations/ folder', async () => {
+    const result = await releaseWith({
+      ...onGreenMain,
+      [`tar -tzf ${tarball}`]: { stdout: `${packedWithoutMigrations.join('\n')}\n` },
+    })
+
+    expect(result).toMatchObject({
+      code: 1,
+      stdout: '',
+      stderr: 'release: refused: package is missing migrations/\n',
+    })
+    expect(commandLines(result.calls).filter((line) => line.startsWith('pnpm add'))).toEqual([])
   })
 
   it('refuses before installing when the packed CLI fails its smoke run', async () => {

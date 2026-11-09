@@ -8,6 +8,7 @@ import {
   HELP_FLAG,
   INSTALLED_BIN,
   MAIN_BRANCH,
+  PACKED_MIGRATIONS,
   PACKED_ROOT,
   PNPM_PREFIX,
   RELEASE_DIR,
@@ -16,6 +17,7 @@ import {
 } from './release.constants.ts'
 import {
   CheckFailedError,
+  MissingMigrationsError,
   NotOnMainError,
   PackedHelpFailedError,
   PackedVersionMismatchError,
@@ -63,6 +65,12 @@ async function pack({ run, packageJson, repoRoot }: ReleaseDeps): Promise<string
   return join(repoRoot, RELEASE_DIR, tarballName)
 }
 
+async function assertShipsMigrations(run: Runner, tarball: string): Promise<void> {
+  const entries = (await printed(run, 'tar', ['-tzf', tarball])).split('\n')
+  const prefix = `${PACKED_ROOT}/${PACKED_MIGRATIONS}`
+  if (!entries.some((entry) => entry.startsWith(prefix))) throw new MissingMigrationsError()
+}
+
 async function smokeRun(run: Runner, tarball: string, dir: string, expected: string) {
   await run('tar', ['-xzf', tarball, '-C', dir])
   const bin = join(dir, PACKED_ROOT, BUNDLE_FILE)
@@ -85,6 +93,7 @@ async function releaseSteps(deps: ReleaseDeps): Promise<void> {
   const target = await releaseOfHead(deps)
   await deps.build(target)
   const tarball = await pack(deps)
+  await assertShipsMigrations(deps.run, tarball)
   const dir = deps.makeTempDir()
   const expected = releaseVersion(target)
   await smokeRun(deps.run, tarball, dir, expected)
