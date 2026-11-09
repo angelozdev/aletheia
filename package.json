@@ -21,12 +21,14 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "aletheia": "ALETHEIA_ENV=test node src/shell/cli/bin.ts"
+    "aletheia": "ALETHEIA_ENV=test node src/shell/cli/bin.ts",
+    "lint": "oxlint"
   },
   "devDependencies": {
     "@commander-js/extra-typings": "15.0.0",
     "@types/node": "26.6.5",
     "commander": "15.0.0",
+    "oxlint": "1.89.0",
     "typescript": "7.0.2",
     "vitest": "5.0.5"
   }

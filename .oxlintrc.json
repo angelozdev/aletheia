@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import"],
+  "overrides": [
+    {
+      "files": ["src/core/**"],
+      "rules": {
+        "import/no-nodejs-modules": "error",
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              { "group": ["node:*"], "message": "src/core performs no I/O" },
+              { "group": ["drizzle-orm", "drizzle-orm/*"], "message": "only src/shell/db knows the ORM" },
+              { "group": ["#shell/*"], "message": "src/core never imports the shell" }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
