@@ -1,6 +1,6 @@
 # 0010. The store is opaque outside the db adapter
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-09
 - **Deciders:** Angelo
 - **Supersedes:** —
