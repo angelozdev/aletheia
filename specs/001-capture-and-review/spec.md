@@ -12,6 +12,7 @@
 - Q: How many times is a new card asked on its first day? → A: FSRS runs with one 10-minute learning step instead of its default two (1 and 10 minutes). A new card graded Good is not asked again that day; one graded Again or Hard comes back once, 10–15 minutes later. Repeating a recalled card the same day adds little once spaced reviews follow, and a failed one gains only from a repeat with other cards in between (Karpicke & Bauernschmidt 2011; Vaughn, Dunlosky & Rawson 2016; Anki manual, FSRS).
 - Q: After showing the grade and the full answer, does Claude wait for Angelo or go straight to the next question? → A: Claude waits after every grade, whatever it was: Angelo may have doubts about a card he got right. His reply (a dispute, a doubt or "sigue") settles the grade, which is then recorded once; the next question comes only when he says so.
 - Q: May a tag carry accents or `ñ`? → A: No: only `a`–`z`, digits and dashes. `mensajería` is refused, so a topic has one spelling and the tag tree never splits on an accent.
+- Q: What does a review keep that cannot be rebuilt later? → A: The grade Claude gave, next to Angelo's final one, and the card's state before the review. A dispute changed the grade when the two grades differ, so that flag is no longer stored. Decided while planning (research R4).
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -36,7 +37,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 **Independent Test**: with a card captured in US1, say "repasemos" in the Aletheia repo, answer, accept or dispute the grade, then ask when the card is due again.
 
 1. **001-US2-AS1** Given new cards, studied cards due today and cards due later, When the due list is asked, Then it holds the new and due cards, studied ones first, each with id, type, tags, question, key points and answer, and their count.
-2. **001-US2-AS2** Given a due card, When a grade is recorded with Angelo's answer, Claude's rationale and whether a dispute changed the grade, Then the review is logged with its instant and stdout gives the card's next due instant.
+2. **001-US2-AS2** Given a due card, When Angelo's final grade is recorded with the grade Claude gave, Angelo's answer and Claude's rationale, Then the review is logged with its instant and the card's state before it, and stdout gives the card's next due instant.
 3. **001-US2-AS3** Given four copies of a card in the same state, When each is graded differently, Then Again comes back first and Easy last.
 4. **001-US2-AS4** Given a card just graded Again and nothing else due, When the due list is asked again, Then the card is in it while its short relearning step ends within 20 minutes.
 5. **001-US2-AS5** Given nothing due, When the due list is asked, Then it is empty and names when the next card is due.
@@ -59,7 +60,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **FR-002**: Every card MUST get a short, stable, unique id that Angelo can quote in chat.
 - **FR-003**: A saved card MUST start active and new, due at once.
 - **FR-004**: The due list MUST hold new cards, studied cards whose due date is on or before Angelo's local today, and (re)learning cards whose instant has passed or, when nothing else is due, ends within 20 minutes.
-- **FR-005**: Recording a grade MUST append a review (card, grade, instant, Angelo's answer, Claude's rationale, changed-after-dispute) and reschedule the card with FSRS, short-term steps on, with one 10-minute learning step.
+- **FR-005**: Recording a grade MUST append a review (card, final grade, Claude's grade, the card's state before, instant, Angelo's answer, Claude's rationale) and reschedule the card with FSRS, short-term steps on, with one 10-minute learning step.
 - **FR-006**: `az-aletheia-add` MUST show every draft before saving, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
 - **FR-007**: The review skill MUST work on `prod` through the installed `aletheia`, ask it for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, wait for Angelo's reply after every grade and record his final grade (Claude's unless he disputes it); then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
 - **FR-008**: Every question about a card or what is due MUST be answered by running `aletheia` (constitution VIII).
@@ -68,7 +69,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 ### Key Entities
 
 - **Card**: id, type, question, answer, key points, situation, tags, source, status (active in this slice), FSRS scheduling state, created and updated instants.
-- **Review**: one per recorded grade: card, grade, instant, Angelo's answer, Claude's rationale, whether a dispute changed the grade.
+- **Review**: one per recorded grade: card, Angelo's final grade, the grade Claude gave (a dispute changed it when they differ), the card's state before the review, instant, Angelo's answer, Claude's rationale.
 - **Grade**: Again, Hard, Good or Easy.
 
 ## Success Criteria _(mandatory)_

@@ -119,10 +119,12 @@ out.
 a tag includes all descendants: `mensajeria` covers `mensajeria::rabbitmq`.
 A card may carry several tags (a Redis-vs-RabbitMQ card lives under both).
 
-**Review log** (one row per graded review): card, rating, timestamp, Angelo's
-answer, Claude's grading rationale, whether the grade was changed after a
-dispute, and flags: `missing-prerequisite`, `badly-written`. — _Storing the
-answer, rationale and flags is my call; they power stats and pruning._
+**Review log** (one row per graded review): card, rating, Claude's rating before
+any dispute (a dispute changed the grade when the two differ), the card's state
+before the review, timestamp, Angelo's answer, Claude's grading rationale, and
+flags: `missing-prerequisite`, `badly-written`. — _Storing the answer, rationale
+and flags is my call; they power stats and pruning. Claude's rating and the
+state before were added in spec 001: neither can be rebuilt later._
 
 A review flagged `badly-written` is **voided**: it is logged, but it does not
 update FSRS and does not count toward retention or leech detection, because it
