@@ -1,10 +1,8 @@
-import type { CliContext } from '../../main/main.types.ts'
+import type { CliContext, Vars } from '../../main/main.types.ts'
 
 export type Release = { version: string; commit: string; repoRoot: string }
 
-type Vars = Record<string, string | undefined>
-
-type Invocation = { vars: Vars; home: string }
+export type Invocation = { vars: Vars; home: string }
 
 export type SourceInvocation = Invocation & { repoRoot: string }
 
