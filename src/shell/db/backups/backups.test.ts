@@ -1,13 +1,27 @@
-import { mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import {
+  chmodSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { closeStore, openStore } from '../database/database.ts'
 import { backupStore } from './backups.ts'
+
+let lockedFolder: string | null = null
 
 function tempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix))
 }
+
+afterEach(() => {
+  if (lockedFolder !== null) chmodSync(lockedFolder, 0o700)
+  lockedFolder = null
+})
 
 describe('backupStore', () => {
   it('000-US3-AS1 the copy opens as a store with the same content', async () => {
@@ -65,6 +79,37 @@ describe('backupStore', () => {
     for (const name of seeded.slice(1)) {
       expect(readFileSync(join(folder, name), 'utf8')).toBe(name)
     }
+    closeStore(db)
+  })
+
+  it('000-US3-AS3 a copy that cannot be moved into place leaves no .partial', async () => {
+    const db = openStore(join(tempDir('aletheia-store-'), 'store.sqlite'))
+    const root = tempDir('aletheia-icloud-')
+    const folder = join(root, 'aletheia-backups')
+    const blocker = 'custom-2026-11-08T21-04-05-123Z.sqlite'
+    mkdirSync(join(folder, blocker), { recursive: true })
+
+    await expect(
+      backupStore({ db, env: 'custom', root, now: new Date('2026-11-08T21:04:05.123Z') }),
+    ).rejects.toThrow(new RegExp(`^${RegExp.escape(`cannot write backup to ${folder}: `)}.+`))
+    expect(readdirSync(folder)).toEqual([blocker])
+    closeStore(db)
+  })
+
+  it('000-US3-AS3 a backup folder that cannot be created is named in the refusal', async () => {
+    const db = openStore(join(tempDir('aletheia-store-'), 'store.sqlite'))
+    const root = tempDir('aletheia-icloud-')
+    chmodSync(root, 0o500)
+    lockedFolder = root
+
+    await expect(
+      backupStore({ db, env: 'custom', root, now: new Date('2026-11-08T21:04:05.123Z') }),
+    ).rejects.toThrow(
+      new RegExp(
+        `^${RegExp.escape(`cannot write backup to ${join(root, 'aletheia-backups')}: `)}.+`,
+      ),
+    )
+    expect(readdirSync(root)).toEqual([])
     closeStore(db)
   })
 })
