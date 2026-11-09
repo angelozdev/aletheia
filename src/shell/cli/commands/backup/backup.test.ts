@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { beforeEach, describe, expect, it } from 'vitest'
@@ -32,6 +32,21 @@ describe('aletheia backup', () => {
 
     expect(code).toBe(0)
     expect(stdout).toBe(`{"path":"${copy}","removed":[]}\n`)
+  })
+
+  it('000-US3-AS2 backup over five copies prints the one it removed', async () => {
+    const folder = join(root, 'aletheia-backups')
+    mkdirSync(folder)
+    for (const day of ['01', '02', '03', '04', '05']) {
+      writeFileSync(join(folder, `custom-2026-11-${day}T10-00-00-000Z.sqlite`), '')
+    }
+
+    const { code, stdout } = await backup()
+
+    expect(code).toBe(0)
+    expect(stdout).toBe(
+      `path: ${copy}\nremoved[1]: ${join(folder, 'custom-2026-11-01T10-00-00-000Z.sqlite')}\n`,
+    )
   })
 
   it('000-US1-AS2 backup prints env: custom (<path>) as the first stderr line and only its result on stdout', async () => {
