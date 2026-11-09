@@ -10,6 +10,7 @@
 - Q: When Angelo has no idea of an answer, does the review move straight on, or does Claude clear his doubts first? → A: The grade (Again) is recorded first; then Angelo may ask about that card and Claude answers each doubt in 2–3 lines, no lesson, without changing the grade. The next card comes when Angelo says so.
 - Q: How does the global skill reach `~/.claude/skills/` so it matches the installed CLI? → A: `pnpm release` copies `az-aletheia-add` from `main` into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy; `~/.claude/skills/az-aletheia-add` is a symlink to that copy, which Angelo creates once. A link into the repo would follow the working tree; a link into pnpm's install folder would break on every release (constitution 1.4.1).
 - Q: How many times is a new card asked on its first day? → A: FSRS runs with one 10-minute learning step instead of its default two (1 and 10 minutes). A new card graded Good is not asked again that day; one graded Again or Hard comes back once, 10–15 minutes later. Repeating a recalled card the same day adds little once spaced reviews follow, and a failed one gains only from a repeat with other cards in between (Karpicke & Bauernschmidt 2011; Vaughn, Dunlosky & Rawson 2016; Anki manual, FSRS).
+- Q: After showing the grade and the full answer, does Claude wait for Angelo or go straight to the next question? → A: Claude waits after every grade, whatever it was: Angelo may have doubts about a card he got right. His reply (a dispute, a doubt or "sigue") settles the grade, which is then recorded once; the next question comes only when he says so.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -59,7 +60,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **FR-004**: The due list MUST hold new cards, studied cards whose due date is on or before Angelo's local today, and (re)learning cards whose instant has passed or, when nothing else is due, ends within 20 minutes.
 - **FR-005**: Recording a grade MUST append a review (card, grade, instant, Angelo's answer, Claude's rationale, changed-after-dispute) and reschedule the card with FSRS, short-term steps on, with one 10-minute learning step.
 - **FR-006**: `az-aletheia-add` MUST show every draft before saving, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
-- **FR-007**: The review skill MUST work on `prod` through the installed `aletheia`, ask it for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, and record Angelo's final grade; then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
+- **FR-007**: The review skill MUST work on `prod` through the installed `aletheia`, ask it for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, wait for Angelo's reply after every grade and record his final grade (Claude's unless he disputes it); then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
 - **FR-008**: Every question about a card or what is due MUST be answered by running `aletheia` (constitution VIII).
 - **FR-009**: `pnpm release` MUST copy `az-aletheia-add` from the released commit into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy whole or not at all (written to a partial folder beside it, then renamed, as backups do) and writing nothing under `~/.claude/`. **INV-01** covers this copy: under vitest the release refuses to write it unless given a folder, as backups are refused.
 
@@ -76,7 +77,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **SC-001**: The day the slice is released, Angelo captures at least one card from another repo and reviews it in the Aletheia repo, in `prod`, without typing a command or a `/`.
 - **SC-002**: From "guarda esto" to a saved card takes under 2 minutes of conversation.
 - **SC-003**: Each CLI call of this slice answers in under 1 second on a deck of 1,000 cards.
-- **SC-004**: A review of 10 due cards needs no input from Angelo beyond his answers and any disputes.
+- **SC-004**: A review of 10 due cards needs no input from Angelo beyond his answers, any disputes or doubts, and telling Claude to go on.
 
 ## Assumptions
 
