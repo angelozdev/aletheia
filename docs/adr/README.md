@@ -18,3 +18,4 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 | 0006 | oxlint with local rules, oxfmt, knip and jscpd | accepted | 2026-11-08 |
 | 0007 | One folder per module, with types, errors and constants files | accepted | 2026-11-09 |
 | 0008 | Installed data in a home dotfolder, development data in the repo | accepted | 2026-11-09 |
+| 0009 | Backups in the data folder, not iCloud Drive | accepted | 2026-11-09 |
