@@ -3,6 +3,14 @@
 **Feature Branch**: `000-skeleton` | **Created**: 2026-11-08 | **Status**: Draft
 **Input**: Slice 0 of `docs/design/2026-11-08-aletheia-design.md` §13: tooling, installed `aletheia` bin, SQLite + migrations, backup. Angelo exercises it with `aletheia --help` and `aletheia backup`.
 
+## Clarifications
+
+### Session 2026-11-08
+
+- Q: Should `prod` back itself up without Angelo asking (daily, or after every write)? → A: No. Backups happen only on `aletheia backup` and before schema changes in `prod`, as in diarium.
+- Q: How is the real deck kept safe from half-built code, given the installed `aletheia` runs the repo folder as it is? → A: A development store (`pnpm aletheia` → `data/test.sqlite`) plus Claude Code worktrees: `~/me/aletheia` stays on `main`, and each slice from 1 on is built in a Claude Code worktree.
+- Q: Should old backups be removed, or all kept? → A: Keep at most 5 per env; each new copy removes that env's oldest beyond 5, the copy before schema changes included.
+
 ## User Scenarios & Testing _(mandatory)_
 
 Slice 0 has no card behavior (constitution V). Its user is Angelo as the system's operator: the commands, paths and checks below are the interface he touches.
@@ -24,7 +32,7 @@ The installed `aletheia` works from any directory, says which environment it is 
 **Independent Test**: run `aletheia backup`, open the copy it names, compare with the store.
 
 1. **000-US2-AS1** Given a store, When `aletheia backup` runs, Then a consistent copy lands in `aletheia-backups/` in iCloud Drive under a name carrying the env and the UTC instant, and stdout names the file written and the copies removed (TOON by default, the same fields with `--json`).
-2. **000-US2-AS2** Given more than 30 copies of the same env, When a backup runs, Then that env's oldest copies beyond 30 are removed, and other envs' copies and unrelated files are untouched.
+2. **000-US2-AS2** Given 5 copies of the same env, When a backup runs, Then that env's oldest copy is removed so the newest 5 remain, and other envs' copies and unrelated files are untouched.
 3. **000-US2-AS3** Given the backup cannot be written (iCloud Drive missing or not writable), When `aletheia backup` runs, Then it exits 1 naming the folder, no partial copy is left under a backup name, and the store is unchanged.
 
 ### User Story 3 - Schema changes apply themselves safely (Priority: P2)
@@ -61,7 +69,7 @@ The checks the constitution requires run green on a clean checkout and fail on t
 - **FR-003**: Every command MUST print `env: <name>` on stderr; stdout carries results only, TOON by default and JSON with `--json`.
 - **FR-004**: Errors MUST exit 1 with a message on stderr and nothing on stdout.
 - **FR-005**: Every command that opens the store MUST apply pending schema changes first, all or none; in `prod`, a backup MUST precede them.
-- **FR-006**: `aletheia backup` MUST write a consistent copy of a live store, keep the newest 30 per env, and remove nothing else.
+- **FR-006**: `aletheia backup` MUST write a consistent copy of a live store, keep the newest 5 per env, and remove nothing else.
 - **FR-007**: **INV-01** No test or eval MAY open a store under `data/` or write to iCloud Drive.
 - **FR-008**: The repo MUST provide the six checks of 000-US4-AS1, with lint enforcing no `node:*` in `src/core` and no comments, and a test enforcing scenario and invariant traceability.
 
@@ -84,7 +92,8 @@ The checks the constitution requires run green on a clean checkout and fail on t
 
 - Slice 0 defines no card tables; slice 1 adds the first domain schema. The plan decides how the schema-change mechanism is exercised before then.
 - Restoring is manual: Angelo copies a backup over `data/<env>.sqlite`, with the command given in the quickstart.
-- Retention of 30 copies per env and the folder name `aletheia-backups` mirror diarium.
+- Retention is 5 copies per env (Clarifications); the folder name `aletheia-backups` mirrors diarium.
+- No periodic or per-write backup: only `aletheia backup` and the backup before schema changes in `prod` (Clarifications).
 - macOS with iCloud Drive only; no fallback location.
-- The installed `aletheia` runs the working tree, with no build step, installed the way diarium is.
+- The installed `aletheia` runs `~/me/aletheia` with no build step, installed the way diarium is. That folder stays on `main`; from slice 1 each slice is built in a Claude Code worktree, whose `pnpm aletheia` uses the worktree's own `data/` (FR-001). Slice 0 is built in place: no `prod` data exists yet.
 - Out of scope: card commands, `PROFILE.md`, skills, an integrity `check` command, `--version`.
