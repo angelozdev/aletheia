@@ -1,14 +1,5 @@
 import { createHash } from 'node:crypto'
-import {
-  chmodSync,
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from 'node:fs'
-import { tmpdir } from 'node:os'
+import { chmodSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { closeStore } from '#shell/db'
@@ -21,6 +12,7 @@ import type { FixtureMigrations } from '../../../../../tests/support/fixture-mig
 import { FIXED_INSTANT } from '../../../../../tests/support/run-cli/run-cli.constants.ts'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
 import { openTestStore, runSql, selectAll } from '../../../../../tests/support/store/store.ts'
+import { tempDir } from '../../../../../tests/support/temp-dir/temp-dir.ts'
 
 let db: string
 let dataDir: string
@@ -32,8 +24,8 @@ function backup(argv: string[] = []) {
 }
 
 beforeEach(() => {
-  db = join(mkdtempSync(join(tmpdir(), 'aletheia-cli-')), 'store.sqlite')
-  dataDir = mkdtempSync(join(tmpdir(), 'aletheia-data-'))
+  db = join(tempDir('aletheia-cli-'), 'store.sqlite')
+  dataDir = tempDir('aletheia-data-')
   copy = join(dataDir, 'backups', 'custom-2026-11-08T21-04-05-123Z.sqlite')
 })
 
@@ -43,7 +35,7 @@ afterEach(() => {
 })
 
 function fixtureMigrations(migrations: FixtureMigrations = FIXTURE_MIGRATIONS): string {
-  return writeMigrations(mkdtempSync(join(tmpdir(), 'aletheia-migrations-')), migrations)
+  return writeMigrations(tempDir('aletheia-migrations-'), migrations)
 }
 
 function sha256(path: string): string {

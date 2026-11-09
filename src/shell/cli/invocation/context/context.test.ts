@@ -1,8 +1,8 @@
-import { existsSync, mkdtempSync, readdirSync } from 'node:fs'
-import { tmpdir } from 'node:os'
+import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
+import { tempDir } from '../../../../../tests/support/temp-dir/temp-dir.ts'
 import { REPO_ROOT } from '../../bin/bin.constants.ts'
 import { releasedContext, sourceContext } from './context.ts'
 import type { ReleasedInvocation } from './context.types.ts'
@@ -14,10 +14,6 @@ function released(vars: ReleasedInvocation['vars']): ReleasedInvocation {
     vars,
     home: '/h',
   }
-}
-
-function tempDir(prefix: string): string {
-  return mkdtempSync(join(tmpdir(), prefix))
 }
 
 function printedVersion(context: ReturnType<typeof sourceContext>) {

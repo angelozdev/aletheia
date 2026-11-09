@@ -1,12 +1,12 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
-import { tmpdir } from 'node:os'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { REPO_ROOT } from '#shell/cli'
+import { tempDir } from '../support/temp-dir/temp-dir.ts'
 import { missingIds, readTraceabilitySources } from './traceability.ts'
 
 function tempTree(files: Record<string, string>): string {
-  const root = mkdtempSync(join(tmpdir(), 'aletheia-traceability-'))
+  const root = tempDir('aletheia-traceability-')
   for (const [path, content] of Object.entries(files)) {
     mkdirSync(dirname(join(root, path)), { recursive: true })
     writeFileSync(join(root, path), content)
