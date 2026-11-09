@@ -1,4 +1,4 @@
-import type { CliContext } from '../main.ts'
+import type { CliContext } from '../main/main.types.ts'
 
 export type Release = { version: string; commit: string; repoRoot: string }
 
