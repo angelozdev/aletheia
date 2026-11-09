@@ -9,6 +9,7 @@ export type ReleaseDeps = {
   packageJson: PackageJson
   repoRoot: string
   makeTempDir(): string
+  removeTempDir(dir: string): void
   stdout: Output
   stderr: Output
 }

@@ -37,6 +37,10 @@ async function releaseWith(responses: Parameters<typeof fakeRunner>[0]) {
   const build = vi.fn(async () => {
     callsBeforeBuild = runner.calls.length
   })
+  let callsBeforeRemoval: number | undefined
+  const removeTempDir = vi.fn(() => {
+    callsBeforeRemoval = runner.calls.length
+  })
   const stdout = captureStream()
   const stderr = captureStream()
   const code = await release({
@@ -45,6 +49,7 @@ async function releaseWith(responses: Parameters<typeof fakeRunner>[0]) {
     packageJson,
     repoRoot,
     makeTempDir: () => tempDir,
+    removeTempDir,
     stdout,
     stderr,
   })
@@ -55,7 +60,14 @@ async function releaseWith(responses: Parameters<typeof fakeRunner>[0]) {
     calls: runner.calls,
     build,
     callsBeforeBuild,
+    removeTempDir,
+    callsBeforeRemoval,
   }
+}
+
+function expectTempDirRemovedLast(result: Awaited<ReturnType<typeof releaseWith>>) {
+  expect(result.removeTempDir).toHaveBeenCalledExactlyOnceWith(tempDir)
+  expect(result.callsBeforeRemoval).toBe(result.calls.length)
 }
 
 function step(line: string, cwd?: string) {
@@ -185,5 +197,34 @@ describe('release from a clean green main', () => {
       stdout: '',
       stderr: `release: failed: aletheia on PATH prints "0.0.0 (1111111)", expected "${released}"\n`,
     })
+  })
+})
+
+describe('release temp folder', () => {
+  it('removes its temp folder after its last command once installed', async () => {
+    const result = await releaseWith(onGreenMain)
+
+    expect(result.code).toBe(0)
+    expectTempDirRemovedLast(result)
+  })
+
+  it('removes its temp folder when the smoke run fails', async () => {
+    const result = await releaseWith({
+      ...onGreenMain,
+      [`node ${packedBin} --help`]: { status: 1 },
+    })
+
+    expect(result.stderr).toBe('release: refused: smoke run failed: --help exited 1\n')
+    expectTempDirRemovedLast(result)
+  })
+
+  it('removes its temp folder when PATH prints another version', async () => {
+    const result = await releaseWith({
+      ...onGreenMain,
+      'aletheia --version': { stdout: '0.0.0 (1111111)\n' },
+    })
+
+    expect(result.stderr).toContain('release: failed: aletheia on PATH prints')
+    expectTempDirRemovedLast(result)
   })
 })
