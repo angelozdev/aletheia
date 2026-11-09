@@ -1,0 +1,4 @@
+data/
+dist/
+.release/
+node_modules/
