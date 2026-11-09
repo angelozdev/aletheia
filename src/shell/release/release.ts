@@ -3,7 +3,11 @@ import type { Output, Release } from '#shell/cli'
 
 type RunResult = { status: number; stdout: string; stderr: string }
 
-type Runner = (command: string, args: string[], options?: { cwd?: string }) => Promise<RunResult>
+export type Runner = (
+  command: string,
+  args: string[],
+  options?: { cwd?: string },
+) => Promise<RunResult>
 
 type ReleaseDeps = {
   run: Runner
