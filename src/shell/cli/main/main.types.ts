@@ -11,6 +11,8 @@ export type CliContext = {
   vars: Vars
   clock: Clock
   backupRoot: string | null
+  defaultEnv: string
+  dataDir: string | null
 }
 
 export type GlobalOptions = { env?: string; json?: boolean }
