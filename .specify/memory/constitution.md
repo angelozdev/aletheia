@@ -49,12 +49,13 @@ test written after the code describes what it does, not what it must do.
 
 ### V. Small Slices, One-Page Specs
 A slice takes one to two days. Its `spec.md` fits on one page. If writing the spec takes longer
-than implementing it, the slice is too big and MUST be split. Every slice from 1 on goes through
-`/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` →
-`/speckit-implement`; nothing is implemented without a spec. Slice 0 (skeleton) has no user
-story and no spec. The slice order lives in the approved design.
-Rationale: Spec Kit keeps the anchor and drops the weight; a spec for a skeleton is weight
-without an anchor.
+than implementing it, the slice is too big and MUST be split. Every slice, slice 0 included,
+goes through `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` →
+`/speckit-implement`; nothing is implemented without a spec. Slice 0 (skeleton) has no card
+behavior; its user stories are the commands Angelo runs to check it (`aletheia --help`,
+`aletheia backup`). The slice order lives in the approved design.
+Rationale: Spec Kit keeps the anchor and drops the weight; the skeleton fixes conventions
+(environments, migrations, backup) that every later slice inherits, so it gets an anchor too.
 
 ### VI. Simplicity and YAGNI, Not Reinvention
 One package. No monorepo, no server, no web UI or TUI, no vector database or embeddings, no
@@ -155,4 +156,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles I�
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-08
+**Version**: 1.1.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-08

@@ -3,7 +3,7 @@
 Date: 2026-11-08
 Status: draft, pending approval
 
-Aletheia (ἀλήθεια, "truth", literally *a-lēthē*, "not-forgetting") is a personal
+Aletheia (ἀλήθεια, "truth", literally _a-lēthē_, "not-forgetting") is a personal
 spaced-repetition flashcard system operated through Claude Code.
 
 ## 1. Intent
@@ -99,21 +99,21 @@ out.
 
 **Card**
 
-| Field | Notes |
-|---|---|
-| id | stable identifier, short enough to quote in chat |
-| type | one of the templates in §7 |
-| question | self-contained prompt, Spanish |
-| answer | full answer shown after grading, 1–3 lines |
-| key points | 1–3 tightly coupled points; the grading rubric |
-| situation | the credible situation where knowing this matters |
-| tags | one or more hierarchical tags, e.g. `mensajeria::redis-streams` |
-| source | where it was captured (repo or study context) — *my call* |
-| status | `active` or `archived` |
-| archive reason | required when archived |
-| replaced by | optional link when archived because a new card replaces it — *my call* |
-| scheduling state | FSRS state as defined by `ts-fsrs` |
-| timestamps | created, updated, archived |
+| Field            | Notes                                                                  |
+| ---------------- | ---------------------------------------------------------------------- |
+| id               | stable identifier, short enough to quote in chat                       |
+| type             | one of the templates in §7                                             |
+| question         | self-contained prompt, Spanish                                         |
+| answer           | full answer shown after grading, 1–3 lines                             |
+| key points       | 1–3 tightly coupled points; the grading rubric                         |
+| situation        | the credible situation where knowing this matters                      |
+| tags             | one or more hierarchical tags, e.g. `mensajeria::redis-streams`        |
+| source           | where it was captured (repo or study context) — _my call_              |
+| status           | `active` or `archived`                                                 |
+| archive reason   | required when archived                                                 |
+| replaced by      | optional link when archived because a new card replaces it — _my call_ |
+| scheduling state | FSRS state as defined by `ts-fsrs`                                     |
+| timestamps       | created, updated, archived                                             |
 
 **Tags** are hierarchical with `::` as separator (Anki convention). Filtering by
 a tag includes all descendants: `mensajeria` covers `mensajeria::rabbitmq`.
@@ -121,23 +121,23 @@ A card may carry several tags (a Redis-vs-RabbitMQ card lives under both).
 
 **Review log** (one row per graded review): card, rating, timestamp, Angelo's
 answer, Claude's grading rationale, whether the grade was changed after a
-dispute, and flags: `missing-prerequisite`, `badly-written`. — *Storing the
-answer, rationale and flags is my call; they power stats and pruning.*
+dispute, and flags: `missing-prerequisite`, `badly-written`. — _Storing the
+answer, rationale and flags is my call; they power stats and pruning._
 
 A review flagged `badly-written` is **voided**: it is logged, but it does not
 update FSRS and does not count toward retention or leech detection, because it
-says nothing about Angelo's memory. — *my call*
+says nothing about Angelo's memory. — _my call_
 
 **Prune decision** (one row per "keep" chosen during pruning): card, candidate
 reason, date. Used so kept cards are not proposed again without new evidence
-(§8.4). — *my call*
+(§8.4). — _my call_
 
 **Profile**: a `PROFILE.md` in the repo that the add and prune skills always
 read, as context for judging usefulness (not a whitelist of topics). Initial
 content:
 
 - Very strong frontend; working backend knowledge; studying AWS.
-- *Guess, not stated:* heading toward full-stack with weight on cloud.
+- _Guess, not stated:_ heading toward full-stack with weight on cloud.
 - Frontend cards must be deep or non-obvious; basics count as "already known".
 
 ## 6. Card quality rules
@@ -149,7 +149,7 @@ Enforced by `az-aletheia-add` when drafting, and by prune when reviewing the dec
    makes no sense without the other.
 2. **Answer fits in 1–3 lines.** Longer means it is not one idea yet.
 3. **Self-contained question.** Names the technology and the variant when it
-   matters ("a *classic* RabbitMQ queue", because RabbitMQ Streams behave
+   matters ("a _classic_ RabbitMQ queue", because RabbitMQ Streams behave
    differently). No "this", "the earlier thing", "our project".
 4. **Credible situation required.** If no believable situation where it matters
    can be named, the card does not enter (or is flagged as dubious).
@@ -174,17 +174,17 @@ Calibration examples (Spanish content, as stored):
 Templates are drafting guides for the add skill (how to phrase each type, with
 an example) and a `type` stored on the card. All follow §6.
 
-| Type | Shape | What grading checks |
-|---|---|---|
-| concept | how something works / what it guarantees | key points present |
-| comparison | X vs Y on one specific dimension | the criterion, not exact wording |
-| command | which command or flag does a specific thing | accepts equivalents (`docker ps -a` = `docker container ls --all`) |
-| scenario | given a concrete situation, what do you do | the concept applied |
-| code | read a short snippet: complexity, output, or the bug | result and reasoning |
+| Type       | Shape                                                | What grading checks                                                |
+| ---------- | ---------------------------------------------------- | ------------------------------------------------------------------ |
+| concept    | how something works / what it guarantees             | key points present                                                 |
+| comparison | X vs Y on one specific dimension                     | the criterion, not exact wording                                   |
+| command    | which command or flag does a specific thing          | accepts equivalents (`docker ps -a` = `docker container ls --all`) |
+| scenario   | given a concrete situation, what do you do           | the concept applied                                                |
+| code       | read a short snippet: complexity, output, or the bug | result and reasoning                                               |
 
-*The type list is my call, distilled from the conversation; cloze and
+_The type list is my call, distilled from the conversation; cloze and
 term↔definition were dropped because at the balanced granularity they tend to
-become trivia.*
+become trivia._
 
 ## 8. Flows
 
@@ -215,7 +215,7 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
    - **Good:** all key points, essentially correct.
    - **Easy:** all key points, precise, and with no hedging ("creo que…",
      "¿era…?"). No timing signal is used: chat latency includes typing and
-     Claude, so it would be noise. Angelo can claim Easy by disputing. — *my call*
+     Claude, so it would be noise. Angelo can claim Easy by disputing. — _my call_
 5. Claude states the grade and why, then shows the full answer.
 6. Angelo may dispute the grade; Claude adjusts before recording it.
 7. The rating is recorded through the CLI; FSRS computes the next due date.
@@ -224,21 +224,21 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
    covering it. If one exists, pull it into this session. If not, propose it
    through the same rules and approval as §8.1. This Again is a real failure: it
    updates FSRS and counts toward retention, and the flag makes it count as a gap
-   rather than toward leech detection. — *my call*
+   rather than toward leech detection. — _my call_
 9. **Badly written card** (failed because of the wording, not the knowledge):
    the review is voided (§5) and Claude proposes a rewrite on the spot.
 10. **Same-session relearning:** FSRS short-term scheduling stays on (the
     `ts-fsrs` default). A card that becomes due again during the session, such
     as one graded Again, is shown again before the session ends. Re-shows do not
-    count toward the session cap. — *my call*
+    count toward the session cap. — _my call_
 11. **Session cap:** about 20 cards, because every card passes through Claude
     and costs context. The cap is soft: when reached, Claude says how many
-    remain and asks whether to continue. — *my call*
+    remain and asks whether to continue. — _my call_
 12. **New cards per day cap**, so a big capture session does not flood reviews.
     Default 10, configurable. It applies to general review only: topic review
     includes the tag's new cards without the cap, and cards pulled in as
     prerequisites or created by a rewrite, split or merge are exempt. All caps
-    are enforced in the core. — *my call*
+    are enforced in the core. — _my call_
 
 ### 8.3 Stats — local skill
 
@@ -286,10 +286,11 @@ be restored. Prune never acts on its own.
 reason until there is new evidence. For a leech, that means new lapses after the
 keep; for the other reasons, six months after the keep.
 
-*Thresholds ("about a year", "failed repeatedly", six months) are my call and
-should be configurable.*
+_Thresholds ("about a year", "failed repeatedly", six months) are my call and
+should be configurable._
 
 **Rewrites — my call:**
+
 - An in-place edit keeps the card and its scheduling state. It is allowed when
   the card still asks for the same knowledge: clearer question, tidier answer,
   adjusted tags or situation.
@@ -315,8 +316,8 @@ skills (Claude)  ──►  CLI (commander)  ──►  core (domain, FSRS, stat
   which is exactly what the adapter boundary absorbs.
 - **CLI:** the only entry point for skills.
   - **Output:** TOON by default (fewer tokens on uniform lists, which is most
-    of what Claude reads); `--json` for debugging and scripts. — *proposed by me,
-    agreed direction from Angelo's question*
+    of what Claude reads); `--json` for debugging and scripts. — _proposed by me,
+    agreed direction from Angelo's question_
   - **Input:** card creation and edits take JSON (stdin or argument), validated
     with zod. JSON because Claude writes it reliably and card content contains
     multi-line code.
@@ -366,20 +367,20 @@ My calls, mirroring diarium where it applies:
 ## 13. Process and slices
 
 Approved 2026-11-08. The design is executed with GitHub Spec Kit, under a
-constitution adapted from diarium's. Each slice from 1 on goes through
+constitution adapted from diarium's. Each slice, slice 0 included, goes through
 `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` →
 `/speckit-implement`, with a one-page spec. Every slice ends in something Angelo
 can use.
 
-| # | Slice | How Angelo exercises it |
-|---|---|---|
-| 0 | Skeleton: tooling, `aletheia` bin, SQLite + migrations, backup. Exception: shared setup, no user story, no spec | `aletheia --help`, `aletheia backup` |
-| 1 | Capture and review: `az-aletheia-add` proposes, Angelo approves; review asks, Claude grades, FSRS schedules | add a card from another repo, review it in the Aletheia repo |
-| 2 | Intake filter: profile, quality rules, duplicate search, dubious flags | Claude flags junk and duplicates when proposing |
-| 3 | Topic review: hierarchical tags, ahead-of-schedule review, caps | "repasemos mensajería" |
-| 4 | Gaps and badly written cards in review: prerequisite card, voided review, rewrite | "no recuerdo qué es X" |
-| 5 | Progress: tag tree, retention, weak, gaps, sorting, free-form queries | "¿qué tengo flojo?" |
-| 6 | Prune: candidates, archive with reason, restore, keep, replace, split, merge | run the prune skill |
+| #   | Slice                                                                                                           | How Angelo exercises it                                      |
+| --- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| 0   | Skeleton: tooling, `aletheia` bin, SQLite + migrations, backup. Exception: shared setup, no card behavior       | `aletheia --help`, `aletheia backup`                         |
+| 1   | Capture and review: `az-aletheia-add` proposes, Angelo approves; review asks, Claude grades, FSRS schedules     | add a card from another repo, review it in the Aletheia repo |
+| 2   | Intake filter: profile, quality rules, duplicate search, dubious flags                                          | Claude flags junk and duplicates when proposing              |
+| 3   | Topic review: hierarchical tags, ahead-of-schedule review, caps                                                 | "repasemos mensajería"                                       |
+| 4   | Gaps and badly written cards in review: prerequisite card, voided review, rewrite                               | "no recuerdo qué es X"                                       |
+| 5   | Progress: tag tree, retention, weak, gaps, sorting, free-form queries                                           | "¿qué tengo flojo?"                                          |
+| 6   | Prune: candidates, archive with reason, restore, keep, replace, split, merge                                    | run the prune skill                                          |
 
 ## 14. Future, not v1
 
