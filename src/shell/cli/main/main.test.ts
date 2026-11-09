@@ -14,7 +14,7 @@ describe('main', () => {
 
     expect(code).toBe(0)
     expect(stdout).toContain('Usage: aletheia')
-    expect(stdout).toContain('--env <name>')
+    expect(stdout).toMatch(/--env <name>\s+use <name>\.sqlite in the data folder/)
     expect(stdout).toContain('--json')
     expect(stdout).toMatch(/^ {2}backup /m)
     expect(stderr).toBe('')

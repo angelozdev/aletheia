@@ -8,7 +8,7 @@ const COMMANDS = [backupCommand]
 function program(context: CliContext) {
   return new Command('aletheia')
     .version(context.version, '-V, --version')
-    .option('--env <name>', 'use data/<name>.sqlite')
+    .option('--env <name>', 'use <name>.sqlite in the data folder')
     .option('--json', 'JSON instead of TOON on stdout')
     .exitOverride()
     .configureOutput({
