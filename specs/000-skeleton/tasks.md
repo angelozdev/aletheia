@@ -115,7 +115,7 @@ errors on stderr; the six checks exist and pass; lint enforces the boundaries an
   - **Test**: `tests/lint.test.ts`: `src/shell/cli/sample.ts` importing `node:sqlite` fails and importing `drizzle-orm` fails; the same imports under `src/shell/db/sample.ts` pass; `src/shell/SampleFile.ts` fails `unicorn/filename-case`; a function with cognitive complexity above 15 fails `sonarjs/cognitive-complexity`
   - **Code**: `pnpm add -D eslint-plugin-sonarjs@4.2.2`; add it to `jsPlugins` with `sonarjs/cognitive-complexity: ["error", 15]`; `unicorn/filename-case: ["error", { "case": "kebabCase" }]`; top-level `no-restricted-imports` forbidding `node:sqlite`, `drizzle-orm`, `drizzle-orm/*`, turned off in an override for `src/shell/db/**`; the `src/core/**` override keeps its own stricter list (T007)
   - **Run**: `pnpm lint`
-- [ ] T010 [P] [US5] A function lists spec ids that no test or eval contains, in `tests/support/traceability.ts`
+- [X] T010 [P] [US5] A function lists spec ids that no test or eval contains, in `tests/support/traceability.ts`
   - **Test**: `tests/traceability.test.ts`: `000-US5-AS3 lists the ids from a spec that no test or eval contains` — `missingIds({ specs: ['… **999-US1-AS1** … **999-US1-AS2** … INV-99 …'], tests: ["it('999-US1-AS1 works')"] })` → `['999-US1-AS2', 'INV-99']`, deduplicated and sorted. Fixtures use spec number `999` so they never cover a real id
   - **Code**: `missingIds` in `tests/support/traceability.ts`; ids are `/\b\d{3}-US\d+-AS\d+\b/g` and `/\bINV-\d{2}\b/g`; an id is covered when any test or eval text contains it. The repo-wide wiring is T029
 - [ ] T011 [US5] `pnpm check` runs the six checks in order and stops at the first failure, in `package.json`
