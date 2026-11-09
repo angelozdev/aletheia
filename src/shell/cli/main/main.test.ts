@@ -1,5 +1,12 @@
+import { existsSync, mkdtempSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { runCli as run } from '../../../../tests/support/run-cli/run-cli.ts'
+
+function tempDir(prefix: string): string {
+  return mkdtempSync(join(tmpdir(), prefix))
+}
 
 describe('main', () => {
   it('000-US1-AS1 --help prints usage with --env and --json on stdout and exits 0', async () => {
@@ -27,5 +34,21 @@ describe('main', () => {
     expect(code).toBe(1)
     expect(stderr).toContain("error: unknown option '--nope'")
     expect(stdout).toBe('')
+  })
+
+  it('000-US1-AS4 with --env, ALETHEIA_DB and ALETHEIA_ENV all set, backup uses --env', async () => {
+    const dataDir = join(tempDir('aletheia-repo-'), 'data')
+    const db = join(tempDir('aletheia-cli-'), 'store.sqlite')
+
+    const { code, stderr } = await run(['--env', 'staging', 'backup'], {
+      vars: { ALETHEIA_DB: db, ALETHEIA_ENV: 'other' },
+      dataDir,
+      backupRoot: tempDir('aletheia-icloud-'),
+    })
+
+    expect(code).toBe(0)
+    expect(stderr).toBe('env: staging\n')
+    expect(existsSync(join(dataDir, 'staging.sqlite'))).toBe(true)
+    expect(existsSync(db)).toBe(false)
   })
 })
