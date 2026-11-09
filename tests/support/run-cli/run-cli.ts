@@ -1,4 +1,5 @@
 import { main } from '#shell/cli'
+import { SHIPPED_MIGRATIONS } from '../fixture-migrations/fixture-migrations.constants.ts'
 import { captureStream } from '../streams/streams.ts'
 import { FIXED_INSTANT } from './run-cli.constants.ts'
 import type { CliOverrides, CliRun } from './run-cli.types.ts'
@@ -12,6 +13,7 @@ export async function runCli(argv: string[], overrides: CliOverrides = {}): Prom
     clock: () => new Date(FIXED_INSTANT),
     defaultEnv: 'test',
     dataDir: null,
+    migrationsDir: SHIPPED_MIGRATIONS,
     ...overrides,
     stdout,
     stderr,

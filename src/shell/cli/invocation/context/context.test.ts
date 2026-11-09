@@ -51,6 +51,13 @@ describe('invocation context', () => {
     })
   })
 
+  it('the source context finds migrations in <repoRoot>/migrations and the release context in <entryDir>/../migrations', () => {
+    expect(sourceContext({ repoRoot: '/r', vars: {}, home: '/h' }).migrationsDir).toBe(
+      '/r/migrations',
+    )
+    expect(releasedContext(released({})).migrationsDir).toBe('/pkg/migrations')
+  })
+
   it('000-US1-AS3 backup from the release context uses prod in <home>/.aletheia, creating the folder', async () => {
     const home = tempDir('aletheia-home-')
 
