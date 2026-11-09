@@ -51,4 +51,18 @@ describe('main', () => {
     expect(existsSync(join(dataDir, 'staging.sqlite'))).toBe(true)
     expect(existsSync(db)).toBe(false)
   })
+
+  it('000-US1-AS4 an invalid env exits 1 before any store is opened', async () => {
+    const dataDir = join(tempDir('aletheia-repo-'), 'data')
+
+    const { code, stdout, stderr } = await run(['--env', 'Bad', 'backup'], {
+      dataDir,
+      backupRoot: tempDir('aletheia-icloud-'),
+    })
+
+    expect(code).toBe(1)
+    expect(stderr).toBe('error: invalid --env "Bad": use lowercase letters, digits and dashes\n')
+    expect(stdout).toBe('')
+    expect(existsSync(dataDir)).toBe(false)
+  })
 })
