@@ -3,4 +3,6 @@ import type { NodeSQLiteDatabase } from 'drizzle-orm/node-sqlite'
 
 export type Store = NodeSQLiteDatabase & { $client: DatabaseSync }
 
-export type StoreRequest = { path: string; migrationsDir: string }
+type MigratedHook = (name: string) => void
+
+export type StoreRequest = { path: string; migrationsDir: string; onMigrated: MigratedHook }
