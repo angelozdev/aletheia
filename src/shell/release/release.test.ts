@@ -15,9 +15,23 @@ const onCleanMain = {
   'git status --porcelain': { stdout: '' },
 }
 
+const tempDir = '/t'
+const tarball = '/r/.release/aletheia-0.0.0.tgz'
+const packedBin = '/t/package/dist/aletheia.js'
+const released = '0.0.0 (2033257)'
+const onGreenMain = {
+  ...onCleanMain,
+  'git rev-parse --short HEAD': { stdout: '2033257\n' },
+  [`node ${packedBin} --version`]: { stdout: `${released}\n` },
+  'aletheia --version': { stdout: `${released}\n` },
+}
+
 async function releaseWith(responses: Parameters<typeof fakeRunner>[0]) {
   const runner = fakeRunner(responses)
-  const build = vi.fn(async () => {})
+  let callsBeforeBuild: number | undefined
+  const build = vi.fn(async () => {
+    callsBeforeBuild = runner.calls.length
+  })
   const stdout = captureStream()
   const stderr = captureStream()
   const code = await release({
@@ -25,11 +39,23 @@ async function releaseWith(responses: Parameters<typeof fakeRunner>[0]) {
     build,
     packageJson,
     repoRoot,
-    makeTempDir: () => '/t',
+    makeTempDir: () => tempDir,
     stdout,
     stderr,
   })
-  return { code, stdout: stdout.text(), stderr: stderr.text(), calls: runner.calls, build }
+  return {
+    code,
+    stdout: stdout.text(),
+    stderr: stderr.text(),
+    calls: runner.calls,
+    build,
+    callsBeforeBuild,
+  }
+}
+
+function step(line: string, cwd?: string) {
+  const [command = '', ...args] = line.split(' ')
+  return { command, args, cwd }
 }
 
 function commandLines(calls: { command: string; args: string[] }[]) {
@@ -71,5 +97,73 @@ describe('release refusals', () => {
       'pnpm run lint',
     ])
     expect(result.calls.find(({ args }) => args.includes('lint'))?.cwd).toBe(repoRoot)
+  })
+})
+
+describe('release from a clean green main', () => {
+  it('000-US2-AS1 builds, packs, smoke-runs and installs from a clean green main', async () => {
+    const result = await releaseWith(onGreenMain)
+
+    expect(result.calls.slice(0, result.callsBeforeBuild)).toEqual([
+      step('git rev-parse --abbrev-ref HEAD', repoRoot),
+      step('git status --porcelain', repoRoot),
+      ...checks.map((name) => step(`pnpm run ${name}`, repoRoot)),
+      step('git rev-parse --short HEAD', repoRoot),
+    ])
+    expect(result.build).toHaveBeenCalledWith({ version: '0.0.0', commit: '2033257', repoRoot })
+    expect(result.calls.slice(result.callsBeforeBuild)).toEqual([
+      step('pnpm pack --pack-destination .release', repoRoot),
+      step(`tar -xzf ${tarball} -C ${tempDir}`),
+      step(`node ${packedBin} --help`, tempDir),
+      step(`node ${packedBin} --version`, tempDir),
+      step(`pnpm add -g ${tarball}`, tempDir),
+      step('aletheia --version', tempDir),
+    ])
+    expect(result).toMatchObject({
+      code: 0,
+      stdout: `release: ${released} installed\n`,
+      stderr: '',
+    })
+  })
+
+  it('refuses before installing when the packed CLI fails its smoke run', async () => {
+    const result = await releaseWith({
+      ...onGreenMain,
+      [`node ${packedBin} --version`]: { stdout: 'dev\n' },
+    })
+
+    expect(result).toMatchObject({
+      code: 1,
+      stdout: '',
+      stderr: `release: refused: smoke run failed: --version printed "dev", expected "${released}"\n`,
+    })
+    expect(commandLines(result.calls).filter((line) => line.startsWith('pnpm add'))).toEqual([])
+  })
+
+  it('refuses before installing when the packed --help fails', async () => {
+    const result = await releaseWith({
+      ...onGreenMain,
+      [`node ${packedBin} --help`]: { status: 1 },
+    })
+
+    expect(result).toMatchObject({
+      code: 1,
+      stdout: '',
+      stderr: 'release: refused: smoke run failed: --help exited 1\n',
+    })
+    expect(commandLines(result.calls).filter((line) => line.startsWith('pnpm add'))).toEqual([])
+  })
+
+  it('reports a PATH mismatch after installing', async () => {
+    const result = await releaseWith({
+      ...onGreenMain,
+      'aletheia --version': { stdout: '0.0.0 (1111111)\n' },
+    })
+
+    expect(result).toMatchObject({
+      code: 1,
+      stdout: '',
+      stderr: `release: failed: aletheia on PATH prints "0.0.0 (1111111)", expected "${released}"\n`,
+    })
   })
 })
