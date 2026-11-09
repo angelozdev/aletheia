@@ -10,9 +10,9 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 
 | #    | Title | Status | Date |
 |------|-------|--------|------|
-| 0001 | Data inside the repo, environment by invocation | proposed | 2026-11-08 |
-| 0002 | Drizzle ORM over node:sqlite, migrations applied at startup | proposed | 2026-11-08 |
-| 0003 | Commander CLI, TOON by default, JSON on request | proposed | 2026-11-08 |
-| 0004 | Functional core and imperative shell in concept folders | proposed | 2026-11-08 |
-| 0005 | Release as a Rolldown bundle installed globally | proposed | 2026-11-08 |
-| 0006 | oxlint with local rules, oxfmt, knip and jscpd | proposed | 2026-11-08 |
+| 0001 | Data inside the repo, environment by invocation | accepted | 2026-11-08 |
+| 0002 | Drizzle ORM over node:sqlite, migrations applied at startup | accepted | 2026-11-08 |
+| 0003 | Commander CLI, TOON by default, JSON on request | accepted | 2026-11-08 |
+| 0004 | Functional core and imperative shell in concept folders | accepted | 2026-11-08 |
+| 0005 | Release as a Rolldown bundle installed globally | accepted | 2026-11-08 |
+| 0006 | oxlint with local rules, oxfmt, knip and jscpd | accepted | 2026-11-08 |

@@ -1,6 +1,6 @@
 # 0002. Drizzle ORM over node:sqlite, migrations applied at startup
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-08
 - **Deciders:** Angelo
 - **Supersedes:** —

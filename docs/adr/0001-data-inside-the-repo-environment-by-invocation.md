@@ -1,6 +1,6 @@
 # 0001. Data inside the repo, environment by invocation
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-08
 - **Deciders:** Angelo
 - **Supersedes:** —

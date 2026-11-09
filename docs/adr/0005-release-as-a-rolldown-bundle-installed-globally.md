@@ -1,6 +1,6 @@
 # 0005. Release as a Rolldown bundle installed globally
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-08
 - **Deciders:** Angelo
 - **Supersedes:** —
