@@ -82,6 +82,20 @@ describe('aletheia backup', () => {
     expect(existsSync(db)).toBe(false)
   })
 
+  it('000-US3-AS3 a missing iCloud Drive root exits 1 naming it', async () => {
+    const missing = join(root, 'missing')
+
+    const { code, stdout, stderr } = await runCli(['backup'], {
+      vars: { ALETHEIA_DB: db },
+      backupRoot: missing,
+    })
+
+    expect(code).toBe(1)
+    expect(stderr).toBe(`env: custom (${db})\nerror: iCloud Drive not found at ${missing}\n`)
+    expect(stdout).toBe('')
+    expect(existsSync(missing)).toBe(false)
+  })
+
   it('INV-01 backup with no backup root exits 1 and writes no copy', async () => {
     const { code, stdout, stderr } = await runCli(['backup'], { vars: { ALETHEIA_DB: db } })
 
