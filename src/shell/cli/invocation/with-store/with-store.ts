@@ -9,9 +9,9 @@ import type { Env } from '../env/env.types.ts'
 import { writeEnvLine, writeError, writeResult } from '../output/output.ts'
 import type { StoreAction } from './with-store.types.ts'
 
-async function openEnvStore({ name, dbPath }: Env): Promise<Store> {
+async function openEnvStore({ migrationsDir }: CliContext, { name, dbPath }: Env): Promise<Store> {
   if (name !== CUSTOM_ENV) await mkdir(dirname(dbPath), { recursive: true })
-  return openStore(dbPath)
+  return openStore({ path: dbPath, migrationsDir })
 }
 
 async function runAgainstStore(
@@ -26,7 +26,7 @@ async function runAgainstStore(
     dataDir: context.dataDir,
   })
   writeEnvLine(context.stderr, env)
-  const store = await openEnvStore(env)
+  const store = await openEnvStore(context, env)
   try {
     return await action(store, env)
   } finally {

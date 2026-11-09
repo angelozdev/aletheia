@@ -11,7 +11,7 @@ async function writeCopy(db: Store, folder: string, path: string): Promise<void>
   const partial = `${path}${PARTIAL_SUFFIX}`
   try {
     await mkdir(folder, { recursive: true })
-    await backup(db, partial)
+    await backup(db.$client, partial)
     await rename(partial, path)
   } catch (error) {
     await rm(partial, { force: true })
