@@ -93,11 +93,12 @@ Node 26.13.0 without touching the real global install.
 - **Rationale**: Constitution IV covers scripts; refusals and step order are testable without
   side effects. Angelo runs it himself after merging (spec Assumptions).
 
-## R8. Environments (ADR-0001)
+## R8. Environments (ADR-0001, superseded by ADR-0008)
 
 - **Decision**: diarium's resolution with `ALETHEIA_*` names; the source entry defaults to
   `test` and finds `data/` and `migrations/` from its own location; the release defaults to
-  `prod` and finds `data/` under `__ALETHEIA_RELEASE__.repoRoot`. Under `VITEST` the entry
+  `prod` and keeps its stores in `<home>/.aletheia/` (ADR-0008; ADR-0001 had it find `data/`
+  under `__ALETHEIA_RELEASE__.repoRoot`). Under `VITEST` the entry
   passes no data folder and no backup root, so named envs and backups are refused (INV-01).
 - **Rationale**: a bare `node src/shell/cli/bin.ts` can never reach `prod` by default.
 

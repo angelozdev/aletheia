@@ -10,7 +10,7 @@ Slice 0 stores no domain data. These are the shapes the skeleton reads and write
 | dbPath | `<dataDir>/<name>.sqlite`, or the absolute path in `ALETHEIA_DB` |
 
 Resolution: `--env` > `ALETHEIA_DB` > `ALETHEIA_ENV` > invocation default (sources `test`,
-release `prod`). `dataDir` is the repo's `data/` (ADR-0001), or none under vitest, which makes
+release `prod`). `dataDir` is `~/.aletheia/` for the release and the repo's `data/` for the sources (ADR-0008), or none under vitest, which makes
 every named env a refusal (INV-01). Shown on stderr as `env: <name>`, or `env: custom (<path>)`.
 
 ## Store

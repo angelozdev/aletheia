@@ -22,7 +22,7 @@ The installed `aletheia` works from any directory, says which environment it is 
 
 1. **000-US1-AS1** Given `aletheia` installed, When Angelo runs `aletheia --help` from a directory outside the repo, Then stdout lists every command and the global options `--env` and `--json`, and it exits 0.
 2. **000-US1-AS2** Given any command, When it runs, Then stderr carries `env: <name>` and stdout holds only the command's result.
-3. **000-US1-AS3** Given no flag and no variables, When the installed `aletheia` runs from any directory, Then the env is `prod` and the store is `data/prod.sqlite` in the repo; When `pnpm aletheia` runs, Then the env is `test` and the store is `data/test.sqlite`.
+3. **000-US1-AS3** Given no flag and no variables, When the installed `aletheia` runs from any directory, Then the env is `prod` and the store is `~/.aletheia/prod.sqlite`, outside the repo; When `pnpm aletheia` runs, Then the env is `test` and the store is `data/test.sqlite`.
 4. **000-US1-AS4** Given `--env`, `ALETHEIA_DB` and `ALETHEIA_ENV` set together, When a command runs, Then `--env` wins, then `ALETHEIA_DB`, then `ALETHEIA_ENV`, then the invocation default; with `ALETHEIA_DB` stderr reads `env: custom (<path>)`.
 5. **000-US1-AS5** Given an unknown command or option, When it runs, Then it exits 1, stderr names what was not recognized, stdout is empty, and no store is opened.
 
@@ -75,19 +75,19 @@ The checks the constitution requires run green on a clean checkout and fail on t
 
 ### Functional Requirements
 
-- **FR-001**: The installed `aletheia` MUST run from its own installed copy, independent of the repo's files, and use the `data/` of the repo it was released from; `pnpm aletheia` MUST run the repo's current code with the repo's `data/`.
+- **FR-001**: The installed `aletheia` MUST run from its own installed copy, independent of the repo's files, and keep its stores in `~/.aletheia/`, outside the repo; `pnpm aletheia` MUST run the repo's current code with the repo's `data/`.
 - **FR-002**: Environment resolution MUST follow `--env` > `ALETHEIA_DB` > `ALETHEIA_ENV` > invocation default (`prod` installed, `test` via `pnpm aletheia`); `--env x` maps to `data/x.sqlite`.
 - **FR-003**: Every command MUST print `env: <name>` on stderr; stdout carries results only, TOON by default and JSON with `--json`.
 - **FR-004**: Errors MUST exit 1 with a message on stderr and nothing on stdout.
 - **FR-005**: Every command that opens the store MUST apply pending schema changes first, all or none; in `prod`, a backup MUST precede them.
 - **FR-006**: `aletheia backup` MUST write a consistent copy of a live store, keep the newest 5 per env, and remove nothing else.
-- **FR-007**: **INV-01** No test or eval MAY open a store under `data/`, write to iCloud Drive, or change the installed `aletheia`.
+- **FR-007**: **INV-01** No test or eval MAY open a store under `data/` or `~/.aletheia/`, write to iCloud Drive, or change the installed `aletheia`.
 - **FR-008**: The repo MUST provide the six checks of 000-US5-AS1, with lint enforcing no `node:*` in `src/core` and no comments, and a test enforcing scenario and invariant traceability.
 - **FR-009**: `pnpm release` MUST build, pack and install only from a clean `main` with the six checks green, and the package MUST carry everything the CLI needs at runtime, schema changes included.
 
 ### Key Entities
 
-- **Environment**: a name and the store it resolves to (`data/<name>.sqlite`, or a custom path).
+- **Environment**: a name and the store it resolves to (`<name>.sqlite` in the entry's data folder, `~/.aletheia/` installed or the repo's `data/` from the sources, or a custom path).
 - **Store**: one database file per environment, recording which schema changes it has applied.
 - **Backup copy**: a file in `aletheia-backups/` named by env and instant.
 - **Release**: the installed package, identified by its version and the commit it was built from.
@@ -99,13 +99,13 @@ The checks the constitution requires run green on a clean checkout and fail on t
 - **SC-001**: From a fresh clone, Angelo has a released `aletheia` on PATH with the commands in the quickstart, in under 5 minutes.
 - **SC-002**: `aletheia --help` and `aletheia backup` each finish in under 1 second on Angelo's Mac.
 - **SC-003**: A backup copy, copied over its env's store, opens as a valid store with the same content.
-- **SC-004**: The whole test suite runs in under 5 seconds, and no run touches `data/`, iCloud Drive or the installed `aletheia` (INV-01).
+- **SC-004**: The whole test suite runs in under 5 seconds, and no run touches `data/`, `~/.aletheia/`, iCloud Drive or the installed `aletheia` (INV-01).
 - **SC-005**: A release from a clean `main` is one command and takes under 1 minute.
 
 ## Assumptions
 
 - Slice 0 defines no card tables; slice 1 adds the first domain schema. The plan decides how the schema-change mechanism is exercised before then.
-- Restoring is manual: Angelo copies a backup over `data/<env>.sqlite`, with the command given in the quickstart.
+- Restoring is manual: Angelo copies a backup over the env's store (`~/.aletheia/prod.sqlite` for `prod`), with the command given in the quickstart.
 - Retention is 5 copies per env (Clarifications); the folder name `aletheia-backups` mirrors diarium.
 - No periodic or per-write backup: only `aletheia backup` and the backup before schema changes in `prod` (Clarifications).
 - macOS with iCloud Drive only; no fallback location.

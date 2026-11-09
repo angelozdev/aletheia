@@ -343,8 +343,9 @@ My calls, mirroring diarium where it applies:
 ## 11. Layout and installation (my calls)
 
 - Repo at `~/me/aletheia`.
-- Database file in `data/` inside the repo, gitignored, at a fixed path so the
-  global skill works from any working directory. Separate database for tests.
+- The installed `aletheia` keeps its database in `~/.aletheia/`, outside the repo, at a fixed
+  path so the global skill works from any working directory; the sources keep theirs in the
+  repo's `data/`, gitignored (ADR-0008). Separate database for tests.
 - Installed bin `aletheia` on PATH: a release, built from `main` with `pnpm release`, packed
   and installed globally, so development in the repo never reaches it (spec 000).
 - `az-aletheia-add` source lives in this repo and is symlinked into

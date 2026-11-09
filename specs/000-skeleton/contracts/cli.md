@@ -1,7 +1,8 @@
 # CLI Contract: Skeleton
 
-Two entry points run the same `main()`: the released `aletheia` (default env `prod`) and
-`pnpm aletheia` (sources, `ALETHEIA_ENV=test`). Exit 0 on success, 1 on any error.
+Two entry points run the same `main()`: the released `aletheia` (default env `prod`, stores in
+`~/.aletheia/`) and `pnpm aletheia` (sources, `ALETHEIA_ENV=test`, stores in the repo's
+`data/`). Exit 0 on success, 1 on any error.
 
 ## Streams
 
@@ -17,7 +18,7 @@ Two entry points run the same `main()`: the released `aletheia` (default env `pr
 
 | Option         | Meaning |
 |----------------|---------|
-| `--env <name>` | use `data/<name>.sqlite` |
+| `--env <name>` | use `<name>.sqlite` in the data folder |
 | `--json`       | JSON instead of TOON on stdout |
 | `-h, --help`   | usage on stdout, exit 0; opens no store, no `env:` line |
 | `-V, --version`| `<version> (<commit>)` released, `dev` from sources; opens no store |
