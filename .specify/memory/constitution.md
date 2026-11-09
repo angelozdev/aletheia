@@ -61,6 +61,7 @@ Rationale: Spec Kit keeps the anchor and drops the weight; the skeleton fixes co
 One package. No monorepo, no server, no web UI or TUI, no vector database or embeddings, no
 hosted database in v1. A typed ORM over the database is welcome; the only generator allowed is
 the one that derives SQL migrations from the schema, and its output is reviewed and committed.
+A release build is not a generator: its output is never committed.
 Statistics are derived from the review log, not stored. Every feature MUST name the user story
 it serves; a feature whose story is hypothetical goes to the design's Future section. Another
 database engine arrives only as a new repository adapter, when Angelo asks for it.
@@ -103,10 +104,12 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
 
 ## Technology Constraints
 
-- TypeScript on Node 26 with native type stripping, `pnpm`, `node:sqlite` through Drizzle ORM
+- TypeScript on Node 26, `pnpm`, `node:sqlite` through Drizzle ORM
   (`drizzle-orm/node-sqlite`), `zod` at the CLI edge, `commander` with
   `@commander-js/extra-typings`, `ts-fsrs` for scheduling, `@toon-format/toon` for output,
-  `vitest`. The schema lives in TypeScript as the source of truth; `drizzle-kit generate`
+  `vitest`. Development and tests run the sources through Node's native type stripping; the
+  installed `aletheia` is a release, a bundle of `main` packed and installed globally by
+  `pnpm release`. The schema lives in TypeScript as the source of truth; `drizzle-kit generate`
   derives numbered SQL migration files, reviewed and committed, applied at startup by
   Drizzle's migrator. What Drizzle cannot express (FTS5 virtual tables, triggers, `CHECK`
   constraints) is declared in the migration SQL.
@@ -115,12 +118,13 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
 - `oxlint` and `oxfmt` lint and format; `knip` finds dead code; `jscpd` finds duplication.
   One lint rule enforces Principle III: `src/core` MUST NOT import `node:*`. Code carries no
   comments; names and extracted functions explain it.
-- Everything lives in one directory, `~/me/aletheia`: code, specs, `PROFILE.md`, skills.
+- Everything lives in one directory, `~/me/aletheia`: code, specs, `PROFILE.md`, skills. The
+  installed release is a build artifact outside it and holds no data.
   Data lives in `data/<env>.sqlite`, ignored by git. `aletheia backup` exists from slice 0,
   copies the database to iCloud Drive, and runs before any migration in `prod`.
 - Environment resolution: `--env` > `ALETHEIA_DB` > `ALETHEIA_ENV` > default by invocation.
   The installed binary `aletheia` defaults to `prod`; the development wrapper `pnpm aletheia`
-  sets `ALETHEIA_ENV=test`. Every command prints `env: <name>` on stderr; stdout stays clean.
+  sets `ALETHEIA_ENV=test`, and the sources default to `test` however they run. Every command prints `env: <name>` on stderr; stdout stays clean.
   Tests use `:memory:`; evals copy fixtures to a temp path. Neither may reach `prod.sqlite`.
 - The CLI performs no network calls.
 - Only `az-aletheia-add` is a global skill: its source lives in this repo and is symlinked
@@ -133,7 +137,8 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
   only, never on `main`. No pre-commit gates. Every task starts with its failing test
   (Principle IV); `pnpm test` is green before the task is closed, not on every commit.
 - Development sessions use `pnpm aletheia`; `prod` is reached only by the installed binary or
-  an explicit `--env prod`.
+  an explicit `--env prod`. Angelo runs `pnpm release` from a clean `main` after a merge; Claude
+  gives him the command.
 - Destructive operations (deleting data, resetting repos, uninstalling) are given to Angelo as
   commands to run, never executed by the agent.
 - `docs/design/` holds the approved design; a change that contradicts it updates the design
@@ -156,4 +161,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.1.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-08
+**Version**: 1.2.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-08
