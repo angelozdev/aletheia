@@ -23,7 +23,8 @@ installed `aletheia`. Decisions marked **Angelo** were his, taken with options o
 
 - **Decision**: a random 4-character code from Crockford's base 32 in lowercase
   (`0-9a-hjkmnp-tv-z`: no `i`, `l`, `o`, `u`), e.g. `k7m2`, the table's primary key. The shell
-  draws it; a collision retries with a new draw.
+  draws each character with `randomInt` from `node:crypto`, behind an injected port so tests
+  fix the ids; a collision retries with a new draw.
 - **Rationale**: Angelo chose a code over a consecutive number. Four characters give 1,048,576
   ids; at 1,000 cards a draw collides once in a thousand, and the primary key catches it. The
   alphabet drops the letters that read as digits and the vowel that spells words.
@@ -59,3 +60,16 @@ installed `aletheia`. Decisions marked **Angelo** were his, taken with options o
   data-model.md.
 - **Alternatives**: validation in the CLI only (a bug in a later command could write what the
   rule forbids); revoking deletes by convention (nothing to revoke in SQLite).
+
+## R8. CLI commands (Angelo: grouped names)
+
+- **Decision**: four commands in two groups: `aletheia card add`, `aletheia card show <id>`,
+  `aletheia review due` and `aletheia review grade`. `card add` and `review grade` read JSON on
+  stdin, validated with zod; `review grade` takes the card id, both grades, the answer and the
+  rationale in one object. Output is TOON by default and JSON with `--json`, as `backup`.
+- **Rationale**: Angelo chose groups over four loose verbs, so `archive`, `restore`, `stats`
+  and `prune` find their place later. Stdin through a quoted heredoc (`<<'JSON'`) passes
+  backticks, accents and multi-line code untouched; as an argument, quotes in the content break
+  the shell. One object per grade means one schema and an error that names the field.
+- **Alternatives**: `add`, `show`, `due`, `grade` (offered, declined); JSON as an argument
+  (the design allowed it); flags for the grades and stdin for the text (two inputs to validate).
