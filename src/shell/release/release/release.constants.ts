@@ -12,6 +12,8 @@ export const TARBALL_EXTENSION = '.tgz'
 
 export const PACKED_ROOT = 'package'
 
+export const PACKED_MIGRATIONS = 'migrations/'
+
 export const INSTALLED_BIN = 'aletheia'
 
 export const HELP_FLAG = '--help'

@@ -1,4 +1,10 @@
-import { HELP_FLAG, INSTALLED_BIN, MAIN_BRANCH, VERSION_FLAG } from './release.constants.ts'
+import {
+  HELP_FLAG,
+  INSTALLED_BIN,
+  MAIN_BRANCH,
+  PACKED_MIGRATIONS,
+  VERSION_FLAG,
+} from './release.constants.ts'
 
 export class ReleaseError extends Error {
   constructor(message: string) {
@@ -34,6 +40,12 @@ export class CheckFailedError extends ReleaseRefusedError {
   constructor(check: string) {
     super(`${check} failed`)
     this.check = check
+  }
+}
+
+export class MissingMigrationsError extends ReleaseRefusedError {
+  constructor() {
+    super(`package is missing ${PACKED_MIGRATIONS}`)
   }
 }
 
