@@ -1,3 +1,3 @@
-export const BACKUPS_FOLDER = 'aletheia-backups'
+export const BACKUPS_FOLDER = 'backups'
 
 export const PARTIAL_SUFFIX = '.partial'

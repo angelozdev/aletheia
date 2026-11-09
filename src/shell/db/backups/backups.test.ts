@@ -28,7 +28,7 @@ describe('backupStore', () => {
     const db = openStore(join(tempDir('aletheia-store-'), 'store.sqlite'))
     db.exec('create table notes (id integer primary key, body text)')
     db.exec("insert into notes (body) values ('first'), ('second')")
-    const root = tempDir('aletheia-icloud-')
+    const root = tempDir('aletheia-data-')
 
     const { path } = await backupStore({
       db,
@@ -37,7 +37,7 @@ describe('backupStore', () => {
       now: new Date('2026-11-08T21:04:05.123Z'),
     })
 
-    const folder = join(root, 'aletheia-backups')
+    const folder = join(root, 'backups')
     expect(path).toBe(join(folder, 'custom-2026-11-08T21-04-05-123Z.sqlite'))
     const copy = openStore(path)
     expect(copy.prepare('select * from notes order by id').all()).toEqual(
@@ -50,8 +50,8 @@ describe('backupStore', () => {
 
   it("000-US3-AS2 a sixth backup removes that env's oldest copy only", async () => {
     const db = openStore(join(tempDir('aletheia-store-'), 'store.sqlite'))
-    const root = tempDir('aletheia-icloud-')
-    const folder = join(root, 'aletheia-backups')
+    const root = tempDir('aletheia-data-')
+    const folder = join(root, 'backups')
     const seeded = [
       'prod-2026-11-01T10-00-00-000Z.sqlite',
       'prod-2026-11-02T10-00-00-000Z.sqlite',
@@ -84,8 +84,8 @@ describe('backupStore', () => {
 
   it('000-US3-AS3 a copy that cannot be moved into place leaves no .partial', async () => {
     const db = openStore(join(tempDir('aletheia-store-'), 'store.sqlite'))
-    const root = tempDir('aletheia-icloud-')
-    const folder = join(root, 'aletheia-backups')
+    const root = tempDir('aletheia-data-')
+    const folder = join(root, 'backups')
     const blocker = 'custom-2026-11-08T21-04-05-123Z.sqlite'
     mkdirSync(join(folder, blocker), { recursive: true })
 
@@ -98,16 +98,14 @@ describe('backupStore', () => {
 
   it('000-US3-AS3 a backup folder that cannot be created is named in the refusal', async () => {
     const db = openStore(join(tempDir('aletheia-store-'), 'store.sqlite'))
-    const root = tempDir('aletheia-icloud-')
+    const root = tempDir('aletheia-data-')
     chmodSync(root, 0o500)
     lockedFolder = root
 
     await expect(
       backupStore({ db, env: 'custom', root, now: new Date('2026-11-08T21:04:05.123Z') }),
     ).rejects.toThrow(
-      new RegExp(
-        `^${RegExp.escape(`cannot write backup to ${join(root, 'aletheia-backups')}: `)}.+`,
-      ),
+      new RegExp(`^${RegExp.escape(`cannot write backup to ${join(root, 'backups')}: `)}.+`),
     )
     expect(readdirSync(root)).toEqual([])
     closeStore(db)

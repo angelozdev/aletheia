@@ -8,6 +8,4 @@ export const SOURCE_DATA_FOLDER = 'data'
 
 export const RELEASE_DATA_FOLDER = '.aletheia'
 
-export const ICLOUD_DRIVE = 'Library/Mobile Documents/com~apple~CloudDocs'
-
 export const VITEST_VAR = 'VITEST'

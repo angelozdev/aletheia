@@ -15,18 +15,18 @@ import { closeStore, openStore } from '#shell/db'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
 
 let db: string
-let root: string
+let dataDir: string
 let copy: string
 let lockedFolder: string | null = null
 
 function backup(argv: string[] = []) {
-  return runCli(['backup', ...argv], { vars: { ALETHEIA_DB: db }, backupRoot: root })
+  return runCli(['backup', ...argv], { vars: { ALETHEIA_DB: db }, dataDir })
 }
 
 beforeEach(() => {
   db = join(mkdtempSync(join(tmpdir(), 'aletheia-cli-')), 'store.sqlite')
-  root = mkdtempSync(join(tmpdir(), 'aletheia-icloud-'))
-  copy = join(root, 'aletheia-backups', 'custom-2026-11-08T21-04-05-123Z.sqlite')
+  dataDir = mkdtempSync(join(tmpdir(), 'aletheia-data-'))
+  copy = join(dataDir, 'backups', 'custom-2026-11-08T21-04-05-123Z.sqlite')
 })
 
 afterEach(() => {
@@ -55,7 +55,7 @@ describe('aletheia backup', () => {
   })
 
   it('000-US3-AS2 backup over five copies prints the one it removed', async () => {
-    const folder = join(root, 'aletheia-backups')
+    const folder = join(dataDir, 'backups')
     mkdirSync(folder)
     for (const day of ['01', '02', '03', '04', '05']) {
       writeFileSync(join(folder, `custom-2026-11-${day}T10-00-00-000Z.sqlite`), '')
@@ -102,18 +102,18 @@ describe('aletheia backup', () => {
     expect(existsSync(db)).toBe(false)
   })
 
-  it('000-US3-AS3 a missing iCloud Drive root exits 1 naming it', async () => {
-    const missing = join(root, 'missing')
+  it('000-US3-AS1 backup creates <dataDir>/backups when the data folder is missing', async () => {
+    const missing = join(dataDir, 'missing')
+    const written = join(missing, 'backups', 'custom-2026-11-08T21-04-05-123Z.sqlite')
 
-    const { code, stdout, stderr } = await runCli(['backup'], {
+    const { code, stdout } = await runCli(['backup'], {
       vars: { ALETHEIA_DB: db },
-      backupRoot: missing,
+      dataDir: missing,
     })
 
-    expect(code).toBe(1)
-    expect(stderr).toBe(`env: custom (${db})\nerror: iCloud Drive not found at ${missing}\n`)
-    expect(stdout).toBe('')
-    expect(existsSync(missing)).toBe(false)
+    expect(code).toBe(0)
+    expect(stdout).toBe(`path: ${written}\nremoved: []\n`)
+    expect(existsSync(written)).toBe(true)
   })
 
   it('000-US3-AS3 an unwritable backup folder exits 1 with no copy left and the store unchanged', async () => {
@@ -123,7 +123,7 @@ describe('aletheia backup', () => {
     )
     closeStore(store)
     const before = sha256(db)
-    const folder = join(root, 'aletheia-backups')
+    const folder = join(dataDir, 'backups')
     mkdirSync(folder, { mode: 0o500 })
     lockedFolder = folder
 
@@ -140,12 +140,12 @@ describe('aletheia backup', () => {
     expect(sha256(db)).toBe(before)
   })
 
-  it('INV-01 backup with no backup root exits 1 and writes no copy', async () => {
+  it('INV-01 backup with no data folder exits 1 and writes no copy', async () => {
     const { code, stdout, stderr } = await runCli(['backup'], { vars: { ALETHEIA_DB: db } })
 
     expect(code).toBe(1)
     expect(stderr).toBe(`env: custom (${db})\nerror: backups are disabled here (under vitest)\n`)
     expect(stdout).toBe('')
-    expect(existsSync(join(root, 'aletheia-backups'))).toBe(false)
+    expect(existsSync(join(dataDir, 'backups'))).toBe(false)
   })
 })

@@ -10,7 +10,6 @@ export async function runCli(argv: string[], overrides: CliOverrides = {}): Prom
     version: 'dev',
     vars: {},
     clock: () => new Date(FIXED_INSTANT),
-    backupRoot: null,
     defaultEnv: 'test',
     dataDir: null,
     ...overrides,

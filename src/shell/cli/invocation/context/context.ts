@@ -1,7 +1,6 @@
 import { join } from 'node:path'
 import {
   DEV_VERSION,
-  ICLOUD_DRIVE,
   RELEASE_DATA_FOLDER,
   RELEASE_DEFAULT_ENV,
   SOURCE_DATA_FOLDER,
@@ -34,7 +33,6 @@ function invocationContext(
     version,
     vars: invocation.vars,
     clock: () => new Date(),
-    backupRoot: outsideVitest(invocation.vars, join(invocation.home, ICLOUD_DRIVE)),
     defaultEnv,
     dataDir: outsideVitest(invocation.vars, dataDir),
   }
