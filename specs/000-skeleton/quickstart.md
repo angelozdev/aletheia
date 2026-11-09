@@ -69,7 +69,7 @@ Taken 2026-11-09 on Angelo's Mac, release `0.0.0 (5efa773)`.
 
 | Criterion | Command | Result | Limit |
 |-----------|---------|--------|-------|
-| SC-001 | fresh clone, `pnpm install`, `pnpm release` | pending | 5 min |
+| SC-001 | fresh clone, `pnpm install`, `pnpm release` | 13.5 s | 5 min |
 | SC-002 | `time aletheia --help` | 0.03–0.04 s | 1 s |
 | SC-002 | `time aletheia backup` in `prod` | 0.05 s | 1 s |
 | SC-003 | a `test-<instant>.sqlite` copy over a scratch store, then `ALETHEIA_DB=<scratch> pnpm aletheia backup` | exit 0, opens as a store | — |
