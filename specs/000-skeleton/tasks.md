@@ -99,7 +99,7 @@ errors on stderr; the six checks exist and pass; lint enforces the boundaries an
   - **Test**: `src/shell/cli/main.test.ts`: `000-US2-AS3 --version from the sources prints dev and opens no store` — `main(['--version'], { …, version: 'dev' })` → stdout exactly `dev\n`, exit 0, stderr empty
   - **Code**: `CliContext` gains `version: string`; `.version(context.version, '-V, --version')`; `bin.ts` passes `version: 'dev'`
   - **Run**: `pnpm aletheia --version` → `dev`
-- [ ] T006 [US1] An unknown option exits 1 with the error on stderr and nothing on stdout, in `src/shell/cli/main.ts`
+- [X] T006 [US1] An unknown option exits 1 with the error on stderr and nothing on stdout, in `src/shell/cli/main.ts`
   - **Test**: `src/shell/cli/main.test.ts`: `000-US1-AS5 an unknown option exits 1 naming it on stderr with nothing on stdout` — `main(['--nope'], …)` → `1`, stderr contains `error: unknown option '--nope'`, stdout `''`. (The unknown-command case needs a registered command; it lands in T019.)
   - **Code**: `main` returns 1 for any other `CommanderError` (commander already wrote `error: …` through `writeErr`)
   - **Run**: `pnpm aletheia --nope; echo $?` → `1`
