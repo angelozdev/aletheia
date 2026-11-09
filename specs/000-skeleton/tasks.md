@@ -314,6 +314,10 @@ quickstart.
   - **Done early**, after Phase 5: PR #1 rebase-merged into `main`, then `release: 0.0.0 (d42cb8a) installed` and `aletheia backup` → `env: prod`, `~/.aletheia/prod.sqlite` and `~/.aletheia/backups/prod-2026-11-09T16-29-55-054Z.sqlite`. Phases 6–7 ship with a later merge and release
 - [X] T033 Walk `specs/000-skeleton/quickstart.md` §1–§5 with Angelo and record the measures in it: SC-002 (`time aletheia --help`, `time aletheia backup` under 1 s), SC-004 (`pnpm test` under 5 s), SC-005 (`time pnpm release` under 1 min), SC-003 (copy a backup over a scratch store, never `prod`, and `ALETHEIA_DB=<that file> pnpm aletheia backup` succeeds), SC-001 (fresh clone to released `aletheia` under 5 minutes)
   - **Done** on `0.0.0 (5efa773)`: every criterion within its limit, measures in `quickstart.md` § Measures. `pnpm release` on `000-close` refused with `release: refused: on 000-close, not main`, as §2 says
+- [ ] R008 Tests remove the temp folders they create (test hygiene, Angelo's request on 2026-11-09: no test removed its `mkdtempSync` folders, 4126 had piled up in the system temp dir)
+  - **Test**: `tests/support/temp-dir/temp-dir.test.ts`: `the folder and its contents are gone once the test finishes` (an `onTestFinished` registered before `tempDir` runs after its removal and sees no folder); `with the test context's onTestFinished the folder is gone once that test finishes` (the same, passing the context's hook, the form concurrent tests need). `tests/lint/lint.test.ts`: `fails when a test file imports mkdtempSync and passes tests/support/temp-dir and non-test files` (`src/shell/cli/sample.test.ts`, `src/shell/db/sample.test.ts` and `tests/sample/sample.test.ts` fail; `tests/support/temp-dir/sample.ts` and `src/shell/release/sample.ts` pass)
+  - **Code**: `tests/support/temp-dir/temp-dir.ts`: `tempDir(prefix, onFinished = onTestFinished)` makes `mkdtempSync(join(tmpdir(), prefix))` and registers `rmSync(dir, { recursive: true, force: true })`; `temp-dir.types.ts` holds the hook's type. `.oxlintrc.json`: `no-restricted-imports` forbids `mkdtemp` and `mkdtempSync` from `node:fs` and `mkdtemp` from `node:fs/promises` in `src/**/*.test.ts` and `tests/**`, except `tests/support/temp-dir/**`; each override that replaces the rule keeps its own patterns. The 8 test files that call `mkdtempSync` (`lint`, `traceability`, `context`, `cli/bin`, `backup`, `main`, `migrations`, `backups`) use `tempDir`; `lint.test.ts` is `describe.concurrent`, so `lintFixture` takes the test context's `onTestFinished`. Assertions unchanged
+  - **Run**: `pnpm check` green; the `aletheia-*` folders in the system temp dir are as many after `pnpm test` as before
 
 ---
 
@@ -335,7 +339,7 @@ quickstart.
 - **Slice 4 (Phase 6)**: after Slice 3 (`openStore`, `with-store.ts`, `backupStore`).
   T024 → T025 → R007 → T026 → T027; T028 anytime after T017.
 - **Close (Phase 7)**: after all slices. T029 needs every id covered; T030 ∥ T031; T032 after
-  T029–T031; T033 after T032.
+  T029–T031; T033 after T032. R008 after T033, before slice 1.
 
 ### User Story Dependencies
 
