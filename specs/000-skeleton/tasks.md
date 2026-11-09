@@ -246,6 +246,11 @@ and says which on stderr; tests never reach `data/`, `~/.aletheia/` or iCloud Dr
   - **Code**: contexts set `dataDir` (`<repoRoot>/data` / `<home>/.aletheia`, null when `vars.VITEST` is set); `--env`'s help reads `use <name>.sqlite in the data folder` (contract); `defaultEnv` (`test` / `prod`) and the refusal of a named env when `dataDir` is null already landed in T022
   - **Run**: `pnpm aletheia backup` → `env: test`, `data/test.sqlite` created, a `test-…` copy in iCloud Drive; `pnpm aletheia backup --json`
   - **Done as**: the source bin test went green on first run: the contexts' vitest guard landed before it, and watching it red would have written `data/test.sqlite` in the repo
+- [ ] T034 [US3] `aletheia backup` writes to `backups/` in the env's data folder and never to iCloud Drive (ADR-0009), in `src/shell/cli/commands/backup/backup.ts`, `src/shell/db/backups/backups.ts` and `src/shell/cli/invocation/context/context.ts`
+  - **Docs first** (docs exception, the ADR-0008 sequence): ADR-0009 and its row in `docs/adr/README.md`; constitution 1.3.0 → 1.4.0 (MINOR, Technology Constraints: `backup` copies into `<data folder>/backups/`); `spec.md` US3 intro, AS1, AS3, FR-007, SC-004 and the iCloud assumption; `contracts/cli.md`, `data-model.md` (Backup copy), `plan.md`, `research.md`, `quickstart.md` (§3, §4, SC-003), `checklists/requirements.md`, design §355; in this file Phase 5's Goal, Independent Test and Checkpoint. Done tasks T019–T023 keep the text they were built with
+  - **Test** (assertions change because the spec changed): `src/shell/cli/commands/backup/backup.test.ts`, through `main()` with `ALETHEIA_DB` and a temp `dataDir` instead of `backupRoot`: copies land in `<dataDir>/backups/custom-2026-11-08T21-04-05-123Z.sqlite`; `000-US3-AS1 backup creates <dataDir>/backups when the data folder is missing` replaces `000-US3-AS3 a missing iCloud Drive root exits 1 naming it` (that refusal no longer exists); the unwritable-folder case locks `<dataDir>/backups`; `INV-01 backup with no data folder exits 1 and writes no copy` (`dataDir: null` → `error: backups are disabled here (under vitest)`). `src/shell/db/backups/backups.test.ts`: copies land in `<root>/backups/`. `src/shell/cli/invocation/context/context.test.ts`: T023's release `backup` case also finds `<home>/.aletheia/backups/prod-….sqlite`; `both contexts back up to iCloud Drive under home` and `INV-01 under vitest neither context has a backup root` go with the `backupRoot` field (the data folder tests cover both entries and vitest). `src/shell/cli/main/main.test.ts`: help lists `backup` as `copy the current env's store to its backups folder`
+  - **Code**: `CliContext` and the contexts drop `backupRoot`; `backup` passes `dataDir` as the root (`null` → `BackupsDisabledError`); `backupStore` writes into `<root>/backups/`, created with `mkdir(…, { recursive: true })`; `ICloudDriveNotFoundError`, `ICLOUD_DRIVE` and `aletheia-backups` go; `tests/support/run-cli/` loses its `backupRoot` default
+  - **Run**: `pnpm aletheia backup` → `env: test`, `data/test.sqlite` and `data/backups/test-….sqlite`; nothing under `~/Library/Mobile Documents`
 
 **Checkpoint**: `pnpm check` green; quickstart §3 from the sources. After a merge and release,
 `aletheia backup` → `env: prod`, `~/.aletheia/prod.sqlite` and a `prod-…` copy.
@@ -309,7 +314,7 @@ quickstart.
 - **Restructure (Phase 4b)**: after Slice 2, before Slice 3. R001 first; R002 → R003 → R004 →
   R005 → R006 (each moves imports the next one touches).
 - **Slice 3 (Phase 5)**: after the Restructure (T015's contexts, in the new layout). T019 → T020; then T021 ∥ T022;
-  T023 after T022.
+  T023 after T022; T034 after T023.
 - **Slice 4 (Phase 6)**: after Slice 3 (`openStore`, `with-store.ts`, `backupStore`).
   T024 → T025 → T026 → T027; T028 anytime after T017.
 - **Close (Phase 7)**: after all slices. T029 needs every id covered; T030 ∥ T031; T032 after
