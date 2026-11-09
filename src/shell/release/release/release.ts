@@ -96,8 +96,12 @@ async function releaseSteps(deps: ReleaseDeps): Promise<void> {
   await assertShipsMigrations(deps.run, tarball)
   const dir = deps.makeTempDir()
   const expected = releaseVersion(target)
-  await smokeRun(deps.run, tarball, dir, expected)
-  await install(deps.run, tarball, dir, expected)
+  try {
+    await smokeRun(deps.run, tarball, dir, expected)
+    await install(deps.run, tarball, dir, expected)
+  } finally {
+    deps.removeTempDir(dir)
+  }
   deps.stdout.write(`release: ${expected} installed\n`)
 }
 

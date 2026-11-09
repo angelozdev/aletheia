@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { REPO_ROOT } from '#shell/cli'
@@ -13,6 +13,7 @@ process.exitCode = await release({
   packageJson: JSON.parse(readFileSync(join(REPO_ROOT, 'package.json'), 'utf8')),
   repoRoot: REPO_ROOT,
   makeTempDir: () => mkdtempSync(join(tmpdir(), TEMP_DIR_PREFIX)),
+  removeTempDir: (dir) => rmSync(dir, { recursive: true, force: true }),
   stdout: process.stdout,
   stderr: process.stderr,
 })
