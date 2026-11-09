@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { captureStream } from '../../../../tests/support/streams.ts'
-import { main } from '../main/main.ts'
+import { captureStream } from '../../../../../tests/support/streams.ts'
+import { main } from '../../main/main.ts'
 import { releasedContext, sourceContext } from './context.ts'
 
 async function printedVersion(context: ReturnType<typeof sourceContext>) {

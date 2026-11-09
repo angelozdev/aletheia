@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { homedir } from 'node:os'
-import { releasedContext, type Release } from './invocation/context.ts'
+import { releasedContext } from './invocation/context/context.ts'
+import type { Release } from './invocation/context/context.types.ts'
 import { main } from './main/main.ts'
 
 declare const __ALETHEIA_RELEASE__: Release
