@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -39,4 +39,5 @@
   the CLI and the skill files, which tests can check.
 - Defaults taken without asking, recorded in Assumptions: FSRS defaults with retention 0.9, local
   midnight as the day boundary, a 20-minute learn-ahead window, no edit or archive in this slice.
-- Open: FR-009, how the global skill is installed so it matches the released CLI.
+- FR-009 resolved in Clarifications: the release copies the skill into `~/.aletheia/skills/`
+  and a one-time symlink in `~/.claude/skills/` points to it (constitution 1.4.1).

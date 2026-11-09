@@ -8,6 +8,7 @@
 ### Session 2026-11-09
 
 - Q: When Angelo has no idea of an answer, does the review move straight on, or does Claude clear his doubts first? → A: The grade (Again) is recorded first; then Angelo may ask about that card and Claude answers each doubt in 2–3 lines, no lesson, without changing the grade. The next card comes when Angelo says so.
+- Q: How does the global skill reach `~/.claude/skills/` so it matches the installed CLI? → A: `pnpm release` copies `az-aletheia-add` from `main` into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy; `~/.claude/skills/az-aletheia-add` is a symlink to that copy, which Angelo creates once. A link into the repo would follow the working tree; a link into pnpm's install folder would break on every release (constitution 1.4.1).
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -24,6 +25,7 @@ In a Claude Code session in any repo, Angelo says "guarda esto". `az-aletheia-ad
 4. **001-US1-AS4** Given content with Spanish accents, backticks and multi-line code, When the card is saved and then shown, Then every field reads back exactly as written.
 5. **001-US1-AS5** Given a card id, When the card is shown, Then stdout gives every field and its next due instant; an unknown id exits 1 naming it.
 6. **001-US1-AS6** Given the `az-aletheia-add` skill file, When it is read, Then its description carries its Spanish triggers ("guarda esto", "haz una tarjeta", "añade esto a aletheia") and it calls the installed `aletheia`, never `pnpm aletheia`, `--env` or a store path.
+7. **001-US1-AS7** Given a clean `main` with every check green, When `pnpm release` installs the CLI, Then it replaces the copy in `~/.aletheia/skills/az-aletheia-add/` with that commit's skill and stdout names it; a release refused or failed before installing leaves the copy unchanged.
 
 ### User Story 2 - Review what is due (Priority: P1)
 
@@ -57,7 +59,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **FR-006**: `az-aletheia-add` MUST show every draft before saving, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
 - **FR-007**: The review skill MUST ask the CLI for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, and record Angelo's final grade; then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
 - **FR-008**: Every question about a card or what is due MUST be answered by running `aletheia` (constitution VIII).
-- **FR-009**: `az-aletheia-add` MUST be available in Claude Code from any repo by [NEEDS CLARIFICATION: how does the global skill reach `~/.claude/skills/` so it matches the installed CLI — a link to the repo's working copy, installed by `pnpm release`, or a link to the released package's copy?].
+- **FR-009**: `pnpm release` MUST copy `az-aletheia-add` from the released commit into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy and writing nothing under `~/.claude/`; INV-01 holds, so tests point it at a temp folder.
 
 ### Key Entities
 
@@ -80,6 +82,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - "Today" is Angelo's local calendar day, ending at midnight. Instants are stored in UTC.
 - The 20-minute window is Anki's learn-ahead default; it is what lets a failed card come back within the session.
 - The add skill fills the source with the current repo's name or the study context.
+- The one-time link (`ln -s ~/.aletheia/skills/az-aletheia-add ~/.claude/skills/az-aletheia-add`) is Angelo's to run, given in the quickstart. The plan decides whether this release step is a new ADR next to ADR-0005 and ADR-0008.
 - No card can be edited or archived in this slice; a wrong card waits for slice 4 (rewrite) or 6 (archive).
 - Out of scope, by slice: profile, quality rules, duplicate search, dubious flags (2); tag filtering, topic review, session and new-card caps (3); missing-prerequisite and badly-written flags, voided reviews (4); stats (5); prune, archive, restore (6).
 - The card id format, the command names and their fields are left to the plan.
