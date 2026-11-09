@@ -5,8 +5,7 @@ How Angelo checks slice 0 end to end. Commands and outputs follow
 
 ## Prerequisites
 
-- macOS with iCloud Drive on (`~/Library/Mobile Documents/com~apple~CloudDocs` exists).
-- Node 26 and pnpm on PATH; `pnpm bin -g` is on PATH.
+- macOS with Node 26 and pnpm on PATH; `pnpm bin -g` is on PATH.
 
 ## 1. Development checks
 
@@ -36,18 +35,26 @@ prints `release: refused: …` and `aletheia --version` still shows the previous
 ```sh
 pnpm aletheia backup                 # stderr: env: test; stdout: path and removed copies
 pnpm aletheia backup --json
-ALETHEIA_DB=/tmp/x.sqlite pnpm aletheia backup   # env: custom (/tmp/x.sqlite)
-aletheia backup                      # env: prod; a prod-….sqlite copy in iCloud Drive
-ls ~/Library/Mobile\ Documents/com~apple~CloudDocs/aletheia-backups/
+ls data/backups/                     # test-….sqlite copies, next to data/test.sqlite
+ALETHEIA_DB=/tmp/x.sqlite pnpm aletheia backup   # env: custom (/tmp/x.sqlite); a custom-… copy in data/backups/
+aletheia backup                      # env: prod; a prod-….sqlite copy in ~/.aletheia/backups/
+ls ~/.aletheia/backups/
 ```
 
-Running `backup` six times leaves five copies of that env.
+Running `backup` six times leaves five copies of that env. Nothing lands under
+`~/Library/Mobile Documents`.
 
 ## 4. Restore (by hand)
 
 ```sh
-cp ~/Library/Mobile\ Documents/com~apple~CloudDocs/aletheia-backups/prod-<instant>.sqlite \
-   ~/.aletheia/prod.sqlite
+cp ~/.aletheia/backups/prod-<instant>.sqlite ~/.aletheia/prod.sqlite
+```
+
+SC-003 without touching `prod`: copy a development copy over a scratch store and open it.
+
+```sh
+cp data/backups/test-<instant>.sqlite /tmp/aletheia-restore.sqlite
+ALETHEIA_DB=/tmp/aletheia-restore.sqlite pnpm aletheia backup   # exit 0: the copy opens as a store
 ```
 
 ## 5. Migrations

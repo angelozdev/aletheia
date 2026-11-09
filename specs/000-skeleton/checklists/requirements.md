@@ -32,9 +32,9 @@
 ## Notes
 
 - Slice 0's user is Angelo as operator (constitution V, amended 1.1.0). The `aletheia` commands,
-  `pnpm aletheia`, `~/.aletheia/` and `data/<env>.sqlite`, iCloud Drive, TOON/JSON output and the `node:*` rule are
+  `pnpm aletheia`, `~/.aletheia/` and `data/<env>.sqlite` with their `backups/`, TOON/JSON output and the `node:*` rule are
   his interface and are fixed by the constitution's Technology Constraints, so they count as
   requirements, not leaked implementation. Libraries, module layout and the migration mechanism
   are left to `/speckit-plan`.
 - No clarification markers: open points had defaults from the constitution or diarium (retention
-  30, folder `aletheia-backups`, manual restore, install as diarium), recorded in Assumptions.
+  30, manual restore, install as diarium), recorded in Assumptions.

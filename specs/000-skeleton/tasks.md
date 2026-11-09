@@ -206,13 +206,15 @@ no assertion changed.
 
 ## Phase 5: Slice 3 — Environments and backup (US3, US1-AS2…AS5, INV-01)
 
-**Goal**: `aletheia backup` copies the current env's store to iCloud Drive, keeps 5 per env,
-refuses cleanly when it cannot write; every command resolves its env by the contract's order
-and says which on stderr; tests never reach `data/`, `~/.aletheia/` or iCloud Drive.
+**Goal**: `aletheia backup` copies the current env's store into `backups/` in its data folder,
+keeps 5 per env, refuses cleanly when it cannot write; every command resolves its env by the
+contract's order and says which on stderr; tests never reach `data/` or `~/.aletheia/`, and
+nothing reaches iCloud Drive.
 
-**Independent Test**: `pnpm aletheia backup` → stderr `env: test`, stdout `path: …` and
-`removed[…]`; open the copy it names and compare with `data/test.sqlite`; after a release,
-`aletheia backup` → `env: prod` and `~/.aletheia/prod.sqlite`.
+**Independent Test**: `pnpm aletheia backup` → stderr `env: test`, stdout
+`path: …/data/backups/test-….sqlite` and `removed[…]`; open the copy it names and compare with
+`data/test.sqlite`; after a release, `aletheia backup` → `env: prod`, `~/.aletheia/prod.sqlite`
+and a copy in `~/.aletheia/backups/`.
 
 - [X] T019 [US3] `aletheia backup` writes a consistent copy and prints its path, in `src/shell/cli/commands/backup/backup.ts`, `src/shell/db/backups/backups.ts` and `src/core/backups/backups.ts`
   - **Test**:
@@ -253,7 +255,8 @@ and says which on stderr; tests never reach `data/`, `~/.aletheia/` or iCloud Dr
   - **Run**: `pnpm aletheia backup` → `env: test`, `data/test.sqlite` and `data/backups/test-….sqlite`; nothing under `~/Library/Mobile Documents`
 
 **Checkpoint**: `pnpm check` green; quickstart §3 from the sources. After a merge and release,
-`aletheia backup` → `env: prod`, `~/.aletheia/prod.sqlite` and a `prod-…` copy.
+`aletheia backup` → `env: prod`, `~/.aletheia/prod.sqlite` and a `prod-…` copy in
+`~/.aletheia/backups/`.
 
 ---
 
@@ -266,10 +269,10 @@ first in `prod`) applies the pending ones all or none.
 until slice 1 ships the first real one).
 
 - [ ] T024 [US4] A new store is created with every migration applied before the command, in `src/shell/db/migrations/migrations.ts`
-  - **Test**: `tests/support/fixture-migrations/fixture-migrations.ts`: `writeMigrations(dir, { '20261108000000_first': 'CREATE TABLE fixture_a (id integer primary key);', '20261108000100_second': … })` writes "`migrations/<YYYYMMDDHHMMSS>_<name>/migration.sql`, statements split by `--> statement-breakpoint`". `src/shell/db/migrations/migrations.test.ts`: `000-US4-AS1 a new store is created with every migration applied` (`fixture_a`, `fixture_b` exist; `__drizzle_migrations` holds both names); `the shipped migrations folder opens a store` (the repo's `migrations/`, read only, over a temp store). `src/shell/cli/commands/backup/backup.test.ts`: `000-US4-AS1 backup on a new store applies the migrations first` (stderr `env: custom (<path>)`, `migrated: 20261108000000_first`, `migrated: 20261108000100_second`, in order, then exit 0); `in a non-prod env pending migrations apply without a backup` (only the command's own copy in `aletheia-backups/`, no `backup: …` line)
+  - **Test**: `tests/support/fixture-migrations/fixture-migrations.ts`: `writeMigrations(dir, { '20261108000000_first': 'CREATE TABLE fixture_a (id integer primary key);', '20261108000100_second': … })` writes "`migrations/<YYYYMMDDHHMMSS>_<name>/migration.sql`, statements split by `--> statement-breakpoint`". `src/shell/db/migrations/migrations.test.ts`: `000-US4-AS1 a new store is created with every migration applied` (`fixture_a`, `fixture_b` exist; `__drizzle_migrations` holds both names); `the shipped migrations folder opens a store` (the repo's `migrations/`, read only, over a temp store). `src/shell/cli/commands/backup/backup.test.ts`: `000-US4-AS1 backup on a new store applies the migrations first` (stderr `env: custom (<path>)`, `migrated: 20261108000000_first`, `migrated: 20261108000100_second`, in order, then exit 0); `in a non-prod env pending migrations apply without a backup` (only the command's own copy in `<dataDir>/backups/`, no `backup: …` line)
   - **Code**: `pnpm add -D drizzle-orm@1.0.0-rc.5`. `database.ts`: `drizzle({ client: new DatabaseSync(path) })` from `drizzle-orm/node-sqlite`. `migrations.ts`: `pendingMigrations(db, migrationsDir)` (shipped folder names minus the names in `__drizzle_migrations`, read only if the table exists) and `applyMigrations(db, migrationsDir)` with `migrate()` from `drizzle-orm/node-sqlite/migrator`; `openStore` reports each applied name through a callback that `with-store.ts` turns into `migrated: <name>`. Create `migrations/.gitkeep`. `CliContext` gains `migrationsDir`: source `<repoRoot>/migrations`, release `<entryDir>/../migrations`
 - [ ] T025 [US4] A `prod` store with pending migrations is backed up first; a current store reports nothing, in `src/shell/cli/invocation/with-store/with-store.ts`
-  - **Test**: `src/shell/cli/commands/backup/backup.test.ts`, `--env prod`, temp `dataDir`/`backupRoot`, fixture migrations, a clock that advances 1 ms per call: `000-US4-AS2 a prod store with pending migrations is backed up before they apply` (stderr exactly `env: prod`, `backup: <root>/aletheia-backups/prod-<instant>.sqlite (before migrating)`, then the `migrated:` lines; that copy lacks the fixture tables; the command then writes its own copy); `000-US4-AS3 a current store takes no backup and reports nothing about schema` (second run: stderr only `env: prod`, one new copy, no `backup:` or `migrated:` line). The pre-migration copy counts toward the 5 (Clarifications)
+  - **Test**: `src/shell/cli/commands/backup/backup.test.ts`, `--env prod`, temp `dataDir`, fixture migrations, a clock that advances 1 ms per call: `000-US4-AS2 a prod store with pending migrations is backed up before they apply` (stderr exactly `env: prod`, `backup: <dataDir>/backups/prod-<instant>.sqlite (before migrating)`, then the `migrated:` lines; that copy lacks the fixture tables; the command then writes its own copy); `000-US4-AS3 a current store takes no backup and reports nothing about schema` (second run: stderr only `env: prod`, one new copy, no `backup:` or `migrated:` line). The pre-migration copy counts toward the 5 (Clarifications)
   - **Code**: `openStore` takes a `beforeMigrating(pending)` hook; `with-store.ts` passes one that, when the env is `prod` and `pending` is not empty, runs `backupStore` and writes `backup: <path> (before migrating)`
 - [ ] T026 [US4] A failing migration keeps none of the pending ones and names itself, in `src/shell/db/migrations/migrations.ts`
   - **Test**: `src/shell/db/migrations/migrations.test.ts`: `000-US4-AS4 a failing migration keeps none of the pending ones` (`first` valid, `second` invalid SQL → throws naming `20261108000100_second`; `fixture_a` absent; `__drizzle_migrations` holds neither). `src/shell/cli/commands/backup/backup.test.ts`: with `--env prod` → exit 1, stderr `error: migration 20261108000100_second failed: <reason>`, stdout empty, the pre-migration copy remains
@@ -387,7 +390,7 @@ wires traceability, releases and walks the quickstart.
 
 - [P] tasks = different files, no dependencies on incomplete tasks.
 - Each test name carries the id it covers; T029 enforces it over the repo.
-- No test may open a store under `data/` or `~/.aletheia/`, write to iCloud Drive or change the installed
-  `aletheia` (INV-01): tests inject temp `dataDir`, `backupRoot` and `ALETHEIA_DB`, and the
+- No test may open a store or write a backup under `data/` or `~/.aletheia/`, or change the
+  installed `aletheia` (INV-01): tests inject temp `dataDir` and `ALETHEIA_DB`, and the
   release runs through a fake runner.
 - A test that looks wrong is raised with Angelo, never weakened, skipped or deleted.

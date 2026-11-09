@@ -37,12 +37,12 @@ The installed `aletheia` works from any directory, says which environment it is 
 
 ### User Story 3 - Back up the store (Priority: P1)
 
-`aletheia backup` copies the current env's store to iCloud Drive, so losing the Mac never loses the deck.
+`aletheia backup` copies the current env's store into `backups/` in its entry's data folder, so a bad schema change or a damaged store never loses the deck. Nothing leaves the Mac.
 **Independent Test**: run `aletheia backup`, open the copy it names, compare with the store.
 
-1. **000-US3-AS1** Given a store, When `aletheia backup` runs, Then a consistent copy lands in `aletheia-backups/` in iCloud Drive under a name carrying the env and the UTC instant, and stdout names the file written and the copies removed (TOON by default, the same fields with `--json`).
+1. **000-US3-AS1** Given a store, When `aletheia backup` runs, Then a consistent copy lands in `backups/` in the entry's data folder, created when missing, under a name carrying the env and the UTC instant, and stdout names the file written and the copies removed (TOON by default, the same fields with `--json`).
 2. **000-US3-AS2** Given 5 copies of the same env, When a backup runs, Then that env's oldest copy is removed so the newest 5 remain, and other envs' copies and unrelated files are untouched.
-3. **000-US3-AS3** Given the backup cannot be written (iCloud Drive missing or not writable), When `aletheia backup` runs, Then it exits 1 naming the folder, no partial copy is left under a backup name, and the store is unchanged.
+3. **000-US3-AS3** Given the backup cannot be written (its folder cannot be created or is not writable), When `aletheia backup` runs, Then it exits 1 naming the folder, no partial copy is left under a backup name, and the store is unchanged.
 
 ### User Story 4 - Schema changes apply themselves safely (Priority: P2)
 
@@ -81,7 +81,7 @@ The checks the constitution requires run green on a clean checkout and fail on t
 - **FR-004**: Errors MUST exit 1 with a message on stderr and nothing on stdout.
 - **FR-005**: Every command that opens the store MUST apply pending schema changes first, all or none; in `prod`, a backup MUST precede them.
 - **FR-006**: `aletheia backup` MUST write a consistent copy of a live store, keep the newest 5 per env, and remove nothing else.
-- **FR-007**: **INV-01** No test or eval MAY open a store under `data/` or `~/.aletheia/`, write to iCloud Drive, or change the installed `aletheia`.
+- **FR-007**: **INV-01** No test or eval MAY open a store or write a backup under `data/` or `~/.aletheia/`, or change the installed `aletheia`.
 - **FR-008**: The repo MUST provide the six checks of 000-US5-AS1, with lint enforcing no `node:*` in `src/core` and no comments, and a test enforcing scenario and invariant traceability.
 - **FR-009**: `pnpm release` MUST build, pack and install only from a clean `main` with the six checks green, and the package MUST carry everything the CLI needs at runtime, schema changes included.
 
@@ -89,7 +89,7 @@ The checks the constitution requires run green on a clean checkout and fail on t
 
 - **Environment**: a name and the store it resolves to (`<name>.sqlite` in the entry's data folder, `~/.aletheia/` installed or the repo's `data/` from the sources, or a custom path).
 - **Store**: one database file per environment, recording which schema changes it has applied.
-- **Backup copy**: a file in `aletheia-backups/` named by env and instant.
+- **Backup copy**: a file in `backups/` in the entry's data folder, named by env and instant.
 - **Release**: the installed package, identified by its version and the commit it was built from.
 
 ## Success Criteria _(mandatory)_
@@ -99,16 +99,16 @@ The checks the constitution requires run green on a clean checkout and fail on t
 - **SC-001**: From a fresh clone, Angelo has a released `aletheia` on PATH with the commands in the quickstart, in under 5 minutes.
 - **SC-002**: `aletheia --help` and `aletheia backup` each finish in under 1 second on Angelo's Mac.
 - **SC-003**: A backup copy, copied over its env's store, opens as a valid store with the same content.
-- **SC-004**: The whole test suite runs in under 5 seconds, and no run touches `data/`, `~/.aletheia/`, iCloud Drive or the installed `aletheia` (INV-01).
+- **SC-004**: The whole test suite runs in under 5 seconds, and no run touches `data/`, `~/.aletheia/` or the installed `aletheia` (INV-01).
 - **SC-005**: A release from a clean `main` is one command and takes under 1 minute.
 
 ## Assumptions
 
 - Slice 0 defines no card tables; slice 1 adds the first domain schema. The plan decides how the schema-change mechanism is exercised before then.
 - Restoring is manual: Angelo copies a backup over the env's store (`~/.aletheia/prod.sqlite` for `prod`), with the command given in the quickstart.
-- Retention is 5 copies per env (Clarifications); the folder name `aletheia-backups` mirrors diarium.
+- Retention is 5 copies per env (Clarifications).
 - No periodic or per-write backup: only `aletheia backup` and the backup before schema changes in `prod` (Clarifications).
-- macOS with iCloud Drive only; no fallback location.
+- macOS only. Nothing is written to iCloud Drive or leaves the Mac, so losing the Mac or its disk loses the deck with its copies; an off-machine copy is Time Machine's job, which covers `~/.aletheia/` by default.
 - Development happens in `~/me/aletheia` on feature branches. Angelo runs `pnpm release` himself after merging to `main`; Claude gives him the command. The version number changes by hand when Angelo wants; the commit in `--version` is what tells releases apart.
 - The package is packed and installed locally, never published to the npm registry. How it is built is left to the plan.
 - Out of scope: card commands, `PROFILE.md`, skills, an integrity `check` command.

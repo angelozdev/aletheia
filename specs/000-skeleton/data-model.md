@@ -42,8 +42,10 @@ States, by comparing the names in the table with the folders shipped in `migrati
 
 ## Backup copy
 
-- Folder: `~/Library/Mobile Documents/com~apple~CloudDocs/aletheia-backups/`. The iCloud Drive
-  root must exist; only `aletheia-backups/` is created (000-US3-AS3).
+- Folder: `<data folder>/backups/`, i.e. `~/.aletheia/backups/` installed and the repo's
+  `data/backups/` from the sources; a store from `ALETHEIA_DB` is copied into the entry's data
+  folder as `custom-…`. Created with its parents on first use (000-US3-AS1). With no data folder
+  (under vitest) backups are refused (INV-01).
 - Name: `<env>-<instant>.sqlite`, the instant as UTC ISO with `:` and `.` turned into `-`,
   e.g. `prod-2026-11-08T21-04-05-123Z.sqlite`. Names sort by time.
 - Written as `<name>.partial` through SQLite's online backup, then renamed.
