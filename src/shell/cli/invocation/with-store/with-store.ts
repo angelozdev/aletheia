@@ -1,9 +1,18 @@
-import { closeStore, openStore } from '#shell/db'
+import { mkdir } from 'node:fs/promises'
+import { dirname } from 'node:path'
+import { closeStore, openStore, type Store } from '#shell/db'
 import { ExitCode } from '../../main/main.constants.ts'
 import type { CliContext, GlobalOptions } from '../../main/main.types.ts'
+import { CUSTOM_ENV } from '../env/env.constants.ts'
 import { resolveEnv } from '../env/env.ts'
+import type { Env } from '../env/env.types.ts'
 import { writeEnvLine, writeError, writeResult } from '../output/output.ts'
 import type { StoreAction } from './with-store.types.ts'
+
+async function openEnvStore({ name, dbPath }: Env): Promise<Store> {
+  if (name !== CUSTOM_ENV) await mkdir(dirname(dbPath), { recursive: true })
+  return openStore(dbPath)
+}
 
 async function runAgainstStore(
   context: CliContext,
@@ -17,7 +26,7 @@ async function runAgainstStore(
     dataDir: context.dataDir,
   })
   writeEnvLine(context.stderr, env)
-  const store = openStore(env.dbPath)
+  const store = await openEnvStore(env)
   try {
     return await action(store, env)
   } finally {
