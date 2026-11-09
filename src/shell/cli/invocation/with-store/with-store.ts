@@ -3,21 +3,37 @@ import { dirname } from 'node:path'
 import { closeStore, openStore, type Store } from '#shell/db'
 import { ExitCode } from '../../main/main.constants.ts'
 import type { CliContext, GlobalOptions } from '../../main/main.types.ts'
-import { CUSTOM_ENV } from '../env/env.constants.ts'
+import { backUpEnv } from '../env-backup/env-backup.ts'
+import { CUSTOM_ENV, PROD_ENV } from '../env/env.constants.ts'
 import { resolveEnv } from '../env/env.ts'
 import type { Env } from '../env/env.types.ts'
-import { writeEnvLine, writeError, writeMigratedLine, writeResult } from '../output/output.ts'
+import {
+  writeBackupBeforeMigratingLine,
+  writeEnvLine,
+  writeError,
+  writeMigratedLine,
+  writeResult,
+} from '../output/output.ts'
 import type { StoreAction } from './with-store.types.ts'
 
-async function openEnvStore(
-  { migrationsDir, stderr }: CliContext,
-  { name, dbPath }: Env,
-): Promise<Store> {
-  if (name !== CUSTOM_ENV) await mkdir(dirname(dbPath), { recursive: true })
+async function backUpBeforeMigrating(
+  context: CliContext,
+  env: Env,
+  store: Store,
+  pending: string[],
+): Promise<void> {
+  if (env.name !== PROD_ENV || pending.length === 0) return
+  const { path } = await backUpEnv(context, store, env)
+  writeBackupBeforeMigratingLine(context.stderr, path)
+}
+
+async function openEnvStore(context: CliContext, env: Env): Promise<Store> {
+  if (env.name !== CUSTOM_ENV) await mkdir(dirname(env.dbPath), { recursive: true })
   return openStore({
-    path: dbPath,
-    migrationsDir,
-    onMigrated: (migration) => writeMigratedLine(stderr, migration),
+    path: env.dbPath,
+    migrationsDir: context.migrationsDir,
+    beforeMigrating: (store, pending) => backUpBeforeMigrating(context, env, store, pending),
+    onMigrated: (migration) => writeMigratedLine(context.stderr, migration),
   })
 }
 

@@ -16,7 +16,7 @@ function tempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix))
 }
 
-function newStore(migrationsDir: string): Store {
+function newStore(migrationsDir: string): Promise<Store> {
   return openTestStore(join(tempDir('aletheia-store-'), 'store.sqlite'), migrationsDir)
 }
 
@@ -28,8 +28,10 @@ function firstColumn(store: Store, query: string): unknown[] {
 }
 
 describe('migrations', () => {
-  it('000-US4-AS1 a new store is created with every migration applied', () => {
-    const store = newStore(writeMigrations(tempDir('aletheia-migrations-'), FIXTURE_MIGRATIONS))
+  it('000-US4-AS1 a new store is created with every migration applied', async () => {
+    const store = await newStore(
+      writeMigrations(tempDir('aletheia-migrations-'), FIXTURE_MIGRATIONS),
+    )
 
     expect(
       firstColumn(
@@ -44,12 +46,12 @@ describe('migrations', () => {
     closeStore(store)
   })
 
-  it('the shipped migrations folder opens a store with every shipped migration applied', () => {
+  it('the shipped migrations folder opens a store with every shipped migration applied', async () => {
     const shipped = readdirSync(SHIPPED_MIGRATIONS)
       .filter((name) => existsSync(join(SHIPPED_MIGRATIONS, name, MIGRATION_FILE)))
       .toSorted()
 
-    const store = newStore(SHIPPED_MIGRATIONS)
+    const store = await newStore(SHIPPED_MIGRATIONS)
 
     expect(firstColumn(store, 'select name from __drizzle_migrations order by name')).toEqual(
       shipped,
