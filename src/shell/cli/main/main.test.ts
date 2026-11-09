@@ -1,13 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { captureStream } from '../../../../tests/support/streams/streams.ts'
-import { main } from './main.ts'
-
-async function run(argv: string[]) {
-  const stdout = captureStream()
-  const stderr = captureStream()
-  const code = await main(argv, { stdout, stderr, version: 'dev' })
-  return { code, stdout: stdout.text(), stderr: stderr.text() }
-}
+import { runCli as run } from '../../../../tests/support/run-cli/run-cli.ts'
 
 describe('main', () => {
   it('000-US1-AS1 --help prints usage with --env and --json on stdout and exits 0', async () => {

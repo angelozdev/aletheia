@@ -1,5 +1,7 @@
-import { DEV_VERSION } from './context.constants.ts'
+import { join } from 'node:path'
+import { DEV_VERSION, ICLOUD_DRIVE, VITEST_VAR } from './context.constants.ts'
 import type {
+  Invocation,
   InvocationContext,
   Release,
   ReleasedInvocation,
@@ -10,10 +12,23 @@ export function releaseVersion(release: Release): string {
   return `${release.version} (${release.commit})`
 }
 
-export function sourceContext(_invocation: SourceInvocation): InvocationContext {
-  return { version: DEV_VERSION }
+function backupRoot({ vars, home }: Invocation): string | null {
+  return vars[VITEST_VAR] ? null : join(home, ICLOUD_DRIVE)
 }
 
-export function releasedContext({ release }: ReleasedInvocation): InvocationContext {
-  return { version: releaseVersion(release) }
+function invocationContext(version: string, invocation: Invocation): InvocationContext {
+  return {
+    version,
+    vars: invocation.vars,
+    clock: () => new Date(),
+    backupRoot: backupRoot(invocation),
+  }
+}
+
+export function sourceContext(invocation: SourceInvocation): InvocationContext {
+  return invocationContext(DEV_VERSION, invocation)
+}
+
+export function releasedContext(invocation: ReleasedInvocation): InvocationContext {
+  return invocationContext(releaseVersion(invocation.release), invocation)
 }
