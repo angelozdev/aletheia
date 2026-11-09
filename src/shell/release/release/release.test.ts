@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fakeRunner } from '../../../../tests/support/fake-runner/fake-runner.ts'
-import { captureStream } from '../../../../tests/support/streams.ts'
+import type { RunCall } from '../../../../tests/support/fake-runner/fake-runner.types.ts'
+import { captureStream } from '../../../../tests/support/streams/streams.ts'
 import { release } from './release.ts'
 
 const repoRoot = '/r'
@@ -58,7 +59,7 @@ function step(line: string, cwd?: string) {
   return { command, args, cwd }
 }
 
-function commandLines(calls: { command: string; args: string[] }[]) {
+function commandLines(calls: RunCall[]) {
   return calls.map(({ command, args }) => [command, ...args].join(' '))
 }
 
