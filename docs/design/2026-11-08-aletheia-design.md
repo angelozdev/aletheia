@@ -332,19 +332,21 @@ Angelo's: TypeScript, zod, Drizzle ORM, drizzle-kit, oxlint, oxfmt, knip, jscpd.
 
 My calls, mirroring diarium where it applies:
 
-- Node 26 with native TypeScript execution, pnpm, vitest.
+- Node 26 with native TypeScript execution for development and tests, pnpm, vitest.
 - SQLite through `node:sqlite` with Drizzle's `node-sqlite` driver (as diarium).
 - `ts-fsrs` for scheduling.
 - `commander` with `@commander-js/extra-typings` for the CLI (typed subcommands,
   generated `--help`).
 - `@toon-format/toon` for TOON output.
+- `rolldown` to bundle releases (spec 000, ADR-0005).
 
 ## 11. Layout and installation (my calls)
 
 - Repo at `~/me/aletheia`.
 - Database file in `data/` inside the repo, gitignored, at a fixed path so the
   global skill works from any working directory. Separate database for tests.
-- Installed bin `aletheia` on PATH, as diarium does.
+- Installed bin `aletheia` on PATH: a release, built from `main` with `pnpm release`, packed
+  and installed globally, so development in the repo never reaches it (spec 000).
 - `az-aletheia-add` source lives in this repo and is symlinked into
   `~/.claude/skills/`, so the skill and the CLI it calls are versioned together.
   (Other `az-*` skills live in `~/dotfiles`; this one is coupled to the CLI.)
