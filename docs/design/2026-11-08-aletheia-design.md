@@ -348,8 +348,10 @@ My calls, mirroring diarium where it applies:
   repo's `data/`, gitignored (ADR-0008). Separate database for tests.
 - Installed bin `aletheia` on PATH: a release, built from `main` with `pnpm release`, packed
   and installed globally, so development in the repo never reaches it (spec 000).
-- `az-aletheia-add` source lives in this repo and is symlinked into
-  `~/.claude/skills/`, so the skill and the CLI it calls are versioned together.
+- `az-aletheia-add` source lives in this repo. `pnpm release` copies it into
+  `~/.aletheia/skills/az-aletheia-add/`, and `~/.claude/skills/az-aletheia-add` is a
+  symlink to that copy, created once (spec 001). The skill and the CLI it calls come from
+  the same release; a symlink into the repo would follow the working tree instead.
   (Other `az-*` skills live in `~/dotfiles`; this one is coupled to the CLI.)
 - Local skills in `.claude/skills/` of the repo.
 - Backups of the database file into `backups/` in the same data folder; nothing in iCloud
