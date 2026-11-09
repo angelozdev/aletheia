@@ -2,7 +2,7 @@
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { sourceContext } from './invocation/context.ts'
-import { main } from './main.ts'
+import { main } from './main/main.ts'
 
 process.exitCode = await main(process.argv.slice(2), {
   ...sourceContext({

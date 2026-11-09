@@ -1,8 +1,6 @@
 import { Command, CommanderError } from '@commander-js/extra-typings'
-
-export type Output = { write(chunk: string): unknown }
-
-export type CliContext = { stdout: Output; stderr: Output; version: string }
+import { ExitCode } from './main.constants.ts'
+import type { CliContext } from './main.types.ts'
 
 function program(context: CliContext) {
   return new Command('aletheia')
@@ -16,12 +14,16 @@ function program(context: CliContext) {
     })
 }
 
+function exitCodeOf(error: CommanderError): number {
+  return error.exitCode === ExitCode.Success ? ExitCode.Success : ExitCode.Failure
+}
+
 export async function main(argv: string[], context: CliContext): Promise<number> {
   try {
     await program(context).parseAsync(argv, { from: 'user' })
-    return 0
+    return ExitCode.Success
   } catch (error) {
-    if (error instanceof CommanderError) return error.exitCode === 0 ? 0 : 1
+    if (error instanceof CommanderError) return exitCodeOf(error)
     throw error
   }
 }
