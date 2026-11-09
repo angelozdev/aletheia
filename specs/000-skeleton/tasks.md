@@ -62,7 +62,7 @@ inside a unit, relative `.ts` imports.
 **Purpose**: The gate and the minimum toolchain to write the first failing test. Config-only
 tasks, no behavior, so no test (named exception).
 
-- [ ] T001 Gate: once Angelo accepts ADRs 0001–0006, change `**Status:** proposed` to `accepted` in each `docs/adr/000[1-6]-*.md` and in the index table of `docs/adr/README.md`; commit `docs(adr): accept 0001-0006`. Do not start T002 before Angelo says so.
+- [X] T001 Gate: once Angelo accepts ADRs 0001–0006, change `**Status:** proposed` to `accepted` in each `docs/adr/000[1-6]-*.md` and in the index table of `docs/adr/README.md`; commit `docs(adr): accept 0001-0006`. Do not start T002 before Angelo says so.
 - [ ] T002 Create `package.json`, `pnpm-workspace.yaml` and `.gitignore` at the repo root and install the test toolchain
   - `package.json`: `"name": "aletheia"`, `"version": "0.0.0"`, `"private": true`, `"type": "module"`, `"engines": { "node": "26.x" }`, `"packageManager": "pnpm@11.28.8"`, `"imports": { "#core/*": "./src/core/*/index.ts", "#shell/*": "./src/shell/*/index.ts" }`, `"bin": { "aletheia": "dist/aletheia.js" }`, `"files": ["dist", "migrations"]`, scripts `"test": "vitest run"` and `"typecheck": "tsc --noEmit"`
   - `pnpm-workspace.yaml`: `saveExact: true` and an `allowBuilds` map with only the packages `pnpm install` asks about, set to `false` unless a task needs their build (none expected)

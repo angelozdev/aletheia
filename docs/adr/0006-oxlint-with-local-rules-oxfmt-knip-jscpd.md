@@ -1,6 +1,6 @@
 # 0006. oxlint with local rules, oxfmt, knip and jscpd
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-08
 - **Deciders:** Angelo
 - **Supersedes:** —
