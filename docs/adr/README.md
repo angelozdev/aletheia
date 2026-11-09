@@ -19,3 +19,4 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 | 0007 | One folder per module, with types, errors and constants files | accepted | 2026-11-09 |
 | 0008 | Installed data in a home dotfolder, development data in the repo | accepted | 2026-11-09 |
 | 0009 | Backups in the data folder, not iCloud Drive | accepted | 2026-11-09 |
+| 0010 | The store is opaque outside the db adapter | proposed | 2026-11-09 |
