@@ -21,7 +21,7 @@ export async function main(argv: string[], context: CliContext): Promise<number>
     await program(context).parseAsync(argv, { from: 'user' })
     return 0
   } catch (error) {
-    if (error instanceof CommanderError && error.exitCode === 0) return 0
+    if (error instanceof CommanderError) return error.exitCode === 0 ? 0 : 1
     throw error
   }
 }
