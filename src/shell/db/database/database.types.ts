@@ -1,7 +1,11 @@
 import type { DatabaseSync } from 'node:sqlite'
 import type { NodeSQLiteDatabase } from 'drizzle-orm/node-sqlite'
 
-export type Store = NodeSQLiteDatabase & { $client: DatabaseSync }
+declare const storeBrand: unique symbol
+
+export type Store = { readonly [storeBrand]: true }
+
+export type Database = NodeSQLiteDatabase & { $client: DatabaseSync }
 
 type BeforeMigratingHook = (store: Store, pending: string[]) => Promise<void>
 
