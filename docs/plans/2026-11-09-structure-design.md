@@ -151,7 +151,7 @@ names, separators and prefixes become named constants in a `.constants.ts`.
 
 ```
 src/shell/cli/
-├── index.ts                     barrel: types Output, Release; ExitCode
+├── index.ts                     barrel: types Output, Release; ExitCode, REPO_ROOT, releaseVersion
 ├── main/
 │   ├── main.ts
 │   ├── main.test.ts
@@ -165,14 +165,15 @@ src/shell/cli/
 │       └── context.constants.ts DEV_VERSION
 ├── bin/
 │   ├── bin.ts                   source entry (package.json script points here)
-│   └── bin.test.ts
+│   ├── bin.test.ts
+│   └── bin.constants.ts         REPO_ROOT (shared through the barrel with release and tests)
 └── released.ts                  release entry, no test
 src/shell/release/
 ├── index.ts                     barrel: types Runner, RunResult, RunOptions (tests/support imports them)
 ├── release/                     as in 3.1
 ├── runner/                      as in 3.1, runner taken out of bin.ts
-├── build.ts                     uses the bundle path constant shared with the smoke run
-└── bin.ts                       wiring only
+├── build/                       build.ts + build.constants.ts (entry, BUNDLE_FILE shared with the smoke run)
+└── bin/                         bin.ts (wiring only) + bin.constants.ts (temp folder prefix)
 tests/
 ├── checks/checks.test.ts
 ├── lint/{lint.test.ts, lint.types.ts}
@@ -182,6 +183,9 @@ tests/
     └── fake-runner/{fake-runner.ts, fake-runner.types.ts}   RunCall; Runner/RunResult from #shell/release
 tools/lint/no-comments.ts
 ```
+
+As built (Phase 4b): `build.ts` and the release `bin.ts` got folders because each has constants
+of its own (§4.1), unlike the first sketch in §3.1.
 
 Paths that move ripple into `package.json` (`aletheia` script), the repo-root computations
 (`join(import.meta.dirname, '..', …)` in `cli/bin/bin.ts`, `tests/lint/lint.test.ts`,
