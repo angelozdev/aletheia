@@ -3,6 +3,12 @@
 **Feature Branch**: `001-capture-and-review` | **Created**: 2026-11-09 | **Status**: Draft
 **Input**: Slice 1 of `docs/design/2026-11-08-aletheia-design.md` §13: `az-aletheia-add` proposes cards, Angelo approves; review asks, Claude grades, FSRS schedules. Angelo exercises it by adding a card from another repo and reviewing it in the Aletheia repo.
 
+## Clarifications
+
+### Session 2026-11-09
+
+- Q: When Angelo has no idea of an answer, does the review move straight on, or does Claude clear his doubts first? → A: The grade (Again) is recorded first; then Angelo may ask about that card and Claude answers each doubt in 2–3 lines, no lesson, without changing the grade. The next card comes when Angelo says so.
+
 ## User Scenarios & Testing _(mandatory)_
 
 Drafting a card and grading an answer are judgment (constitution II): Angelo checks them by using the slice, and their evals arrive after a second real failure (constitution IV). The scenarios below cover what a test can check: the CLI the skills call and the skill files themselves.
@@ -21,7 +27,7 @@ In a Claude Code session in any repo, Angelo says "guarda esto". `az-aletheia-ad
 
 ### User Story 2 - Review what is due (Priority: P1)
 
-In the Aletheia repo, Angelo says "repasemos". The review skill shows one question at a time; Angelo answers in his own words; Claude grades Again, Hard, Good or Easy against the key points, says why, then shows the full answer. Angelo may dispute the grade, and his final one is recorded. FSRS decides when the card comes back.
+In the Aletheia repo, Angelo says "repasemos". The review skill shows one question at a time; Angelo answers in his own words; Claude grades Again, Hard, Good or Easy against the key points, says why, then shows the full answer. Angelo may dispute the grade, and his final one is recorded. Then he may ask about the card; Claude answers briefly and moves on when he says so. FSRS decides when the card comes back.
 **Independent Test**: with a card captured in US1, say "repasemos" in the Aletheia repo, answer, accept or dispute the grade, then ask when the card is due again.
 
 1. **001-US2-AS1** Given new cards, studied cards due today and cards due later, When the due list is asked, Then it holds the new and due cards, studied ones first, each with id, type, tags, question, key points and answer, and their count.
@@ -49,7 +55,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **FR-004**: The due list MUST hold new cards, studied cards whose due date is on or before Angelo's local today, and (re)learning cards whose instant has passed or, when nothing else is due, ends within 20 minutes.
 - **FR-005**: Recording a grade MUST append a review (card, grade, instant, Angelo's answer, Claude's rationale, changed-after-dispute) and reschedule the card with FSRS, short-term steps on.
 - **FR-006**: `az-aletheia-add` MUST show every draft before saving, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
-- **FR-007**: The review skill MUST ask the CLI for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, record Angelo's final grade, and go on until nothing is due or Angelo stops.
+- **FR-007**: The review skill MUST ask the CLI for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, and record Angelo's final grade; then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
 - **FR-008**: Every question about a card or what is due MUST be answered by running `aletheia` (constitution VIII).
 - **FR-009**: `az-aletheia-add` MUST be available in Claude Code from any repo by [NEEDS CLARIFICATION: how does the global skill reach `~/.claude/skills/` so it matches the installed CLI — a link to the repo's working copy, installed by `pnpm release`, or a link to the released package's copy?].
 
