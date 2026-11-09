@@ -1,12 +1,23 @@
-import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { closeStore, openStore } from '#shell/db'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
 
 let db: string
 let root: string
 let copy: string
+let lockedFolder: string | null = null
 
 function backup(argv: string[] = []) {
   return runCli(['backup', ...argv], { vars: { ALETHEIA_DB: db }, backupRoot: root })
@@ -17,6 +28,15 @@ beforeEach(() => {
   root = mkdtempSync(join(tmpdir(), 'aletheia-icloud-'))
   copy = join(root, 'aletheia-backups', 'custom-2026-11-08T21-04-05-123Z.sqlite')
 })
+
+afterEach(() => {
+  if (lockedFolder !== null) chmodSync(lockedFolder, 0o700)
+  lockedFolder = null
+})
+
+function sha256(path: string): string {
+  return createHash('sha256').update(readFileSync(path)).digest('hex')
+}
 
 describe('aletheia backup', () => {
   it('000-US3-AS1 backup prints the copy written and none removed, TOON by default', async () => {
@@ -94,6 +114,30 @@ describe('aletheia backup', () => {
     expect(stderr).toBe(`env: custom (${db})\nerror: iCloud Drive not found at ${missing}\n`)
     expect(stdout).toBe('')
     expect(existsSync(missing)).toBe(false)
+  })
+
+  it('000-US3-AS3 an unwritable backup folder exits 1 with no copy left and the store unchanged', async () => {
+    const store = openStore(db)
+    store.exec(
+      "create table notes (id integer primary key, body text); insert into notes (body) values ('first')",
+    )
+    closeStore(store)
+    const before = sha256(db)
+    const folder = join(root, 'aletheia-backups')
+    mkdirSync(folder, { mode: 0o500 })
+    lockedFolder = folder
+
+    const { code, stdout, stderr } = await backup()
+
+    expect(code).toBe(1)
+    expect(stderr).toMatch(
+      new RegExp(
+        `^${RegExp.escape(`env: custom (${db})\nerror: cannot write backup to ${folder}: `)}.+\n$`,
+      ),
+    )
+    expect(stdout).toBe('')
+    expect(readdirSync(folder)).toEqual([])
+    expect(sha256(db)).toBe(before)
   })
 
   it('INV-01 backup with no backup root exits 1 and writes no copy', async () => {
