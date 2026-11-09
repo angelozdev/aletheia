@@ -1,5 +1,4 @@
-import { existsSync, mkdtempSync, readdirSync } from 'node:fs'
-import { tmpdir } from 'node:os'
+import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
@@ -10,11 +9,8 @@ import {
 } from '../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
 import { writeMigrations } from '../../../../tests/support/fixture-migrations/fixture-migrations.ts'
 import { openTestStore, selectAll } from '../../../../tests/support/store/store.ts'
+import { tempDir } from '../../../../tests/support/temp-dir/temp-dir.ts'
 import { closeStore } from '../database/database.ts'
-
-function tempDir(prefix: string): string {
-  return mkdtempSync(join(tmpdir(), prefix))
-}
 
 async function newStore(migrationsDir: string): Promise<string> {
   const path = join(tempDir('aletheia-store-'), 'store.sqlite')

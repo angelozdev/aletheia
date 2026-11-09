@@ -1,24 +1,13 @@
-import {
-  chmodSync,
-  mkdirSync,
-  mkdtempSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from 'node:fs'
-import { tmpdir } from 'node:os'
+import { chmodSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { openTestStore, runSql, selectAll } from '../../../../tests/support/store/store.ts'
+import { tempDir } from '../../../../tests/support/temp-dir/temp-dir.ts'
 import { closeStore } from '../database/database.ts'
 import type { Store } from '../database/database.types.ts'
 import { backupStore } from './backups.ts'
 
 let lockedFolder: string | null = null
-
-function tempDir(prefix: string): string {
-  return mkdtempSync(join(tmpdir(), prefix))
-}
 
 function tempStorePath(): string {
   return join(tempDir('aletheia-store-'), 'store.sqlite')

@@ -1,12 +1,8 @@
-import { existsSync, mkdtempSync } from 'node:fs'
-import { tmpdir } from 'node:os'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { runCli as run } from '../../../../tests/support/run-cli/run-cli.ts'
-
-function tempDir(prefix: string): string {
-  return mkdtempSync(join(tmpdir(), prefix))
-}
+import { tempDir } from '../../../../tests/support/temp-dir/temp-dir.ts'
 
 describe('main', () => {
   it('000-US1-AS1 --help prints usage with --env and --json on stdout and exits 0', async () => {
