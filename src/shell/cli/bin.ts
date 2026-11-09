@@ -4,4 +4,5 @@ import { main } from './main.ts'
 process.exitCode = await main(process.argv.slice(2), {
   stdout: process.stdout,
   stderr: process.stderr,
+  version: 'dev',
 })

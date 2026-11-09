@@ -2,10 +2,11 @@ import { Command, CommanderError } from '@commander-js/extra-typings'
 
 type Output = { write(chunk: string): unknown }
 
-export type CliContext = { stdout: Output; stderr: Output }
+export type CliContext = { stdout: Output; stderr: Output; version: string }
 
 function program(context: CliContext) {
   return new Command('aletheia')
+    .version(context.version, '-V, --version')
     .option('--env <name>', 'use data/<name>.sqlite')
     .option('--json', 'JSON instead of TOON on stdout')
     .exitOverride()
