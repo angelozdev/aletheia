@@ -9,6 +9,7 @@ describe('main', () => {
     expect(stdout).toContain('Usage: aletheia')
     expect(stdout).toContain('--env <name>')
     expect(stdout).toContain('--json')
+    expect(stdout).toMatch(/^ {2}backup /m)
     expect(stderr).toBe('')
   })
 
