@@ -9,6 +9,7 @@
 
 - Q: When Angelo has no idea of an answer, does the review move straight on, or does Claude clear his doubts first? → A: The grade (Again) is recorded first; then Angelo may ask about that card and Claude answers each doubt in 2–3 lines, no lesson, without changing the grade. The next card comes when Angelo says so.
 - Q: How does the global skill reach `~/.claude/skills/` so it matches the installed CLI? → A: `pnpm release` copies `az-aletheia-add` from `main` into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy; `~/.claude/skills/az-aletheia-add` is a symlink to that copy, which Angelo creates once. A link into the repo would follow the working tree; a link into pnpm's install folder would break on every release (constitution 1.4.1).
+- Q: How many times is a new card asked on its first day? → A: FSRS runs with one 10-minute learning step instead of its default two (1 and 10 minutes). A new card graded Good is not asked again that day; one graded Again or Hard comes back once, 10–15 minutes later. Repeating a recalled card the same day adds little once spaced reviews follow, and a failed one gains only from a repeat with other cards in between (Karpicke & Bauernschmidt 2011; Vaughn, Dunlosky & Rawson 2016; Anki manual, FSRS).
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -39,6 +40,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 5. **001-US2-AS5** Given nothing due, When the due list is asked, Then it is empty and names when the next card is due.
 6. **001-US2-AS6** Given an unknown card id, a grade outside the four, or a missing answer or rationale, When a review is recorded, Then it exits 1 naming the problem, and neither the log nor the card's schedule changes.
 7. **001-US2-AS7** Given the review skill file, When it is read, Then its description carries its Spanish triggers ("repasemos", "vamos a repasar", "¿qué tengo para hoy?") and it calls the installed `aletheia`, never `pnpm aletheia`, `--env` or a store path.
+8. **001-US2-AS8** Given a new card, When it is graded Good, Then its next due instant is on a later day; graded Again or Hard, it is within 20 minutes, and a Good after that moves it to a later day.
 
 ### Edge Cases
 
@@ -55,7 +57,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **FR-002**: Every card MUST get a short, stable, unique id that Angelo can quote in chat.
 - **FR-003**: A saved card MUST start active and new, due at once.
 - **FR-004**: The due list MUST hold new cards, studied cards whose due date is on or before Angelo's local today, and (re)learning cards whose instant has passed or, when nothing else is due, ends within 20 minutes.
-- **FR-005**: Recording a grade MUST append a review (card, grade, instant, Angelo's answer, Claude's rationale, changed-after-dispute) and reschedule the card with FSRS, short-term steps on.
+- **FR-005**: Recording a grade MUST append a review (card, grade, instant, Angelo's answer, Claude's rationale, changed-after-dispute) and reschedule the card with FSRS, short-term steps on, with one 10-minute learning step.
 - **FR-006**: `az-aletheia-add` MUST show every draft before saving, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
 - **FR-007**: The review skill MUST work on `prod` through the installed `aletheia`, ask it for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, and record Angelo's final grade; then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
 - **FR-008**: Every question about a card or what is due MUST be answered by running `aletheia` (constitution VIII).
@@ -78,7 +80,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 
 ## Assumptions
 
-- FSRS runs with its default parameters and a desired retention of 0.9; no optimizer.
+- FSRS runs with its default parameters and a desired retention of 0.9, except for one 10-minute learning step; no optimizer.
 - "Today" is Angelo's local calendar day, ending at midnight. Instants are stored in UTC.
 - The 20-minute window is Anki's learn-ahead default; it is what lets a failed card come back within the session.
 - The add skill fills the source with the current repo's name or the study context.
