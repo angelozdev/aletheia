@@ -8,6 +8,7 @@ import {
   SOURCE_DEFAULT_ENV,
   VITEST_VAR,
 } from './context.constants.ts'
+import type { Vars } from '../../main/main.types.ts'
 import type {
   EntryDefaults,
   Invocation,
@@ -21,8 +22,8 @@ export function releaseVersion(release: Release): string {
   return `${release.version} (${release.commit})`
 }
 
-function backupRoot({ vars, home }: Invocation): string | null {
-  return vars[VITEST_VAR] ? null : join(home, ICLOUD_DRIVE)
+function outsideVitest(vars: Vars, path: string): string | null {
+  return vars[VITEST_VAR] ? null : path
 }
 
 function invocationContext(
@@ -33,9 +34,9 @@ function invocationContext(
     version,
     vars: invocation.vars,
     clock: () => new Date(),
-    backupRoot: backupRoot(invocation),
+    backupRoot: outsideVitest(invocation.vars, join(invocation.home, ICLOUD_DRIVE)),
     defaultEnv,
-    dataDir,
+    dataDir: outsideVitest(invocation.vars, dataDir),
   }
 }
 
