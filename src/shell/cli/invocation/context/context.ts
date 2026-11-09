@@ -2,11 +2,14 @@ import { join } from 'node:path'
 import {
   DEV_VERSION,
   ICLOUD_DRIVE,
+  RELEASE_DATA_FOLDER,
   RELEASE_DEFAULT_ENV,
+  SOURCE_DATA_FOLDER,
   SOURCE_DEFAULT_ENV,
   VITEST_VAR,
 } from './context.constants.ts'
 import type {
+  EntryDefaults,
   Invocation,
   InvocationContext,
   Release,
@@ -23,8 +26,7 @@ function backupRoot({ vars, home }: Invocation): string | null {
 }
 
 function invocationContext(
-  version: string,
-  defaultEnv: string,
+  { version, defaultEnv, dataDir }: EntryDefaults,
   invocation: Invocation,
 ): InvocationContext {
   return {
@@ -33,14 +35,28 @@ function invocationContext(
     clock: () => new Date(),
     backupRoot: backupRoot(invocation),
     defaultEnv,
-    dataDir: null,
+    dataDir,
   }
 }
 
 export function sourceContext(invocation: SourceInvocation): InvocationContext {
-  return invocationContext(DEV_VERSION, SOURCE_DEFAULT_ENV, invocation)
+  return invocationContext(
+    {
+      version: DEV_VERSION,
+      defaultEnv: SOURCE_DEFAULT_ENV,
+      dataDir: join(invocation.repoRoot, SOURCE_DATA_FOLDER),
+    },
+    invocation,
+  )
 }
 
 export function releasedContext(invocation: ReleasedInvocation): InvocationContext {
-  return invocationContext(releaseVersion(invocation.release), RELEASE_DEFAULT_ENV, invocation)
+  return invocationContext(
+    {
+      version: releaseVersion(invocation.release),
+      defaultEnv: RELEASE_DEFAULT_ENV,
+      dataDir: join(invocation.home, RELEASE_DATA_FOLDER),
+    },
+    invocation,
+  )
 }
