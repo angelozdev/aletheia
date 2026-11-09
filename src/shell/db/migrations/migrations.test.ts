@@ -8,23 +8,21 @@ import {
   SHIPPED_MIGRATIONS,
 } from '../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
 import { writeMigrations } from '../../../../tests/support/fixture-migrations/fixture-migrations.ts'
-import { openTestStore } from '../../../../tests/support/store/store.ts'
+import { openTestStore, selectAll } from '../../../../tests/support/store/store.ts'
 import { closeStore } from '../database/database.ts'
-import type { Store } from '../database/database.types.ts'
 
 function tempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix))
 }
 
-function newStore(migrationsDir: string): Promise<Store> {
-  return openTestStore(join(tempDir('aletheia-store-'), 'store.sqlite'), migrationsDir)
+async function newStore(migrationsDir: string): Promise<string> {
+  const path = join(tempDir('aletheia-store-'), 'store.sqlite')
+  closeStore(await openTestStore(path, migrationsDir))
+  return path
 }
 
-function firstColumn(store: Store, query: string): unknown[] {
-  return store.$client
-    .prepare(query)
-    .all()
-    .map((row) => Object.values(row)[0])
+function firstColumn(path: string, query: string): unknown[] {
+  return selectAll(path, query).map((row) => Object.values(row)[0])
 }
 
 describe('migrations', () => {
@@ -43,7 +41,6 @@ describe('migrations', () => {
       '20261108000000_first',
       '20261108000100_second',
     ])
-    closeStore(store)
   })
 
   it('the shipped migrations folder opens a store with every shipped migration applied', async () => {
@@ -56,6 +53,5 @@ describe('migrations', () => {
     expect(firstColumn(store, 'select name from __drizzle_migrations order by name')).toEqual(
       shipped,
     )
-    closeStore(store)
   })
 })
