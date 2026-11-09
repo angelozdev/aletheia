@@ -8,9 +8,9 @@ import type { LintResult } from './lint.types.ts'
 
 const oxlint = join(REPO_ROOT, 'node_modules', '.bin', 'oxlint')
 
-function runOxlint(cwd: string): Promise<LintResult> {
+function runOxlint(cwd: string, roots: string[]): Promise<LintResult> {
   return new Promise((resolve) => {
-    const child = spawn(oxlint, ['src'], { cwd })
+    const child = spawn(oxlint, roots, { cwd })
     let output = ''
     child.stdout.on('data', (chunk: Buffer) => (output += chunk.toString()))
     child.stderr.on('data', (chunk: Buffer) => (output += chunk.toString()))
@@ -28,7 +28,7 @@ function lintFixture(files: Record<string, string>): Promise<LintResult> {
     mkdirSync(dirname(join(dir, path)), { recursive: true })
     writeFileSync(join(dir, path), content)
   }
-  return runOxlint(dir)
+  return runOxlint(dir, [...new Set(Object.keys(files).map((path) => path.split('/')[0]))])
 }
 
 function expectFailure(expect: ExpectStatic, result: LintResult, ...mentions: string[]) {
@@ -43,6 +43,11 @@ function expectPass(expect: ExpectStatic, result: LintResult, path: string) {
 
 const coreFile = 'src/core/sample/sample.ts'
 
+const sqliteImport =
+  "import { DatabaseSync } from 'node:sqlite'\nexport const open = DatabaseSync\n"
+
+const drizzleImport = "import { sql } from 'drizzle-orm'\nexport const query = sql\n"
+
 describe.concurrent('lint', () => {
   it('000-US5-AS2 lint fails naming a src/core file that imports node:*', async ({ expect }) => {
     const result = await lintFixture({
@@ -54,7 +59,7 @@ describe.concurrent('lint', () => {
 
   it('fails when a src/core file imports drizzle-orm', async ({ expect }) => {
     const result = await lintFixture({
-      [coreFile]: "import { sql } from 'drizzle-orm'\nexport const query = sql\n",
+      [coreFile]: drizzleImport,
     })
 
     expectFailure(expect, result, coreFile)
@@ -94,11 +99,8 @@ describe.concurrent('lint', () => {
   })
 
   it.for([
-    [
-      'node:sqlite',
-      "import { DatabaseSync } from 'node:sqlite'\nexport const open = DatabaseSync\n",
-    ],
-    ['drizzle-orm', "import { sql } from 'drizzle-orm'\nexport const query = sql\n"],
+    ['node:sqlite', sqliteImport],
+    ['drizzle-orm', drizzleImport],
   ])(
     'fails when src/shell/cli imports %s and passes when src/shell/db does',
     async ([, source], { expect }) => {
@@ -135,5 +137,17 @@ describe.concurrent('lint', () => {
     })
 
     expectPass(expect, result, 'src/shell/db/sample.ts')
+  })
+
+  it('tests/support/store may import node:sqlite but not drizzle-orm', async ({ expect }) => {
+    const storeFile = 'tests/support/store/sample.ts'
+
+    const [sqlite, drizzle] = await Promise.all([
+      lintFixture({ [storeFile]: sqliteImport }),
+      lintFixture({ [storeFile]: drizzleImport }),
+    ])
+
+    expectPass(expect, sqlite, storeFile)
+    expectFailure(expect, drizzle, storeFile)
   })
 })

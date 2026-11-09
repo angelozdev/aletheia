@@ -26,6 +26,22 @@
       }
     },
     {
+      "files": ["tests/support/store/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["drizzle-orm", "drizzle-orm/*"],
+                "message": "only src/shell/db knows the ORM"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["src/core/**"],
       "rules": {
         "import/no-nodejs-modules": "error",
