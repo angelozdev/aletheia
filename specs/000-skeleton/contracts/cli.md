@@ -46,6 +46,8 @@ Errors: `error: iCloud Drive not found at <path>`; `error: cannot write backup t
 
 - unknown command or option: commander's message after `error:`, no store opened
 - `error: invalid --env "<value>": use lowercase letters, digits and dashes`
+- `error: invalid ALETHEIA_ENV "<value>": use lowercase letters, digits and dashes`
+- `error: invalid --env "custom": custom is reserved for ALETHEIA_DB` (likewise `ALETHEIA_ENV`)
 - `error: invalid ALETHEIA_DB "<value>": must be an absolute path`
 - `error: named environments are disabled here (<source>: <name>); set ALETHEIA_DB to a temporary file` (under vitest)
 - `error: the store has migrations this code does not know: <names>`

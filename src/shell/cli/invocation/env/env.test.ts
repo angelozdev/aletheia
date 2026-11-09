@@ -40,6 +40,9 @@ describe('resolveEnv', () => {
     expect(() => resolveEnv({ ...base, flag: 'custom' })).toThrow(
       'invalid --env "custom": custom is reserved for ALETHEIA_DB',
     )
+    expect(() => resolveEnv({ ...base, vars: { ALETHEIA_ENV: 'custom' } })).toThrow(
+      'invalid ALETHEIA_ENV "custom": custom is reserved for ALETHEIA_DB',
+    )
   })
 
   it('000-US1-AS4 a relative ALETHEIA_DB is refused', () => {
