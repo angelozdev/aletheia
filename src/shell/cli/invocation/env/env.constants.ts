@@ -9,3 +9,5 @@ export const ENV_FLAG = '--env'
 export const DEFAULT_SOURCE = 'default'
 
 export const STORE_EXTENSION = '.sqlite'
+
+export const PROD_ENV = 'prod'

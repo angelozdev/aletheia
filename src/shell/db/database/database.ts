@@ -3,9 +3,15 @@ import { drizzle } from 'drizzle-orm/node-sqlite'
 import { applyMigrations, pendingMigrations } from '../migrations/migrations.ts'
 import type { Store, StoreRequest } from './database.types.ts'
 
-export function openStore({ path, migrationsDir, onMigrated }: StoreRequest): Store {
+export async function openStore({
+  path,
+  migrationsDir,
+  beforeMigrating,
+  onMigrated,
+}: StoreRequest): Promise<Store> {
   const store = drizzle({ client: new DatabaseSync(path) })
   const pending = pendingMigrations(store, migrationsDir)
+  await beforeMigrating(store, pending)
   applyMigrations(store, migrationsDir)
   for (const name of pending) onMigrated(name)
   return store

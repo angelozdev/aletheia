@@ -20,7 +20,7 @@ function tempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix))
 }
 
-function tempStore(): Store {
+function tempStore(): Promise<Store> {
   return openTestStore(join(tempDir('aletheia-store-'), 'store.sqlite'))
 }
 
@@ -31,7 +31,7 @@ afterEach(() => {
 
 describe('backupStore', () => {
   it('000-US3-AS1 the copy opens as a store with the same content', async () => {
-    const db = tempStore()
+    const db = await tempStore()
     db.$client.exec('create table notes (id integer primary key, body text)')
     db.$client.exec("insert into notes (body) values ('first'), ('second')")
     const root = tempDir('aletheia-data-')
@@ -45,7 +45,7 @@ describe('backupStore', () => {
 
     const folder = join(root, 'backups')
     expect(path).toBe(join(folder, 'custom-2026-11-08T21-04-05-123Z.sqlite'))
-    const copy = openTestStore(path)
+    const copy = await openTestStore(path)
     expect(copy.$client.prepare('select * from notes order by id').all()).toEqual(
       db.$client.prepare('select * from notes order by id').all(),
     )
@@ -55,7 +55,7 @@ describe('backupStore', () => {
   })
 
   it("000-US3-AS2 a sixth backup removes that env's oldest copy only", async () => {
-    const db = tempStore()
+    const db = await tempStore()
     const root = tempDir('aletheia-data-')
     const folder = join(root, 'backups')
     const seeded = [
@@ -89,7 +89,7 @@ describe('backupStore', () => {
   })
 
   it('000-US3-AS3 a copy that cannot be moved into place leaves no .partial', async () => {
-    const db = tempStore()
+    const db = await tempStore()
     const root = tempDir('aletheia-data-')
     const folder = join(root, 'backups')
     const blocker = 'custom-2026-11-08T21-04-05-123Z.sqlite'
@@ -103,7 +103,7 @@ describe('backupStore', () => {
   })
 
   it('000-US3-AS3 a backup folder that cannot be created is named in the refusal', async () => {
-    const db = tempStore()
+    const db = await tempStore()
     const root = tempDir('aletheia-data-')
     chmodSync(root, 0o500)
     lockedFolder = root
