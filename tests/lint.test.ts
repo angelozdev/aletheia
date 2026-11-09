@@ -22,7 +22,8 @@ function runOxlint(cwd: string): Promise<LintResult> {
 function lintFixture(files: Record<string, string>): Promise<LintResult> {
   const dir = mkdtempSync(join(tmpdir(), 'aletheia-lint-'))
   cpSync(join(repoRoot, '.oxlintrc.json'), join(dir, '.oxlintrc.json'))
-  if (existsSync(join(repoRoot, 'tools'))) cpSync(join(repoRoot, 'tools'), join(dir, 'tools'), { recursive: true })
+  if (existsSync(join(repoRoot, 'tools')))
+    cpSync(join(repoRoot, 'tools'), join(dir, 'tools'), { recursive: true })
   symlinkSync(join(repoRoot, 'node_modules'), join(dir, 'node_modules'))
   for (const [path, content] of Object.entries(files)) {
     mkdirSync(dirname(join(dir, path)), { recursive: true })
@@ -45,19 +46,25 @@ const coreFile = 'src/core/sample/sample.ts'
 
 describe.concurrent('lint', () => {
   it('000-US5-AS2 lint fails naming a src/core file that imports node:*', async ({ expect }) => {
-    const result = await lintFixture({ [coreFile]: "import { readFileSync } from 'node:fs'\nexport const read = readFileSync\n" })
+    const result = await lintFixture({
+      [coreFile]: "import { readFileSync } from 'node:fs'\nexport const read = readFileSync\n",
+    })
 
     expectFailure(expect, result, coreFile)
   })
 
   it('fails when a src/core file imports drizzle-orm', async ({ expect }) => {
-    const result = await lintFixture({ [coreFile]: "import { sql } from 'drizzle-orm'\nexport const query = sql\n" })
+    const result = await lintFixture({
+      [coreFile]: "import { sql } from 'drizzle-orm'\nexport const query = sql\n",
+    })
 
     expectFailure(expect, result, coreFile)
   })
 
   it('fails when a src/core file imports #shell/*', async ({ expect }) => {
-    const result = await lintFixture({ [coreFile]: "import { openStore } from '#shell/db'\nexport const open = openStore\n" })
+    const result = await lintFixture({
+      [coreFile]: "import { openStore } from '#shell/db'\nexport const open = openStore\n",
+    })
 
     expectFailure(expect, result, coreFile)
   })
@@ -72,29 +79,39 @@ describe.concurrent('lint', () => {
   })
 
   it('passes a file whose only comment-like line is the shebang', async ({ expect }) => {
-    const result = await lintFixture({ 'src/shell/bin.ts': '#!/usr/bin/env node\nexport const a = 1\n' })
+    const result = await lintFixture({
+      'src/shell/bin.ts': '#!/usr/bin/env node\nexport const a = 1\n',
+    })
 
     expectPass(expect, result, 'src/shell/bin.ts')
   })
 
   it('reports an oxlint-disable directive as a comment', async ({ expect }) => {
-    const result = await lintFixture({ 'src/shell/sample.ts': '// oxlint-disable\nexport const a = 1\n' })
+    const result = await lintFixture({
+      'src/shell/sample.ts': '// oxlint-disable\nexport const a = 1\n',
+    })
 
     expectFailure(expect, result, 'src/shell/sample.ts')
   })
 
   it.for([
-    ['node:sqlite', "import { DatabaseSync } from 'node:sqlite'\nexport const open = DatabaseSync\n"],
+    [
+      'node:sqlite',
+      "import { DatabaseSync } from 'node:sqlite'\nexport const open = DatabaseSync\n",
+    ],
     ['drizzle-orm', "import { sql } from 'drizzle-orm'\nexport const query = sql\n"],
-  ])('fails when src/shell/cli imports %s and passes when src/shell/db does', async ([, source], { expect }) => {
-    const [outside, inside] = await Promise.all([
-      lintFixture({ 'src/shell/cli/sample.ts': source }),
-      lintFixture({ 'src/shell/db/sample.ts': source }),
-    ])
+  ])(
+    'fails when src/shell/cli imports %s and passes when src/shell/db does',
+    async ([, source], { expect }) => {
+      const [outside, inside] = await Promise.all([
+        lintFixture({ 'src/shell/cli/sample.ts': source }),
+        lintFixture({ 'src/shell/db/sample.ts': source }),
+      ])
 
-    expectFailure(expect, outside, 'src/shell/cli/sample.ts')
-    expectPass(expect, inside, 'src/shell/db/sample.ts')
-  })
+      expectFailure(expect, outside, 'src/shell/cli/sample.ts')
+      expectPass(expect, inside, 'src/shell/db/sample.ts')
+    },
+  )
 
   it('fails a file name that is not kebab-case', async ({ expect }) => {
     const result = await lintFixture({ 'src/shell/SampleFile.ts': 'export const a = 1\n' })
@@ -103,14 +120,20 @@ describe.concurrent('lint', () => {
   })
 
   it('fails a function with cognitive complexity above 15', async ({ expect }) => {
-    const nested = (depth: number): string => (depth === 0 ? 'return 1' : `if (n > ${depth}) { ${nested(depth - 1)} }`)
-    const result = await lintFixture({ 'src/shell/complex.ts': `export function complex(n: number) { ${nested(6)}; return 0 }\n` })
+    const nested = (depth: number): string =>
+      depth === 0 ? 'return 1' : `if (n > ${depth}) { ${nested(depth - 1)} }`
+    const result = await lintFixture({
+      'src/shell/complex.ts': `export function complex(n: number) { ${nested(6)}; return 0 }\n`,
+    })
 
     expectFailure(expect, result, 'cognitive-complexity')
   })
 
   it('passes when a src/shell/db file imports node:fs', async ({ expect }) => {
-    const result = await lintFixture({ 'src/shell/db/sample.ts': "import { readFileSync } from 'node:fs'\nexport const read = readFileSync\n" })
+    const result = await lintFixture({
+      'src/shell/db/sample.ts':
+        "import { readFileSync } from 'node:fs'\nexport const read = readFileSync\n",
+    })
 
     expectPass(expect, result, 'src/shell/db/sample.ts')
   })

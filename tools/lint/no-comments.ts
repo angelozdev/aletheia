@@ -7,7 +7,10 @@ const noComments = defineRule({
       Program() {
         for (const comment of context.sourceCode.getAllComments()) {
           if (comment.type === 'Shebang') continue
-          context.report({ node: comment, message: 'Remove the comment; let names and extracted functions explain the code' })
+          context.report({
+            node: comment,
+            message: 'Remove the comment; let names and extracted functions explain the code',
+          })
         }
       },
     }

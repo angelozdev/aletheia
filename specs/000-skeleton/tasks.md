@@ -125,7 +125,7 @@ errors on stderr; the six checks exist and pass; lint enforces the boundaries an
   - entries `src/shell/cli/bin.ts` and `tools/lint/no-comments.ts` (T015 adds `src/shell/cli/released.ts`, T018 adds `src/shell/release/bin.ts`); `ignoreDependencies: ["eslint-plugin-sonarjs"]` (loaded only by `.oxlintrc.json`); vitest plugin on. **Run**: `pnpm dead-code` passes
 - [X] T013 [P] [US5] Configure duplication detection in `.jscpd.json`
   - `path: ["src", "tests"]`, `format: ["typescript"]`, default `minTokens`, `exitCode: 1` so any clone fails, console reporter. **Run**: `pnpm duplication` passes
-- [ ] T014 [US5] Configure formatting in `.oxfmtrc.json`, after T012 and T013
+- [X] T014 [US5] Configure formatting in `.oxfmtrc.json`, after T012 and T013
   - ignore patterns per T011; run `pnpm format` once over the repo. **Run**: `pnpm check` passes end to end
 
 **Checkpoint**: `pnpm check` green; `pnpm aletheia --help`; `pnpm aletheia --version` → `dev`.
