@@ -59,7 +59,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **FR-006**: `az-aletheia-add` MUST show every draft before saving, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
 - **FR-007**: The review skill MUST work on `prod` through the installed `aletheia`, ask it for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, and record Angelo's final grade; then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
 - **FR-008**: Every question about a card or what is due MUST be answered by running `aletheia` (constitution VIII).
-- **FR-009**: `pnpm release` MUST copy `az-aletheia-add` from the released commit into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy whole or not at all (written to a partial folder beside it, then renamed, as backups do) and writing nothing under `~/.claude/`; INV-01 holds, so tests point it at a temp folder.
+- **FR-009**: `pnpm release` MUST copy `az-aletheia-add` from the released commit into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy whole or not at all (written to a partial folder beside it, then renamed, as backups do) and writing nothing under `~/.claude/`. **INV-01** covers this copy: under vitest the release refuses to write it unless given a folder, as backups are refused.
 
 ### Key Entities
 
