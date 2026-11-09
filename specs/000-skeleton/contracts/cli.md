@@ -27,21 +27,22 @@ Environment variables: `ALETHEIA_DB=<absolute path>`, `ALETHEIA_ENV=<name>`.
 
 ## `aletheia backup`
 
-Copies the current env's store to iCloud Drive (data-model.md, Backup copy).
+Copies the current env's store into `backups/` in the entry's data folder (data-model.md, Backup
+copy).
 
 TOON:
 
 ```
-path: /Users/angelozdev/Library/Mobile Documents/com~apple~CloudDocs/aletheia-backups/prod-2026-11-08T21-04-05-123Z.sqlite
-removed[1]: /Users/angelozdev/Library/Mobile Documents/com~apple~CloudDocs/aletheia-backups/prod-2026-11-01T10-00-00-000Z.sqlite
+path: /Users/angelozdev/.aletheia/backups/prod-2026-11-08T21-04-05-123Z.sqlite
+removed[1]: /Users/angelozdev/.aletheia/backups/prod-2026-11-01T10-00-00-000Z.sqlite
 ```
 
 With no copy removed, the second line is `removed: []`.
 
 JSON: `{"path":"…","removed":["…"]}`
 
-Errors: `error: iCloud Drive not found at <path>`; `error: cannot write backup to <folder>: <reason>`;
-`error: backups are disabled here (under vitest)`.
+Errors: `error: cannot write backup to <folder>: <reason>`; `error: backups are disabled here
+(under vitest)`.
 
 ## Errors shared by every command
 

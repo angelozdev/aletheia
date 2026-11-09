@@ -23,22 +23,22 @@ drizzle-orm 1.0.0-rc.5 (`node-sqlite`), @toon-format/toon 4.4.0 — all bundled,
 `devDependencies` (R2)
 
 **Storage**: `node:sqlite` files `<env>.sqlite` in `~/.aletheia/` (installed) or the repo's
-`data/` (sources, ADR-0008); backups in iCloud Drive
-`aletheia-backups/` (data-model.md)
+`data/` (sources, ADR-0008); backups in that data folder's `backups/` (ADR-0009,
+data-model.md)
 
 **Testing**: vitest 5.0.5; `:memory:` and temp stores; CLI through `main()`; one spawn test of
 the source bin; release steps through a fake command runner (R4, R7, R12)
 
-**Target Platform**: macOS with iCloud Drive, Node 26, pnpm 11.28.8
+**Target Platform**: macOS, Node 26, pnpm 11.28.8
 
 **Project Type**: CLI, one package
 
 **Performance Goals**: `aletheia --help` and `aletheia backup` under 1 s (SC-002); test suite
 under 5 s (SC-004); release under 1 min (SC-005)
 
-**Constraints**: no network in the CLI; `src/core` without `node:*`; only `src/shell/db` imports
-`node:sqlite` and `drizzle-orm`; stdout holds results only; no test reaches `data/`, `~/.aletheia/`,
-iCloud Drive or the installed `aletheia` (INV-01)
+**Constraints**: no network in the CLI and nothing in iCloud Drive; `src/core` without `node:*`;
+only `src/shell/db` imports `node:sqlite` and `drizzle-orm`; stdout holds results only; no test
+reaches `data/`, `~/.aletheia/` or the installed `aletheia` (INV-01)
 
 **Scale/Scope**: one user, one Mac; three commands; zero domain tables
 

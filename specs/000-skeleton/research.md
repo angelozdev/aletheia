@@ -43,8 +43,7 @@ Node 26.13.0 without touching the real global install.
 ## R4. CLI (ADR-0003)
 
 - **Decision**: one `main(argv, context)` returning an exit code, with injected `stdout`,
-  `stderr`, `vars`, `clock`, `defaultEnv`, `dataDir`, `migrationsDir`, `backupRoot` and
-  `version`. commander with `exitOverride()` and `configureOutput()`; the store opens inside each
+  `stderr`, `vars`, `clock`, `defaultEnv`, `dataDir`, `migrationsDir` and `version`. commander with `exitOverride()` and `configureOutput()`; the store opens inside each
   action, so help, version and parse errors never open it. TOON via `encode`, JSON via
   `JSON.stringify` on one line.
 - **Rationale**: tests drive the public interface through `main()` with `:memory:` or temp
@@ -99,17 +98,18 @@ Node 26.13.0 without touching the real global install.
   `test` and finds `data/` and `migrations/` from its own location; the release defaults to
   `prod` and keeps its stores in `<home>/.aletheia/` (ADR-0008; ADR-0001 had it find `data/`
   under `__ALETHEIA_RELEASE__.repoRoot`). Under `VITEST` the entry
-  passes no data folder and no backup root, so named envs and backups are refused (INV-01).
+  passes no data folder, so named envs and backups are refused (INV-01).
 - **Rationale**: a bare `node src/shell/cli/bin.ts` can never reach `prod` by default.
 
 ## R9. Backup (spec US3)
 
-- **Decision**: `backup()` from `node:sqlite` into `<name>.partial`, then `rename`; the iCloud
-  Drive root `~/Library/Mobile Documents/com~apple~CloudDocs` must exist and only
-  `aletheia-backups/` is created; names and the choice of copies to remove are pure functions in
-  `src/core/backups`; retention 5 per env.
-- **Rationale**: diarium's approach, except that diarium creates the folder recursively, which
-  would invent an iCloud Drive path when iCloud is missing (000-US3-AS3 wants a refusal).
+- **Decision**: `backup()` from `node:sqlite` into `<name>.partial`, then `rename`, in
+  `<data folder>/backups/`, created with `mkdir(…, { recursive: true })` (ADR-0009); names and
+  the choice of copies to remove are pure functions in `src/core/backups`; retention 5 per env.
+- **Rationale**: the online backup copies a live store consistently, and the rename keeps a
+  failed copy from ever sitting under a backup name (000-US3-AS3). The folder sits next to the
+  stores, so creating it recursively invents no path; the iCloud Drive root this decision used
+  to require went with ADR-0009.
 
 ## R10. Lint and format (ADR-0006)
 

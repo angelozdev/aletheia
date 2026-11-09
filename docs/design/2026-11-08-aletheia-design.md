@@ -352,7 +352,8 @@ My calls, mirroring diarium where it applies:
   `~/.claude/skills/`, so the skill and the CLI it calls are versioned together.
   (Other `az-*` skills live in `~/dotfiles`; this one is coupled to the CLI.)
 - Local skills in `.claude/skills/` of the repo.
-- Backups of the database file to iCloud Drive, following diarium's approach.
+- Backups of the database file into `backups/` in the same data folder; nothing in iCloud
+  Drive (ADR-0009).
 
 ## 12. Left to the builder
 
