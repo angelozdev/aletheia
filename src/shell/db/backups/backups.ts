@@ -2,6 +2,7 @@ import { mkdir, readdir, rename, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { backup } from 'node:sqlite'
 import { backupFileName, copiesToRemove } from '#core/backups'
+import { database } from '../database/database.ts'
 import type { Store } from '../database/database.types.ts'
 import { BACKUPS_FOLDER, PARTIAL_SUFFIX } from './backups.constants.ts'
 import { BackupNotWrittenError } from './backups.errors.ts'
@@ -11,7 +12,7 @@ async function writeCopy(db: Store, folder: string, path: string): Promise<void>
   const partial = `${path}${PARTIAL_SUFFIX}`
   try {
     await mkdir(folder, { recursive: true })
-    await backup(db.$client, partial)
+    await backup(database(db).$client, partial)
     await rename(partial, path)
   } catch (error) {
     await rm(partial, { force: true })

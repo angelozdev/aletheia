@@ -1,32 +1,30 @@
 import { sql } from 'drizzle-orm'
 import { readMigrationFiles } from 'drizzle-orm/migrator'
 import { migrate } from 'drizzle-orm/node-sqlite/migrator'
-import type { Store } from '../database/database.types.ts'
+import type { Database } from '../database/database.types.ts'
 import { MIGRATIONS_TABLE } from './migrations.constants.ts'
 import type { AppliedMigration } from './migrations.types.ts'
 
-function hasMigrationsTable(store: Store): boolean {
+function hasMigrationsTable(db: Database): boolean {
   return (
-    store.all(sql`select 1 from sqlite_master where type = 'table' and name = ${MIGRATIONS_TABLE}`)
+    db.all(sql`select 1 from sqlite_master where type = 'table' and name = ${MIGRATIONS_TABLE}`)
       .length > 0
   )
 }
 
-function appliedMigrations(store: Store): Set<string> {
-  if (!hasMigrationsTable(store)) return new Set()
-  const rows = store.all<AppliedMigration>(
-    sql`select name from ${sql.identifier(MIGRATIONS_TABLE)}`,
-  )
+function appliedMigrations(db: Database): Set<string> {
+  if (!hasMigrationsTable(db)) return new Set()
+  const rows = db.all<AppliedMigration>(sql`select name from ${sql.identifier(MIGRATIONS_TABLE)}`)
   return new Set(rows.map(({ name }) => name))
 }
 
-export function pendingMigrations(store: Store, migrationsDir: string): string[] {
-  const applied = appliedMigrations(store)
+export function pendingMigrations(db: Database, migrationsDir: string): string[] {
+  const applied = appliedMigrations(db)
   return readMigrationFiles({ migrationsFolder: migrationsDir })
     .map(({ name }) => name)
     .filter((name) => !applied.has(name))
 }
 
-export function applyMigrations(store: Store, migrationsDir: string): void {
-  migrate(store, { migrationsFolder: migrationsDir, migrationsTable: MIGRATIONS_TABLE })
+export function applyMigrations(db: Database, migrationsDir: string): void {
+  migrate(db, { migrationsFolder: migrationsDir, migrationsTable: MIGRATIONS_TABLE })
 }
