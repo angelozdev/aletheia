@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { captureStream } from '../../../../tests/support/streams.ts'
+import { captureStream } from '../../../../tests/support/streams/streams.ts'
 import { main } from './main.ts'
 
 async function run(argv: string[]) {

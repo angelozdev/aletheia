@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { missingIds } from './support/traceability.ts'
+import { missingIds } from './traceability.ts'
 
 describe('traceability', () => {
   it('000-US5-AS3 lists the ids from a spec that no test or eval contains', () => {

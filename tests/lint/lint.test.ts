@@ -3,11 +3,10 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, symlinkSync, writeFileSync 
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { describe, it, type ExpectStatic } from 'vitest'
+import { REPO_ROOT } from '#shell/cli'
+import type { LintResult } from './lint.types.ts'
 
-const repoRoot = join(import.meta.dirname, '..')
-const oxlint = join(repoRoot, 'node_modules', '.bin', 'oxlint')
-
-type LintResult = { status: number | null; output: string }
+const oxlint = join(REPO_ROOT, 'node_modules', '.bin', 'oxlint')
 
 function runOxlint(cwd: string): Promise<LintResult> {
   return new Promise((resolve) => {
@@ -21,10 +20,10 @@ function runOxlint(cwd: string): Promise<LintResult> {
 
 function lintFixture(files: Record<string, string>): Promise<LintResult> {
   const dir = mkdtempSync(join(tmpdir(), 'aletheia-lint-'))
-  cpSync(join(repoRoot, '.oxlintrc.json'), join(dir, '.oxlintrc.json'))
-  if (existsSync(join(repoRoot, 'tools')))
-    cpSync(join(repoRoot, 'tools'), join(dir, 'tools'), { recursive: true })
-  symlinkSync(join(repoRoot, 'node_modules'), join(dir, 'node_modules'))
+  cpSync(join(REPO_ROOT, '.oxlintrc.json'), join(dir, '.oxlintrc.json'))
+  if (existsSync(join(REPO_ROOT, 'tools')))
+    cpSync(join(REPO_ROOT, 'tools'), join(dir, 'tools'), { recursive: true })
+  symlinkSync(join(REPO_ROOT, 'node_modules'), join(dir, 'node_modules'))
   for (const [path, content] of Object.entries(files)) {
     mkdirSync(dirname(join(dir, path)), { recursive: true })
     writeFileSync(join(dir, path), content)
