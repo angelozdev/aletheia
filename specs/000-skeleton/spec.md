@@ -53,6 +53,7 @@ Every command brings the store to the current schema before running, and in `pro
 2. **000-US4-AS2** Given a `prod` store with pending schema changes, When any command runs, Then a backup is taken first, stderr reports the backup and each change applied, then the command runs.
 3. **000-US4-AS3** Given a store already current, When a command runs, Then no backup is taken and nothing is reported about schema.
 4. **000-US4-AS4** Given a pending schema change that fails, When a command runs, Then no pending change is kept, it exits 1 naming the change, and in `prod` the backup taken before it remains.
+5. **000-US4-AS5** Given a store holding schema changes this code does not know (an older release run on a newer store), When a command runs, Then it exits 1 naming them, and the store is unchanged.
 
 ### User Story 5 - Quality checks guard the conventions (Priority: P3)
 
