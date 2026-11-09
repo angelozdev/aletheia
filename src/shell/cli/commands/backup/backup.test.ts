@@ -16,7 +16,7 @@ import { FIXTURE_MIGRATIONS } from '../../../../../tests/support/fixture-migrati
 import { writeMigrations } from '../../../../../tests/support/fixture-migrations/fixture-migrations.ts'
 import { FIXED_INSTANT } from '../../../../../tests/support/run-cli/run-cli.constants.ts'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
-import { openTestStore } from '../../../../../tests/support/store/store.ts'
+import { openTestStore, runSql, selectAll } from '../../../../../tests/support/store/store.ts'
 
 let db: string
 let dataDir: string
@@ -51,13 +51,8 @@ function advancingClock(): () => Date {
   return () => new Date(Date.parse(FIXED_INSTANT) + calls++)
 }
 
-async function fixtureTables(path: string, migrationsDir?: string): Promise<unknown[]> {
-  const store = await openTestStore(path, migrationsDir)
-  const tables = store.$client
-    .prepare("select name from sqlite_master where name like 'fixture_%' order by name")
-    .all()
-  closeStore(store)
-  return tables
+function fixtureTables(path: string): unknown[] {
+  return selectAll(path, "select name from sqlite_master where name like 'fixture_%' order by name")
 }
 
 describe('aletheia backup', () => {
@@ -139,11 +134,11 @@ describe('aletheia backup', () => {
   })
 
   it('000-US3-AS3 an unwritable backup folder exits 1 with no copy left and the store unchanged', async () => {
-    const store = await openTestStore(db)
-    store.$client.exec(
+    closeStore(await openTestStore(db))
+    runSql(
+      db,
       "create table notes (id integer primary key, body text); insert into notes (body) values ('first')",
     )
-    closeStore(store)
     const before = sha256(db)
     const folder = join(dataDir, 'backups')
     mkdirSync(folder, { mode: 0o500 })
@@ -184,10 +179,7 @@ describe('aletheia backup', () => {
     expect(stderr).toBe(
       `env: custom (${db})\nmigrated: 20261108000000_first\nmigrated: 20261108000100_second\n`,
     )
-    expect(await fixtureTables(copy, migrationsDir)).toEqual([
-      { name: 'fixture_a' },
-      { name: 'fixture_b' },
-    ])
+    expect(fixtureTables(copy)).toEqual([{ name: 'fixture_a' }, { name: 'fixture_b' }])
   })
 
   it('in a non-prod env pending migrations apply without a backup', async () => {
@@ -218,7 +210,7 @@ describe('aletheia backup', () => {
       `env: prod\nbackup: ${beforeMigrating} (before migrating)\n` +
         'migrated: 20261108000000_first\nmigrated: 20261108000100_second\n',
     )
-    expect(await fixtureTables(beforeMigrating)).toEqual([])
+    expect(fixtureTables(beforeMigrating)).toEqual([])
     expect(readdirSync(folder)).toEqual([
       'prod-2026-11-08T21-04-05-123Z.sqlite',
       'prod-2026-11-08T21-04-05-124Z.sqlite',

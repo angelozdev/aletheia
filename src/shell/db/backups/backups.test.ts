@@ -9,7 +9,7 @@ import {
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { openTestStore } from '../../../../tests/support/store/store.ts'
+import { openTestStore, runSql, selectAll } from '../../../../tests/support/store/store.ts'
 import { closeStore } from '../database/database.ts'
 import type { Store } from '../database/database.types.ts'
 import { backupStore } from './backups.ts'
@@ -20,8 +20,12 @@ function tempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix))
 }
 
+function tempStorePath(): string {
+  return join(tempDir('aletheia-store-'), 'store.sqlite')
+}
+
 function tempStore(): Promise<Store> {
-  return openTestStore(join(tempDir('aletheia-store-'), 'store.sqlite'))
+  return openTestStore(tempStorePath())
 }
 
 afterEach(() => {
@@ -31,9 +35,10 @@ afterEach(() => {
 
 describe('backupStore', () => {
   it('000-US3-AS1 the copy opens as a store with the same content', async () => {
-    const db = await tempStore()
-    db.$client.exec('create table notes (id integer primary key, body text)')
-    db.$client.exec("insert into notes (body) values ('first'), ('second')")
+    const storePath = tempStorePath()
+    const db = await openTestStore(storePath)
+    runSql(storePath, 'create table notes (id integer primary key, body text)')
+    runSql(storePath, "insert into notes (body) values ('first'), ('second')")
     const root = tempDir('aletheia-data-')
 
     const { path } = await backupStore({
@@ -46,8 +51,8 @@ describe('backupStore', () => {
     const folder = join(root, 'backups')
     expect(path).toBe(join(folder, 'custom-2026-11-08T21-04-05-123Z.sqlite'))
     const copy = await openTestStore(path)
-    expect(copy.$client.prepare('select * from notes order by id').all()).toEqual(
-      db.$client.prepare('select * from notes order by id').all(),
+    expect(selectAll(path, 'select * from notes order by id')).toEqual(
+      selectAll(storePath, 'select * from notes order by id'),
     )
     expect(readdirSync(folder)).toEqual(['custom-2026-11-08T21-04-05-123Z.sqlite'])
     closeStore(copy)
