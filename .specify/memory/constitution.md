@@ -118,9 +118,10 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
 - `oxlint` and `oxfmt` lint and format; `knip` finds dead code; `jscpd` finds duplication.
   One lint rule enforces Principle III: `src/core` MUST NOT import `node:*`. Code carries no
   comments; names and extracted functions explain it.
-- Everything lives in one directory, `~/me/aletheia`: code, specs, `PROFILE.md`, skills. The
-  installed release is a build artifact outside it and holds no data.
-  Data lives in `data/<env>.sqlite`, ignored by git. `aletheia backup` exists from slice 0,
+- Code, specs, `PROFILE.md` and skills live in one directory, `~/me/aletheia`. The installed
+  release is a build artifact outside it and holds no data. Its stores live in
+  `~/.aletheia/<env>.sqlite`, outside the repo; the sources keep theirs in the repo's
+  `data/<env>.sqlite`, ignored by git. `aletheia backup` exists from slice 0,
   copies the database to iCloud Drive, and runs before any migration in `prod`.
 - Environment resolution: `--env` > `ALETHEIA_DB` > `ALETHEIA_ENV` > default by invocation.
   The installed binary `aletheia` defaults to `prod`; the development wrapper `pnpm aletheia`
@@ -161,4 +162,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.2.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-08
+**Version**: 1.3.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
