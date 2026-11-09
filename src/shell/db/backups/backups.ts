@@ -1,21 +1,16 @@
-import { existsSync } from 'node:fs'
 import { mkdir, readdir, rename, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { backup } from 'node:sqlite'
 import { backupFileName, copiesToRemove } from '#core/backups'
 import type { Store } from '../database/database.types.ts'
 import { BACKUPS_FOLDER, PARTIAL_SUFFIX } from './backups.constants.ts'
-import { BackupNotWrittenError, ICloudDriveNotFoundError } from './backups.errors.ts'
+import { BackupNotWrittenError } from './backups.errors.ts'
 import type { BackupRequest, BackupResult } from './backups.types.ts'
-
-async function ensureFolder(folder: string): Promise<void> {
-  if (!existsSync(folder)) await mkdir(folder)
-}
 
 async function writeCopy(db: Store, folder: string, path: string): Promise<void> {
   const partial = `${path}${PARTIAL_SUFFIX}`
   try {
-    await ensureFolder(folder)
+    await mkdir(folder, { recursive: true })
     await backup(db, partial)
     await rename(partial, path)
   } catch (error) {
@@ -32,7 +27,6 @@ async function removeOldCopies(folder: string, env: string): Promise<string[]> {
 }
 
 export async function backupStore({ db, env, root, now }: BackupRequest): Promise<BackupResult> {
-  if (!existsSync(root)) throw new ICloudDriveNotFoundError(root)
   const folder = join(root, BACKUPS_FOLDER)
   const path = join(folder, backupFileName(env, now))
   await writeCopy(db, folder, path)

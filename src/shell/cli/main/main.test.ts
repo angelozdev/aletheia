@@ -16,7 +16,7 @@ describe('main', () => {
     expect(stdout).toContain('Usage: aletheia')
     expect(stdout).toMatch(/--env <name>\s+use <name>\.sqlite in the data folder/)
     expect(stdout).toContain('--json')
-    expect(stdout).toMatch(/^ {2}backup /m)
+    expect(stdout).toMatch(/^ {2}backup\s+copy the current env's store to its backups folder$/m)
     expect(stderr).toBe('')
   })
 
@@ -43,7 +43,6 @@ describe('main', () => {
     const { code, stderr } = await run(['--env', 'staging', 'backup'], {
       vars: { ALETHEIA_DB: db, ALETHEIA_ENV: 'other' },
       dataDir,
-      backupRoot: tempDir('aletheia-icloud-'),
     })
 
     expect(code).toBe(0)
@@ -55,10 +54,7 @@ describe('main', () => {
   it('000-US1-AS4 an invalid env exits 1 before any store is opened', async () => {
     const dataDir = join(tempDir('aletheia-repo-'), 'data')
 
-    const { code, stdout, stderr } = await run(['--env', 'Bad', 'backup'], {
-      dataDir,
-      backupRoot: tempDir('aletheia-icloud-'),
-    })
+    const { code, stdout, stderr } = await run(['--env', 'Bad', 'backup'], { dataDir })
 
     expect(code).toBe(1)
     expect(stderr).toBe('error: invalid --env "Bad": use lowercase letters, digits and dashes\n')

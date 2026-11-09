@@ -10,7 +10,6 @@ export type CliContext = {
   version: string
   vars: Vars
   clock: Clock
-  backupRoot: string | null
   defaultEnv: string
   dataDir: string | null
 }

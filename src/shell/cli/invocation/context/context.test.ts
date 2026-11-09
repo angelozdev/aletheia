@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync } from 'node:fs'
+import { existsSync, mkdtempSync, readdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -40,20 +40,6 @@ describe('invocation context', () => {
     expect(await printedVersion(context)).toEqual({ code: 0, stdout: 'dev\n', stderr: '' })
   })
 
-  it('both contexts back up to iCloud Drive under home', () => {
-    const iCloudDrive = '/h/Library/Mobile Documents/com~apple~CloudDocs'
-
-    expect(sourceContext({ repoRoot: '/r', vars: {}, home: '/h' }).backupRoot).toBe(iCloudDrive)
-    expect(releasedContext(released({})).backupRoot).toBe(iCloudDrive)
-  })
-
-  it('INV-01 under vitest neither context has a backup root', () => {
-    const vars = { VITEST: 'true' }
-
-    expect(sourceContext({ repoRoot: '/r', vars, home: '/h' }).backupRoot).toBeNull()
-    expect(releasedContext(released(vars)).backupRoot).toBeNull()
-  })
-
   it('000-US1-AS3 the source context defaults to test under <repoRoot>/data and the release context to prod under <home>/.aletheia', () => {
     expect(sourceContext({ repoRoot: '/r', vars: {}, home: '/h' })).toMatchObject({
       defaultEnv: 'test',
@@ -67,16 +53,15 @@ describe('invocation context', () => {
 
   it('000-US1-AS3 backup from the release context uses prod in <home>/.aletheia, creating the folder', async () => {
     const home = tempDir('aletheia-home-')
-    const context = {
-      ...releasedContext({ ...released({}), home }),
-      backupRoot: tempDir('aletheia-icloud-'),
-    }
 
-    const { code, stderr } = await runCli(['backup'], context)
+    const { code, stderr } = await runCli(['backup'], releasedContext({ ...released({}), home }))
 
     expect(code).toBe(0)
     expect(stderr).toBe('env: prod\n')
     expect(existsSync(join(home, '.aletheia', 'prod.sqlite'))).toBe(true)
+    expect(readdirSync(join(home, '.aletheia', 'backups'))).toEqual([
+      expect.stringMatching(/^prod-.+\.sqlite$/),
+    ])
   })
 
   it('INV-01 under vitest the contexts have no data folder, so named envs are refused', async () => {
