@@ -83,37 +83,40 @@ specs/000-skeleton/
 ```text
 src/
 ├── core/
-│   └── backups/                 backups.ts (file name, copies to remove), index.ts
+│   └── backups/                 backups.ts (file name, copies to remove), its test, index.ts
 └── shell/
     ├── cli/
-    │   ├── bin.ts               source entry: default env test, repo-relative paths
+    │   ├── index.ts             barrel
+    │   ├── main/                main(argv, context) → exit code; commander program; CliContext, ExitCode
+    │   ├── bin/                 source entry: default env test, REPO_ROOT
     │   ├── released.ts          release entry: default env prod, __ALETHEIA_RELEASE__
-    │   ├── main.ts              main(argv, context) → exit code; commander program
-    │   ├── invocation/          env.ts (resolution, zod), output.ts (TOON/JSON, stderr lines)
-    │   ├── commands/            backup.ts
-    │   └── index.ts
+    │   ├── invocation/          context/, env/ (resolution, zod), output/ (TOON/JSON, stderr lines), with-store/
+    │   └── commands/            backup/
     ├── db/
-    │   ├── database.ts          open/close over node:sqlite + drizzle
+    │   ├── index.ts
+    │   ├── database/            open/close over node:sqlite + drizzle
     │   ├── migrations/          migrations.ts (pending, unknown, apply)
-    │   ├── backups/             backup.ts (online backup, rename, prune)
-    │   └── index.ts
+    │   └── backups/             backups.ts (online backup, rename, prune)
     └── release/
-        ├── bin.ts               pnpm release entry
-        ├── release.ts           steps over an injected command runner
-        ├── build.ts             rolldown API call
-        └── index.ts
+        ├── index.ts             barrel: runner types
+        ├── bin/                 pnpm release entry
+        ├── release/             the steps, their typed errors and constants
+        ├── runner/              spawnSync runner, Runner types
+        └── build/               rolldown API call
 migrations/.gitkeep
 tools/lint/no-comments.ts        local oxlint JS plugin
 tests/
-├── traceability.test.ts
-├── lint.test.ts
-└── support/                     temp dirs, fixture migrations, fake runner, captured streams
+├── checks/  lint/  traceability/
+└── support/                     streams/, fake-runner/, fixture-migrations/
 .oxlintrc.json  .oxfmtrc.json  knip.json  .jscpd.json  tsconfig.json  vitest.config.ts
 package.json  pnpm-workspace.yaml  .gitignore (data/, dist/, .release/, node_modules/)
 CLAUDE.md
 ```
 
-Unit tests sit beside the code (`*.test.ts`), as in diarium; cross-cutting tests in `tests/`.
+Each module is a folder holding `<name>.ts`, its `<name>.test.ts` and, as needed, its
+`.types.ts`, `.errors.ts`, `.constants.ts` and `.schema.ts`; an entry point without any of them
+stays a loose file ([ADR-0007](../../docs/adr/0007-one-folder-per-module-with-types-errors-and-constants.md)).
+Cross-cutting tests get folders in `tests/`.
 
 **Structure Decision**: one package, functional core and imperative shell in concept folders
 reached through `#core/*` and `#shell/*` (ADR-0004).
