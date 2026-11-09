@@ -12,8 +12,12 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { closeStore } from '#shell/db'
-import { FIXTURE_MIGRATIONS } from '../../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
+import {
+  FAILING_MIGRATIONS,
+  FIXTURE_MIGRATIONS,
+} from '../../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
 import { writeMigrations } from '../../../../../tests/support/fixture-migrations/fixture-migrations.ts'
+import type { FixtureMigrations } from '../../../../../tests/support/fixture-migrations/fixture-migrations.types.ts'
 import { FIXED_INSTANT } from '../../../../../tests/support/run-cli/run-cli.constants.ts'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
 import { openTestStore, runSql, selectAll } from '../../../../../tests/support/store/store.ts'
@@ -38,8 +42,8 @@ afterEach(() => {
   lockedFolder = null
 })
 
-function fixtureMigrations(): string {
-  return writeMigrations(mkdtempSync(join(tmpdir(), 'aletheia-migrations-')), FIXTURE_MIGRATIONS)
+function fixtureMigrations(migrations: FixtureMigrations = FIXTURE_MIGRATIONS): string {
+  return writeMigrations(mkdtempSync(join(tmpdir(), 'aletheia-migrations-')), migrations)
 }
 
 function sha256(path: string): string {
@@ -215,6 +219,30 @@ describe('aletheia backup', () => {
       'prod-2026-11-08T21-04-05-123Z.sqlite',
       'prod-2026-11-08T21-04-05-124Z.sqlite',
     ])
+  })
+
+  it('000-US4-AS4 a failing migration in prod exits 1 naming it and keeps the backup taken before it', async () => {
+    const folder = join(dataDir, 'backups')
+    const beforeMigrating = join(folder, 'prod-2026-11-08T21-04-05-123Z.sqlite')
+
+    const { code, stdout, stderr } = await runCli(['--env', 'prod', 'backup'], {
+      dataDir,
+      migrationsDir: fixtureMigrations(FAILING_MIGRATIONS),
+      clock: advancingClock(),
+    })
+
+    expect(code).toBe(1)
+    expect(stderr).toMatch(
+      new RegExp(
+        `^${RegExp.escape(
+          `env: prod\nbackup: ${beforeMigrating} (before migrating)\n` +
+            'error: migration 20261108000100_second failed: ',
+        )}.+\n$`,
+      ),
+    )
+    expect(stdout).toBe('')
+    expect(readdirSync(folder)).toEqual(['prod-2026-11-08T21-04-05-123Z.sqlite'])
+    expect(fixtureTables(join(dataDir, 'prod.sqlite'))).toEqual([])
   })
 
   it('000-US4-AS3 a current store takes no backup and reports nothing about schema', async () => {
