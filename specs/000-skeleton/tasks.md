@@ -111,7 +111,7 @@ errors on stderr; the six checks exist and pass; lint enforces the boundaries an
   - **Test**: `tests/lint.test.ts`: `000-US5-AS2 lint fails naming a file with a comment` (`src/shell/sample.ts` with `// note`, `src/shell/other.ts` with `/* note */` → both paths in the output); a file whose only comment-like line is `#!/usr/bin/env node` passes; `// oxlint-disable` is itself reported (no escape hatch, ADR-0006)
   - **Code**: `pnpm add -D @oxlint/plugins@1.89.0`. `tools/lint/no-comments.ts` exports a plugin named `local` with rule `no-comments` that reports every comment of the file except the shebang. `.oxlintrc.json`: `jsPlugins: ["./tools/lint/no-comments.ts"]`, rule `local/no-comments: "error"`. `lintFixture` copies `tools/`
   - **Run**: `pnpm lint`
-- [ ] T009 [US5] Lint enforces the database boundary, kebab-case file names and cognitive complexity 15, in `.oxlintrc.json`
+- [X] T009 [US5] Lint enforces the database boundary, kebab-case file names and cognitive complexity 15, in `.oxlintrc.json`
   - **Test**: `tests/lint.test.ts`: `src/shell/cli/sample.ts` importing `node:sqlite` fails and importing `drizzle-orm` fails; the same imports under `src/shell/db/sample.ts` pass; `src/shell/SampleFile.ts` fails `unicorn/filename-case`; a function with cognitive complexity above 15 fails `sonarjs/cognitive-complexity`
   - **Code**: `pnpm add -D eslint-plugin-sonarjs@4.2.2`; add it to `jsPlugins` with `sonarjs/cognitive-complexity: ["error", 15]`; `unicorn/filename-case: ["error", { "case": "kebabCase" }]`; top-level `no-restricted-imports` forbidding `node:sqlite`, `drizzle-orm`, `drizzle-orm/*`, turned off in an override for `src/shell/db/**`; the `src/core/**` override keeps its own stricter list (T007)
   - **Run**: `pnpm lint`

@@ -76,6 +76,36 @@ describe('lint', () => {
     expect(output).toContain('src/shell/sample.ts')
   })
 
+  it.each([
+    ['node:sqlite', "import { DatabaseSync } from 'node:sqlite'\nexport const open = DatabaseSync\n"],
+    ['drizzle-orm', "import { sql } from 'drizzle-orm'\nexport const query = sql\n"],
+  ])('fails when src/shell/cli imports %s and passes when src/shell/db does', (_name, source) => {
+    const outside = lintFixture({ 'src/shell/cli/sample.ts': source })
+    const inside = lintFixture({ 'src/shell/db/sample.ts': source })
+
+    expect(outside.status).not.toBe(0)
+    expect(outside.output).toContain('src/shell/cli/sample.ts')
+    expect(inside.output).not.toContain('src/shell/db/sample.ts')
+    expect(inside.status).toBe(0)
+  })
+
+  it('fails a file name that is not kebab-case', () => {
+    const { status, output } = lintFixture({ 'src/shell/SampleFile.ts': 'export const a = 1\n' })
+
+    expect(status).not.toBe(0)
+    expect(output).toContain('filename-case')
+  })
+
+  it('fails a function with cognitive complexity above 15', () => {
+    const nested = (depth: number): string => (depth === 0 ? 'return 1' : `if (n > ${depth}) { ${nested(depth - 1)} }`)
+    const { status, output } = lintFixture({
+      'src/shell/complex.ts': `export function complex(n: number) { ${nested(6)}; return 0 }\n`,
+    })
+
+    expect(status).not.toBe(0)
+    expect(output).toContain('cognitive-complexity')
+  })
+
   it('passes when a src/shell/db file imports node:fs', () => {
     const { status, output } = lintFixture({
       'src/shell/db/sample.ts': "import { readFileSync } from 'node:fs'\nexport const read = readFileSync\n",

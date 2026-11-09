@@ -1,47 +1,38 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "typescript",
-    "unicorn",
-    "oxc",
-    "import"
-  ],
-  "jsPlugins": [
-    "./tools/lint/no-comments.ts"
-  ],
+  "plugins": ["typescript", "unicorn", "oxc", "import"],
+  "jsPlugins": ["./tools/lint/no-comments.ts", "eslint-plugin-sonarjs"],
   "rules": {
-    "local/no-comments": "error"
+    "local/no-comments": "error",
+    "sonarjs/cognitive-complexity": ["error", 15],
+    "unicorn/filename-case": ["error", { "case": "kebabCase" }],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          { "group": ["node:sqlite", "drizzle-orm", "drizzle-orm/*"], "message": "only src/shell/db knows the database" }
+        ]
+      }
+    ]
   },
   "overrides": [
     {
-      "files": [
-        "src/core/**"
-      ],
+      "files": ["src/shell/db/**"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    },
+    {
+      "files": ["src/core/**"],
       "rules": {
         "import/no-nodejs-modules": "error",
         "no-restricted-imports": [
           "error",
           {
             "patterns": [
-              {
-                "group": [
-                  "node:*"
-                ],
-                "message": "src/core performs no I/O"
-              },
-              {
-                "group": [
-                  "drizzle-orm",
-                  "drizzle-orm/*"
-                ],
-                "message": "only src/shell/db knows the ORM"
-              },
-              {
-                "group": [
-                  "#shell/*"
-                ],
-                "message": "src/core never imports the shell"
-              }
+              { "group": ["node:*"], "message": "src/core performs no I/O" },
+              { "group": ["drizzle-orm", "drizzle-orm/*"], "message": "only src/shell/db knows the ORM" },
+              { "group": ["#shell/*"], "message": "src/core never imports the shell" }
             ]
           }
         ]
