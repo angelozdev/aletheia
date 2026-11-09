@@ -11,6 +11,7 @@
 - Q: How does the global skill reach `~/.claude/skills/` so it matches the installed CLI? → A: `pnpm release` copies `az-aletheia-add` from `main` into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy; `~/.claude/skills/az-aletheia-add` is a symlink to that copy, which Angelo creates once. A link into the repo would follow the working tree; a link into pnpm's install folder would break on every release (constitution 1.4.1).
 - Q: How many times is a new card asked on its first day? → A: FSRS runs with one 10-minute learning step instead of its default two (1 and 10 minutes). A new card graded Good is not asked again that day; one graded Again or Hard comes back once, 10–15 minutes later. Repeating a recalled card the same day adds little once spaced reviews follow, and a failed one gains only from a repeat with other cards in between (Karpicke & Bauernschmidt 2011; Vaughn, Dunlosky & Rawson 2016; Anki manual, FSRS).
 - Q: After showing the grade and the full answer, does Claude wait for Angelo or go straight to the next question? → A: Claude waits after every grade, whatever it was: Angelo may have doubts about a card he got right. His reply (a dispute, a doubt or "sigue") settles the grade, which is then recorded once; the next question comes only when he says so.
+- Q: May a tag carry accents or `ñ`? → A: No: only `a`–`z`, digits and dashes. `mensajería` is refused, so a topic has one spelling and the tag tree never splits on an accent.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -47,7 +48,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 
 - A card graded before it is due is an early review: it is recorded, and FSRS grows its interval only a little.
 - Malformed JSON input exits 1 before anything is stored.
-- Tags are lowercase letters, digits and dashes in segments joined by `::` (`mensajeria::redis-streams`); a card's tags are unique.
+- Tags are lowercase `a`–`z`, digits and dashes in segments joined by `::` (`mensajeria::redis-streams`); an accent or `ñ` makes a tag malformed; a card's tags are unique.
 - **INV-02** No card and no review is ever deleted, and a recorded review is never changed; the store refuses both.
 
 ## Requirements _(mandatory)_
