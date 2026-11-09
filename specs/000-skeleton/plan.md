@@ -108,7 +108,7 @@ migrations/.gitkeep
 tools/lint/no-comments.ts        local oxlint JS plugin
 tests/
 ├── checks/  lint/  traceability/
-└── support/                     streams/, fake-runner/, fixture-migrations/
+└── support/                     streams/, fake-runner/, fixture-migrations/, run-cli/, store/
 .oxlintrc.json  .oxfmtrc.json  knip.json  .jscpd.json  tsconfig.json  vitest.config.ts
 package.json  pnpm-workspace.yaml  .gitignore (data/, dist/, .release/, node_modules/)
 CLAUDE.md
