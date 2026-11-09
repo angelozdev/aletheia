@@ -16,3 +16,4 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 | 0004 | Functional core and imperative shell in concept folders | accepted | 2026-11-08 |
 | 0005 | Release as a Rolldown bundle installed globally | accepted | 2026-11-08 |
 | 0006 | oxlint with local rules, oxfmt, knip and jscpd | accepted | 2026-11-08 |
+| 0007 | One folder per module, with types, errors and constants files | accepted | 2026-11-09 |

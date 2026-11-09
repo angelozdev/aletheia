@@ -1,6 +1,6 @@
 # Structure and error handling — Design
 
-**Date**: 2026-11-09 · **Status**: draft, awaiting approval · **Branch**: `000-skeleton`
+**Date**: 2026-11-09 · **Status**: approved by Angelo, 2026-11-09 ([ADR-0007](../adr/0007-one-folder-per-module-with-types-errors-and-constants.md)) · **Branch**: `000-skeleton`
 
 ## 1. Intent
 
@@ -115,9 +115,9 @@ names, separators and prefixes become named constants in a `.constants.ts`.
    exact contract message, so the `.errors.ts` file is the only place a message is written.
 7. **How errors reach the two edges.** Each module's `.errors.ts` holds the classes that module
    throws, whatever unit it is in (`src/shell/db`, `src/core`, `src/shell/cli`).
-   - **CLI edge (`main()`)**: the contract says "exit 1 on any error" with `error: <message>`
-     on stderr, so `main()` keeps a catch-all: any thrown error is written as
-     `error: <message>` and returns `ExitCode.Failure`. Error classes carry the message without
+   - **CLI edge (`invocation/with-store`, from T019)**: the contract says "exit 1 on any
+     error" with `error: <message>` on stderr, so the command edge has a catch-all: any thrown
+     error is written as `error: <message>` and returns `ExitCode.Failure`. Error classes carry the message without
      the `error: ` prefix (the edge adds it, as the contract defines it per stream). Errors from
      `#shell/db` or `#core/*` therefore need no CLI base class and no translation at the
      boundary. commander's `CommanderError` keeps being handled as today.
