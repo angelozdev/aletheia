@@ -62,3 +62,18 @@ ALETHEIA_DB=/tmp/aletheia-restore.sqlite pnpm aletheia backup   # exit 0: the co
 Slice 0 ships none. `pnpm test -t 000-US4` runs the scenarios over fixture migrations; the
 first real one arrives with slice 1 and applies, after a backup, on the first `aletheia` in
 `prod` after its release.
+
+## Measures
+
+Taken 2026-11-09 on Angelo's Mac, release `0.0.0 (5efa773)`.
+
+| Criterion | Command | Result | Limit |
+|-----------|---------|--------|-------|
+| SC-001 | fresh clone, `pnpm install`, `pnpm release` | pending | 5 min |
+| SC-002 | `time aletheia --help` | 0.03–0.04 s | 1 s |
+| SC-002 | `time aletheia backup` in `prod` | 0.05 s | 1 s |
+| SC-003 | a `test-<instant>.sqlite` copy over a scratch store, then `ALETHEIA_DB=<scratch> pnpm aletheia backup` | exit 0, opens as a store | — |
+| SC-004 | `time pnpm test` | 1.7 s, 71 tests; `data/`, `~/.aletheia/` and the installed `aletheia` unchanged | 5 s |
+| SC-005 | `time pnpm release` | 5.0 s | 1 min |
+
+Nothing from aletheia under `~/Library/Mobile Documents`.
