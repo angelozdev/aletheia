@@ -45,7 +45,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - A card graded before it is due is an early review: it is recorded, and FSRS grows its interval only a little.
 - Malformed JSON input exits 1 before anything is stored.
 - Tags are lowercase letters, digits and dashes in segments joined by `::` (`mensajeria::redis-streams`); a card's tags are unique.
-- **INV-02** No card and no recorded review is ever deleted or rewritten by a command, and the store refuses deleting either.
+- **INV-02** No card and no review is ever deleted, and a recorded review is never changed; the store refuses both.
 
 ## Requirements _(mandatory)_
 
