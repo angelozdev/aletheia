@@ -8,7 +8,8 @@ import {
   SHIPPED_MIGRATIONS,
 } from '../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
 import { writeMigrations } from '../../../../tests/support/fixture-migrations/fixture-migrations.ts'
-import { closeStore, openStore } from '../database/database.ts'
+import { openTestStore } from '../../../../tests/support/store/store.ts'
+import { closeStore } from '../database/database.ts'
 import type { Store } from '../database/database.types.ts'
 
 function tempDir(prefix: string): string {
@@ -16,7 +17,7 @@ function tempDir(prefix: string): string {
 }
 
 function newStore(migrationsDir: string): Store {
-  return openStore({ path: join(tempDir('aletheia-store-'), 'store.sqlite'), migrationsDir })
+  return openTestStore(join(tempDir('aletheia-store-'), 'store.sqlite'), migrationsDir)
 }
 
 function firstColumn(store: Store, query: string): unknown[] {

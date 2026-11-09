@@ -9,8 +9,8 @@ import {
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { SHIPPED_MIGRATIONS } from '../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
-import { closeStore, openStore } from '../database/database.ts'
+import { openTestStore } from '../../../../tests/support/store/store.ts'
+import { closeStore } from '../database/database.ts'
 import type { Store } from '../database/database.types.ts'
 import { backupStore } from './backups.ts'
 
@@ -20,12 +20,8 @@ function tempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix))
 }
 
-function storeAt(path: string): Store {
-  return openStore({ path, migrationsDir: SHIPPED_MIGRATIONS })
-}
-
 function tempStore(): Store {
-  return storeAt(join(tempDir('aletheia-store-'), 'store.sqlite'))
+  return openTestStore(join(tempDir('aletheia-store-'), 'store.sqlite'))
 }
 
 afterEach(() => {
@@ -49,7 +45,7 @@ describe('backupStore', () => {
 
     const folder = join(root, 'backups')
     expect(path).toBe(join(folder, 'custom-2026-11-08T21-04-05-123Z.sqlite'))
-    const copy = storeAt(path)
+    const copy = openTestStore(path)
     expect(copy.$client.prepare('select * from notes order by id').all()).toEqual(
       db.$client.prepare('select * from notes order by id').all(),
     )

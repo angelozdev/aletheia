@@ -6,12 +6,19 @@ import type { CliContext, GlobalOptions } from '../../main/main.types.ts'
 import { CUSTOM_ENV } from '../env/env.constants.ts'
 import { resolveEnv } from '../env/env.ts'
 import type { Env } from '../env/env.types.ts'
-import { writeEnvLine, writeError, writeResult } from '../output/output.ts'
+import { writeEnvLine, writeError, writeMigratedLine, writeResult } from '../output/output.ts'
 import type { StoreAction } from './with-store.types.ts'
 
-async function openEnvStore({ migrationsDir }: CliContext, { name, dbPath }: Env): Promise<Store> {
+async function openEnvStore(
+  { migrationsDir, stderr }: CliContext,
+  { name, dbPath }: Env,
+): Promise<Store> {
   if (name !== CUSTOM_ENV) await mkdir(dirname(dbPath), { recursive: true })
-  return openStore({ path: dbPath, migrationsDir })
+  return openStore({
+    path: dbPath,
+    migrationsDir,
+    onMigrated: (migration) => writeMigratedLine(stderr, migration),
+  })
 }
 
 async function runAgainstStore(

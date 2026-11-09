@@ -11,9 +11,11 @@ import {
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { closeStore, openStore } from '#shell/db'
-import { SHIPPED_MIGRATIONS } from '../../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
+import { closeStore } from '#shell/db'
+import { FIXTURE_MIGRATIONS } from '../../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
+import { writeMigrations } from '../../../../../tests/support/fixture-migrations/fixture-migrations.ts'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
+import { openTestStore } from '../../../../../tests/support/store/store.ts'
 
 let db: string
 let dataDir: string
@@ -34,6 +36,10 @@ afterEach(() => {
   if (lockedFolder !== null) chmodSync(lockedFolder, 0o700)
   lockedFolder = null
 })
+
+function fixtureMigrations(): string {
+  return writeMigrations(mkdtempSync(join(tmpdir(), 'aletheia-migrations-')), FIXTURE_MIGRATIONS)
+}
 
 function sha256(path: string): string {
   return createHash('sha256').update(readFileSync(path)).digest('hex')
@@ -118,7 +124,7 @@ describe('aletheia backup', () => {
   })
 
   it('000-US3-AS3 an unwritable backup folder exits 1 with no copy left and the store unchanged', async () => {
-    const store = openStore({ path: db, migrationsDir: SHIPPED_MIGRATIONS })
+    const store = openTestStore(db)
     store.$client.exec(
       "create table notes (id integer primary key, body text); insert into notes (body) values ('first')",
     )
@@ -148,5 +154,40 @@ describe('aletheia backup', () => {
     expect(stderr).toBe(`env: custom (${db})\nerror: backups are disabled here (under vitest)\n`)
     expect(stdout).toBe('')
     expect(existsSync(join(dataDir, 'backups'))).toBe(false)
+  })
+
+  it('000-US4-AS1 backup on a new store applies the migrations first', async () => {
+    const migrationsDir = fixtureMigrations()
+
+    const { code, stderr } = await runCli(['backup'], {
+      vars: { ALETHEIA_DB: db },
+      dataDir,
+      migrationsDir,
+    })
+
+    expect(code).toBe(0)
+    expect(stderr).toBe(
+      `env: custom (${db})\nmigrated: 20261108000000_first\nmigrated: 20261108000100_second\n`,
+    )
+    const backedUp = openTestStore(copy, migrationsDir)
+    expect(
+      backedUp.$client
+        .prepare("select name from sqlite_master where name like 'fixture_%' order by name")
+        .all(),
+    ).toEqual([{ name: 'fixture_a' }, { name: 'fixture_b' }])
+    closeStore(backedUp)
+  })
+
+  it('in a non-prod env pending migrations apply without a backup', async () => {
+    const { code, stderr } = await runCli(['--env', 'test', 'backup'], {
+      dataDir,
+      migrationsDir: fixtureMigrations(),
+    })
+
+    expect(code).toBe(0)
+    expect(stderr).toBe(
+      'env: test\nmigrated: 20261108000000_first\nmigrated: 20261108000100_second\n',
+    )
+    expect(readdirSync(join(dataDir, 'backups'))).toEqual(['test-2026-11-08T21-04-05-123Z.sqlite'])
   })
 })
