@@ -63,12 +63,12 @@ inside a unit, relative `.ts` imports.
 tasks, no behavior, so no test (named exception).
 
 - [X] T001 Gate: once Angelo accepts ADRs 0001–0006, change `**Status:** proposed` to `accepted` in each `docs/adr/000[1-6]-*.md` and in the index table of `docs/adr/README.md`; commit `docs(adr): accept 0001-0006`. Do not start T002 before Angelo says so.
-- [ ] T002 Create `package.json`, `pnpm-workspace.yaml` and `.gitignore` at the repo root and install the test toolchain
+- [X] T002 Create `package.json`, `pnpm-workspace.yaml` and `.gitignore` at the repo root and install the test toolchain
   - `package.json`: `"name": "aletheia"`, `"version": "0.0.0"`, `"private": true`, `"type": "module"`, `"engines": { "node": "26.x" }`, `"packageManager": "pnpm@11.28.8"`, `"imports": { "#core/*": "./src/core/*/index.ts", "#shell/*": "./src/shell/*/index.ts" }`, `"bin": { "aletheia": "dist/aletheia.js" }`, `"files": ["dist", "migrations"]`, scripts `"test": "vitest run"` and `"typecheck": "tsc --noEmit"`
   - `pnpm-workspace.yaml`: `saveExact: true` and an `allowBuilds` map with only the packages `pnpm install` asks about, set to `false` unless a task needs their build (none expected)
   - `.gitignore`: `data/`, `dist/`, `.release/`, `node_modules/`
   - `pnpm add -D typescript@7.0.2 @types/node@26.6.5 vitest@5.0.5` (every library is a `devDependency`: the release bundles them, R2)
-- [ ] T003 Create `tsconfig.json` and `vitest.config.ts` at the repo root
+- [X] T003 Create `tsconfig.json` and `vitest.config.ts` at the repo root
   - `tsconfig.json`: `strict`, `target: "esnext"`, `module`/`moduleResolution: "nodenext"`, `noEmit`, `allowImportingTsExtensions`, `erasableSyntaxOnly`, `verbatimModuleSyntax`, `skipLibCheck`, `types: ["node"]`; include `src`, `tests`, `tools`, `*.ts`; do not set `rewriteRelativeImportExtensions`
   - `vitest.config.ts`: include `src/**/*.test.ts` and `tests/**/*.test.ts`, environment `node`
   - **Run**: `pnpm typecheck` passes (`pnpm test` reports no test files until T004)
