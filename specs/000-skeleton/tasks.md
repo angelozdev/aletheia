@@ -208,11 +208,11 @@ no assertion changed.
 
 **Goal**: `aletheia backup` copies the current env's store to iCloud Drive, keeps 5 per env,
 refuses cleanly when it cannot write; every command resolves its env by the contract's order
-and says which on stderr; tests never reach `data/` or iCloud Drive.
+and says which on stderr; tests never reach `data/`, `~/.aletheia/` or iCloud Drive.
 
 **Independent Test**: `pnpm aletheia backup` → stderr `env: test`, stdout `path: …` and
 `removed[…]`; open the copy it names and compare with `data/test.sqlite`; after a release,
-`aletheia backup` → `env: prod`.
+`aletheia backup` → `env: prod` and `~/.aletheia/prod.sqlite`.
 
 - [X] T019 [US3] `aletheia backup` writes a consistent copy and prints its path, in `src/shell/cli/commands/backup/backup.ts`, `src/shell/db/backups/backups.ts` and `src/core/backups/backups.ts`
   - **Test**:
@@ -242,12 +242,12 @@ and says which on stderr; tests never reach `data/` or iCloud Drive.
   - **Run**: `pnpm aletheia backup --env Bad; echo $?` → `error: invalid --env "Bad": …`, `1`
   - **Done as**: `dataDir: string | null` needs its null branch, so `resolveEnv` already refuses a named env when `dataDir` is null with T023's message (`NamedEnvDisabledError`, unit-tested in `env.test.ts` as `INV-01`). Until T023 both contexts set their `defaultEnv` and `dataDir: null`, so from the sources only `ALETHEIA_DB` works
 - [ ] T023 [US1] Each entry defaults to its env and data folder, and under vitest named envs are refused, in `src/shell/cli/invocation/context/context.ts`
-  - **Test**: `src/shell/cli/invocation/context/context.test.ts`: `000-US1-AS3 the source context defaults to test under <repoRoot>/data and the release context to prod under the released repo's data/` (`sourceContext({ repoRoot: '/r', vars: {}, home: '/h' })` → `defaultEnv: 'test'`, `dataDir: '/r/data'`; `releasedContext({ release: { repoRoot: '/r', … }, … })` → `'prod'`, `'/r/data'`); through `main()` with `{ ...releasedContext({ release: { repoRoot: <tmp>, … }, vars: {}, … }), backupRoot: <tmpRoot> }` and `backup` → stderr `env: prod`, store `<tmp>/data/prod.sqlite`. `INV-01 under vitest the contexts have no data folder, so named envs are refused` (`vars: { VITEST: 'true' }` → `dataDir: null`; `backup` → exit 1, `error: named environments are disabled here (default: test); set ALETHEIA_DB to a temporary file`; `--env prod` → `(--env: prod)`; `ALETHEIA_ENV=x` → `(ALETHEIA_ENV: x)`). `src/shell/cli/bin/bin.test.ts`: `INV-01 the source bin under vitest refuses its default env` (spawn `bin.ts backup` from a temp cwd with the inherited `VITEST` → exit 1 with that message)
-  - **Code**: contexts set `dataDir` (`<repoRoot>/data` / `<release.repoRoot>/data`, null when `vars.VITEST` is set); `defaultEnv` (`test` / `prod`) and the refusal of a named env when `dataDir` is null already landed in T022
+  - **Test**: `src/shell/cli/invocation/context/context.test.ts`: `000-US1-AS3 the source context defaults to test under <repoRoot>/data and the release context to prod under <home>/.aletheia` (ADR-0008; `sourceContext({ repoRoot: '/r', vars: {}, home: '/h' })` → `defaultEnv: 'test'`, `dataDir: '/r/data'`; `releasedContext({ release: { repoRoot: '/r', … }, home: '/h', … })` → `'prod'`, `'/h/.aletheia'`); through `main()` with `{ ...releasedContext({ home: <tmp>, vars: {}, … }), backupRoot: <tmpRoot> }` and `backup` → stderr `env: prod`, store `<tmp>/.aletheia/prod.sqlite`, its folder created. `INV-01 under vitest the contexts have no data folder, so named envs are refused` (`vars: { VITEST: 'true' }` → `dataDir: null`; `backup` → exit 1, `error: named environments are disabled here (default: test); set ALETHEIA_DB to a temporary file`; `--env prod` → `(--env: prod)`; `ALETHEIA_ENV=x` → `(ALETHEIA_ENV: x)`). `src/shell/cli/bin/bin.test.ts`: `INV-01 the source bin under vitest refuses its default env` (spawn `bin.ts backup` from a temp cwd with the inherited `VITEST` → exit 1 with that message)
+  - **Code**: contexts set `dataDir` (`<repoRoot>/data` / `<home>/.aletheia`, null when `vars.VITEST` is set); `--env`'s help reads `use <name>.sqlite in the data folder` (contract); `defaultEnv` (`test` / `prod`) and the refusal of a named env when `dataDir` is null already landed in T022
   - **Run**: `pnpm aletheia backup` → `env: test`, `data/test.sqlite` created, a `test-…` copy in iCloud Drive; `pnpm aletheia backup --json`
 
 **Checkpoint**: `pnpm check` green; quickstart §3 from the sources. After a merge and release,
-`aletheia backup` → `env: prod` and a `prod-…` copy.
+`aletheia backup` → `env: prod`, `~/.aletheia/prod.sqlite` and a `prod-…` copy.
 
 ---
 
@@ -381,7 +381,7 @@ wires traceability, releases and walks the quickstart.
 
 - [P] tasks = different files, no dependencies on incomplete tasks.
 - Each test name carries the id it covers; T029 enforces it over the repo.
-- No test may open a store under `data/`, write to iCloud Drive or change the installed
+- No test may open a store under `data/` or `~/.aletheia/`, write to iCloud Drive or change the installed
   `aletheia` (INV-01): tests inject temp `dataDir`, `backupRoot` and `ALETHEIA_DB`, and the
   release runs through a fake runner.
 - A test that looks wrong is raised with Angelo, never weakened, skipped or deleted.

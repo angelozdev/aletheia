@@ -32,7 +32,7 @@
 ## Notes
 
 - Slice 0's user is Angelo as operator (constitution V, amended 1.1.0). The `aletheia` commands,
-  `pnpm aletheia`, `data/<env>.sqlite`, iCloud Drive, TOON/JSON output and the `node:*` rule are
+  `pnpm aletheia`, `~/.aletheia/` and `data/<env>.sqlite`, iCloud Drive, TOON/JSON output and the `node:*` rule are
   his interface and are fixed by the constitution's Technology Constraints, so they count as
   requirements, not leaked implementation. Libraries, module layout and the migration mechanism
   are left to `/speckit-plan`.

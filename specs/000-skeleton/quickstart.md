@@ -47,7 +47,7 @@ Running `backup` six times leaves five copies of that env.
 
 ```sh
 cp ~/Library/Mobile\ Documents/com~apple~CloudDocs/aletheia-backups/prod-<instant>.sqlite \
-   ~/me/aletheia/data/prod.sqlite
+   ~/.aletheia/prod.sqlite
 ```
 
 ## 5. Migrations
