@@ -122,7 +122,8 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
   release is a build artifact outside it and holds no data. Its stores live in
   `~/.aletheia/<env>.sqlite`, outside the repo; the sources keep theirs in the repo's
   `data/<env>.sqlite`, ignored by git. `aletheia backup` exists from slice 0,
-  copies the database to iCloud Drive, and runs before any migration in `prod`.
+  copies the database into `backups/` in the same data folder, and runs before any migration
+  in `prod`. Nothing aletheia writes lands in iCloud Drive or leaves the Mac.
 - Environment resolution: `--env` > `ALETHEIA_DB` > `ALETHEIA_ENV` > default by invocation.
   The installed binary `aletheia` defaults to `prod`; the development wrapper `pnpm aletheia`
   sets `ALETHEIA_ENV=test`, and the sources default to `test` however they run. Every command prints `env: <name>` on stderr; stdout stays clean.
@@ -162,4 +163,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.3.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
+**Version**: 1.4.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
