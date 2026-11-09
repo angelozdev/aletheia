@@ -75,12 +75,13 @@ Rationale: each removed piece is one fewer reason to stop using the system; each
 is one more piece to maintain and one more place to be wrong.
 
 ### VII. English System, Spanish Content
-Code, identifiers, CLI commands, ids, commits, tests, specs, this constitution, `CLAUDE.md`,
-skill files and docs MUST be in English. Card content (question, answer, key points,
-situation, tags, archive reasons), `PROFILE.md`, skill output to the user and the conversation
-MUST be in Spanish, keeping technical terms in English.
+Code, identifiers, CLI commands, ids, tags, commits, tests, specs, this constitution,
+`CLAUDE.md`, skill files and docs MUST be in English. Card content (question, answer, key
+points, situation, archive reasons), `PROFILE.md`, skill output to the user and the
+conversation MUST be in Spanish, keeping technical terms in English.
 Rationale: the system is portable and readable by any tool; the content is what Angelo studies,
-in the language he thinks in, with the terms he will meet at work.
+in the language he thinks in, with the terms he will meet at work. A tag names a topic of the
+system, not something to study: in English it has one spelling and needs no accent.
 
 ### VIII. Conversation, Not Commands
 Angelo talks; Claude picks the skill and runs the CLI. No ritual MAY depend on Angelo
@@ -165,4 +166,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.4.2 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
+**Version**: 1.5.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
