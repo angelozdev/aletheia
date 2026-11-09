@@ -2,8 +2,8 @@ import {
   BACKUP_EXTENSION,
   COPIES_KEPT,
   ENV_SEPARATOR,
-  INSTANT_PATTERN,
   SAFE_INSTANT_CHAR,
+  STAMPED_COPY_PATTERN,
   UNSAFE_INSTANT_CHARS,
 } from './backups.constants.ts'
 
@@ -12,14 +12,12 @@ export function backupFileName(env: string, instant: Date): string {
   return `${env}${ENV_SEPARATOR}${stamp}${BACKUP_EXTENSION}`
 }
 
-function copyPattern(env: string): RegExp {
-  return new RegExp(
-    `^${RegExp.escape(env)}${ENV_SEPARATOR}${INSTANT_PATTERN}${RegExp.escape(BACKUP_EXTENSION)}$`,
-  )
+function isCopyOf(env: string, name: string): boolean {
+  const prefix = `${env}${ENV_SEPARATOR}`
+  return name.startsWith(prefix) && STAMPED_COPY_PATTERN.test(name.slice(prefix.length))
 }
 
 export function copiesToRemove(env: string, names: string[], keep = COPIES_KEPT): string[] {
-  const pattern = copyPattern(env)
-  const copies = names.filter((name) => pattern.test(name)).toSorted()
+  const copies = names.filter((name) => isCopyOf(env, name)).toSorted()
   return copies.slice(0, Math.max(0, copies.length - keep))
 }
