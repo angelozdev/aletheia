@@ -319,6 +319,10 @@ quickstart.
   - **Code**: `tests/support/temp-dir/temp-dir.ts`: `tempDir(prefix, onFinished = onTestFinished)` makes `mkdtempSync(join(tmpdir(), prefix))` and registers `rmSync(dir, { recursive: true, force: true })`; `temp-dir.types.ts` holds the hook's type. `.oxlintrc.json`: `no-restricted-imports` forbids `mkdtemp` and `mkdtempSync` from `node:fs` and `mkdtemp` from `node:fs/promises` in `src/**/*.test.ts` and `tests/**`, except `tests/support/temp-dir/**`; each override that replaces the rule keeps its own patterns. The 8 test files that call `mkdtempSync` (`lint`, `traceability`, `context`, `cli/bin`, `backup`, `main`, `migrations`, `backups`) use `tempDir`; `lint.test.ts` is `describe.concurrent`, so `lintFixture` takes the test context's `onTestFinished`. Assertions unchanged
   - **Run**: `pnpm check` green; the `aletheia-*` folders in the system temp dir are as many after `pnpm test` as before
   - **Done as**: vitest 5 sets the current test before `beforeEach`, so `backup.test.ts` makes its folders there with the global hook; the global hook in a concurrent test can land on another test, hence the parameter. `onTestFinished` runs after `afterEach`, so the read-only folders in `backup.test.ts` and `backups.test.ts` get their mode back before the removal (they would fail otherwise). The lint tests are two: `fails when a test file imports %s instead of using tempDir` (each of the three imports, over the three test paths) and `passes mkdtempSync in tests/support/temp-dir and in non-test files`. `lintFixture(onFinished, files)` takes the hook first and every lint test destructures `onTestFinished`. `.oxlintrc.json` gains overrides for `src/**/*.test.ts` + `tests/**` (temp paths and the database patterns), `src/shell/db/**/*.test.ts` (temp paths only) and `tests/support/temp-dir/**` (the database patterns only); `tests/support/store/**` gains the temp paths. `import * as fs` would slip past the rule. The three helper tests went red first (`expected true to be false`, no removal), the lint ones as exit 0. Run: 81 `aletheia-*` folders before `pnpm check` and 81 after, all from this task's red runs. Not done: `pnpm release` never removes its `aletheia-release-*` folder (`release.ts` `makeTempDir`), a separate finding
+- [ ] R009 `pnpm release` removes its temp folder (Angelo's request on 2026-11-09: every release left an `aletheia-release-*` folder holding the unpacked package in the system temp dir, also when it failed)
+  - **Test**: `src/shell/release/release/release.test.ts`: `removes its temp folder after its last command once installed`; `removes its temp folder when the smoke run fails`; `removes its temp folder when PATH prints another version`. The fake `removeTempDir` records each folder with the runner calls made before it, so the folder goes after `aletheia --version`, the last command that runs in it
+  - **Code**: `ReleaseDeps` gains `removeTempDir(dir)`; `releaseSteps` calls it in a `finally` around the smoke run and the install. `bin.ts`: `rmSync(dir, { recursive: true, force: true })`. `contracts/cli.md` step 3 says the folder is removed either way. The install is safe without it: `pnpm add -g` installs from the tarball in `.release/`
+  - **Run**: `pnpm check` green
 
 ---
 
@@ -340,7 +344,7 @@ quickstart.
 - **Slice 4 (Phase 6)**: after Slice 3 (`openStore`, `with-store.ts`, `backupStore`).
   T024 → T025 → R007 → T026 → T027; T028 anytime after T017.
 - **Close (Phase 7)**: after all slices. T029 needs every id covered; T030 ∥ T031; T032 after
-  T029–T031; T033 after T032. R008 after T033, before slice 1.
+  T029–T031; T033 after T032. R008 after T033, then R009, before slice 1.
 
 ### User Story Dependencies
 
