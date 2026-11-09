@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
+import { REPO_ROOT } from '../../bin/bin.constants.ts'
 import { releasedContext, sourceContext } from './context.ts'
 import type { ReleasedInvocation } from './context.types.ts'
 
@@ -60,8 +61,12 @@ describe('invocation context', () => {
 
   it('000-US1-AS3 backup from the release context uses prod in <home>/.aletheia, creating the folder', async () => {
     const home = tempDir('aletheia-home-')
+    const entryDir = join(REPO_ROOT, 'dist')
 
-    const { code, stderr } = await runCli(['backup'], releasedContext({ ...released({}), home }))
+    const { code, stderr } = await runCli(
+      ['backup'],
+      releasedContext({ ...released({}), home, entryDir }),
+    )
 
     expect(code).toBe(0)
     expect(stderr).toBe('env: prod\n')

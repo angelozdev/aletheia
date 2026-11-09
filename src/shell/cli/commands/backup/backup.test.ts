@@ -12,6 +12,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { closeStore, openStore } from '#shell/db'
+import { SHIPPED_MIGRATIONS } from '../../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
 
 let db: string
@@ -117,8 +118,8 @@ describe('aletheia backup', () => {
   })
 
   it('000-US3-AS3 an unwritable backup folder exits 1 with no copy left and the store unchanged', async () => {
-    const store = openStore(db)
-    store.exec(
+    const store = openStore({ path: db, migrationsDir: SHIPPED_MIGRATIONS })
+    store.$client.exec(
       "create table notes (id integer primary key, body text); insert into notes (body) values ('first')",
     )
     closeStore(store)
