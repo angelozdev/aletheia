@@ -1,10 +1,10 @@
 # 0001. Data inside the repo, environment by invocation
 
-- **Status:** accepted
+- **Status:** superseded
 - **Date:** 2026-11-08
 - **Deciders:** Angelo
 - **Supersedes:** —
-- **Superseded by:** —
+- **Superseded by:** 0008
 
 ## Context and problem statement
 
