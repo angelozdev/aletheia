@@ -12,3 +12,11 @@ export type CliContext = {
   clock: Clock
   backupRoot: string | null
 }
+
+export type GlobalOptions = { env?: string; json?: boolean }
+
+export type CliCommand = {
+  name: string
+  description: string
+  run(context: CliContext, options: GlobalOptions): Promise<number>
+}

@@ -35,9 +35,12 @@ path: /Users/angelozdev/Library/Mobile Documents/com~apple~CloudDocs/aletheia-ba
 removed[1]: /Users/angelozdev/Library/Mobile Documents/com~apple~CloudDocs/aletheia-backups/prod-2026-11-01T10-00-00-000Z.sqlite
 ```
 
+With no copy removed, the second line is `removed: []`.
+
 JSON: `{"path":"…","removed":["…"]}`
 
-Errors: `error: iCloud Drive not found at <path>`; `error: cannot write backup to <folder>: <reason>`.
+Errors: `error: iCloud Drive not found at <path>`; `error: cannot write backup to <folder>: <reason>`;
+`error: backups are disabled here (under vitest)`.
 
 ## Errors shared by every command
 
