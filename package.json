@@ -16,7 +16,7 @@
   },
   "scripts": {
     "aletheia": "ALETHEIA_ENV=test node src/shell/cli/bin/bin.ts",
-    "release": "node src/shell/release/bin.ts",
+    "release": "node src/shell/release/bin/bin.ts",
     "check": "pnpm test && pnpm lint && pnpm format:check && pnpm typecheck && pnpm dead-code && pnpm duplication",
     "test": "vitest run",
     "lint": "oxlint",

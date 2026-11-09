@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { fakeRunner } from '../../../tests/support/fake-runner.ts'
-import { captureStream } from '../../../tests/support/streams.ts'
+import { fakeRunner } from '../../../../tests/support/fake-runner/fake-runner.ts'
+import { captureStream } from '../../../../tests/support/streams.ts'
 import { release } from './release.ts'
 
 const repoRoot = '/r'
