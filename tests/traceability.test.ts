@@ -9,4 +9,10 @@ describe('traceability', () => {
 
     expect(missing).toEqual(['999-US1-AS2', 'INV-99'])
   })
+
+  it('does not count a longer id as covering a shorter one', () => {
+    const missing = missingIds({ specs: ['**999-US1-AS1** **999-US1-AS10**'], tests: ["it('999-US1-AS10 works')"] })
+
+    expect(missing).toEqual(['999-US1-AS1'])
+  })
 })
