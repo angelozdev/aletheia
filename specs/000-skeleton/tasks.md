@@ -163,6 +163,32 @@ runs the Independent Test above (Claude gives the commands, never runs `pnpm rel
 
 ---
 
+## Phase 4b: Restructure (pure refactor exception)
+
+**Goal**: one folder per module with its `.types.ts`, `.errors.ts`, `.constants.ts` and
+`.schema.ts`; errors as classes; no magic strings or numbers; each type declared once
+([design](../../docs/plans/2026-11-09-structure-design.md), ADR-0007). Angelo approved the
+design on 2026-11-09 before Phase 5.
+
+**Independent Test**: `pnpm check` green after every task with the same tests and the same
+assertions; `pnpm aletheia --help`, `pnpm aletheia --version` → `dev`; on `000-skeleton`
+`pnpm release` → `release: refused: on 000-skeleton, not main` (Angelo runs it).
+
+No new behavior, so no new test (named exception). Test files move with their modules; their
+assertions do not change. Commit after each green task.
+
+- [ ] R001 Accept the design: `docs/plans/2026-11-09-structure-design.md` status `approved`; write `docs/adr/0007-one-folder-per-module-with-types-errors-and-constants.md` (`accepted`, extends ADR-0004, does not supersede it) and its row in `docs/adr/README.md`; fix design §4.7 so the CLI catch-all is `invocation/with-store` from T019, not `main()`
+- [ ] R002 Move `main` into `src/shell/cli/main/`: `main.ts`, `main.test.ts`, `main.types.ts` (`Output`, `CliContext`), `main.constants.ts` (`ExitCode = { Success: 0, Failure: 1 } as const`); `main()` returns `ExitCode.*`; `src/shell/cli/index.ts` exports the types and `ExitCode`; update every import
+- [ ] R003 Move `context` into `src/shell/cli/invocation/context/` (`context.ts`, `context.test.ts`, `context.types.ts` with `Release`, `Vars`, `Invocation`, `SourceInvocation`, `ReleasedInvocation`, `InvocationContext`; `context.constants.ts` with `DEV_VERSION`) and the source entry into `src/shell/cli/bin/` (`bin.ts`, `bin.test.ts`); `package.json` script `aletheia` → `node src/shell/cli/bin/bin.ts`; the repo root computed one level deeper. `released.ts` stays loose
+- [ ] R004 Split `src/shell/release/`: `runner/runner.ts` (the `spawnSync` runner taken out of `bin.ts`) and `runner/runner.types.ts` (`Runner`, `RunResult`, `RunOptions`); `release/release.ts` + `release.test.ts` + `release.types.ts` (`ReleaseDeps`, `PackageJson`) + `release.errors.ts` (`ReleaseError`; `ReleaseRefusedError` and its subclasses `NotOnMainError`, `UncommittedChangesError`, `CheckFailedError`, `SmokeRunError`; `PathMismatchError` extends `ReleaseError`; each builds the contract's text) + `release.constants.ts` (main branch, `.release`, the bundle path shared with `build.ts`, check script name and separator, `pnpm ` prefix, temp prefix); `release()` reads as its list of steps, catches `ReleaseError` only and returns `ExitCode.*`; `src/shell/release/index.ts` exports the runner types; `tests/support/fake-runner/fake-runner.ts` + `fake-runner.types.ts` (`RunCall`, `FakeResponses`) import `Runner`/`RunResult` from `#shell/release` instead of redeclaring them
+- [ ] R005 Give the remaining tests folders: `tests/checks/checks.test.ts`; `tests/lint/lint.test.ts` + `lint.types.ts` (`LintResult`); `tests/traceability/traceability.ts` + `traceability.test.ts` + `traceability.constants.ts` (the id patterns); `tests/support/streams/streams.ts` + `streams.types.ts` (`CapturedStream`, built on `Output` from `#shell/cli`); repo-root computations one level deeper; update every import
+- [ ] R006 Point the docs at the new layout: `plan.md` Project Structure tree; in this file, Path Conventions gets the rules of design §3–§4 and every path in T019–T033 moves to the new layout (`commands/backup/backup.ts`, `db/backups/backups.ts`, `db/database/database.ts`, `invocation/{env,output,with-store}/`, `tests/support/fixture-migrations/`, `tests/traceability/`), and a line says every failure a task names by its message is an error class in its module's `.errors.ts`
+
+**Checkpoint**: `pnpm check` green; `git diff main --stat -- src tests` shows moves and splits,
+no assertion changed.
+
+---
+
 ## Phase 5: Slice 3 — Environments and backup (US3, US1-AS2…AS5, INV-01)
 
 **Goal**: `aletheia backup` copies the current env's store to iCloud Drive, keeps 5 per env,
@@ -263,7 +289,9 @@ quickstart.
   must have something to check); T012, T013 after T011; T014 last.
 - **Slice 2 (Phase 4)**: after Slice 1 (`release` runs `pnpm check`). T015 ∥ T016; T017 after
   T016; T018 after T015 and T017.
-- **Slice 3 (Phase 5)**: after Slice 2 (T015's contexts). T019 → T020; then T021 ∥ T022;
+- **Restructure (Phase 4b)**: after Slice 2, before Slice 3. R001 first; R002 → R003 → R004 →
+  R005 → R006 (each moves imports the next one touches).
+- **Slice 3 (Phase 5)**: after the Restructure (T015's contexts, in the new layout). T019 → T020; then T021 ∥ T022;
   T023 after T022.
 - **Slice 4 (Phase 6)**: after Slice 3 (`openStore`, `with-store.ts`, `backupStore`).
   T024 → T025 → T026 → T027; T028 anytime after T017.
