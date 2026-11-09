@@ -32,7 +32,8 @@ Instants are UTC ISO 8601 with milliseconds (`2026-11-09T15:00:00.000Z`), the fo
 | tag | text | only `a`–`z`, digits, `-` and `:` (store); full grammar at the CLI edge |
 
 Primary key `(card_id, tag)`: a card's tags are unique. A card has at least one tag (CLI edge).
-Grammar: `^[a-z0-9]+(-[a-z0-9]+)*(::[a-z0-9]+(-[a-z0-9]+)*)*$`, e.g. `mensajeria::redis-streams`.
+Grammar: `^[a-z0-9]+(-[a-z0-9]+)*(::[a-z0-9]+(-[a-z0-9]+)*)*$`, e.g. `messaging::redis-streams`. Tags are written in English (constitution 1.5.0), which is
+the add skill's judgment; the store only knows the alphabet.
 
 ## Review: table `reviews`
 

@@ -13,6 +13,7 @@
 - Q: After showing the grade and the full answer, does Claude wait for Angelo or go straight to the next question? → A: Claude waits after every grade, whatever it was: Angelo may have doubts about a card he got right. His reply (a dispute, a doubt or "sigue") settles the grade, which is then recorded once; the next question comes only when he says so.
 - Q: May a tag carry accents or `ñ`? → A: No: only `a`–`z`, digits and dashes. `mensajería` is refused, so a topic has one spelling and the tag tree never splits on an accent.
 - Q: What does a review keep that cannot be rebuilt later? → A: The grade Claude gave, next to Angelo's final one, and the card's state before the review. A dispute changed the grade when the two grades differ, so that flag is no longer stored. Decided while planning (research R4).
+- Q: In which language are tags written? → A: English (`messaging::redis-streams`), like the rest of the system (constitution 1.5.0). Angelo names a topic in Spanish and Claude finds its tag.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -49,7 +50,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 
 - A card graded before it is due is an early review: it is recorded, and FSRS grows its interval only a little.
 - Malformed JSON input exits 1 before anything is stored.
-- Tags are lowercase `a`–`z`, digits and dashes in segments joined by `::` (`mensajeria::redis-streams`); an accent or `ñ` makes a tag malformed; a card's tags are unique.
+- Tags are lowercase `a`–`z`, digits and dashes in segments joined by `::` (`messaging::redis-streams`), written in English; an accent or `ñ` makes a tag malformed; a card's tags are unique.
 - **INV-02** No card and no review is ever deleted, and a recorded review is never changed; the store refuses both.
 
 ## Requirements _(mandatory)_
@@ -61,7 +62,7 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **FR-003**: A saved card MUST start active and new, due at once.
 - **FR-004**: The due list MUST hold new cards, studied cards whose due date is on or before Angelo's local today, and (re)learning cards whose instant has passed or, when nothing else is due, ends within 20 minutes.
 - **FR-005**: Recording a grade MUST append a review (card, final grade, Claude's grade, the card's state before, instant, Angelo's answer, Claude's rationale) and reschedule the card with FSRS, short-term steps on, with one 10-minute learning step.
-- **FR-006**: `az-aletheia-add` MUST show every draft before saving, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
+- **FR-006**: `az-aletheia-add` MUST show every draft before saving, write its tags in English, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
 - **FR-007**: The review skill MUST work on `prod` through the installed `aletheia`, ask it for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, wait for Angelo's reply after every grade and record his final grade (Claude's unless he disputes it); then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
 - **FR-008**: Every question about a card or what is due MUST be answered by running `aletheia` (constitution VIII).
 - **FR-009**: `pnpm release` MUST copy `az-aletheia-add` from the released commit into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy whole or not at all (written to a partial folder beside it, then renamed, as backups do) and writing nothing under `~/.claude/`. **INV-01** covers this copy: under vitest the release refuses to write it unless given a folder, as backups are refused.

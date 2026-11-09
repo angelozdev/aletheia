@@ -107,7 +107,7 @@ out.
 | answer           | full answer shown after grading, 1–3 lines                             |
 | key points       | 1–3 tightly coupled points; the grading rubric                         |
 | situation        | the credible situation where knowing this matters                      |
-| tags             | one or more hierarchical tags, e.g. `mensajeria::redis-streams`        |
+| tags             | one or more hierarchical tags, e.g. `messaging::redis-streams`         |
 | source           | where it was captured (repo or study context) — _my call_              |
 | status           | `active` or `archived`                                                 |
 | archive reason   | required when archived                                                 |
@@ -116,7 +116,9 @@ out.
 | timestamps       | created, updated, archived                                             |
 
 **Tags** are hierarchical with `::` as separator (Anki convention). Filtering by
-a tag includes all descendants: `mensajeria` covers `mensajeria::rabbitmq`.
+a tag includes all descendants: `messaging` covers `messaging::rabbitmq`.
+Tags are written in English, like the rest of the system (constitution 1.5.0);
+Angelo names a topic in Spanish and Claude finds its tag.
 A card may carry several tags (a Redis-vs-RabbitMQ card lives under both).
 
 **Review log** (one row per graded review): card, rating, Claude's rating before
@@ -259,11 +261,11 @@ Illustrative shape (not a spec of columns or wording):
 ```
 TEMA                     TARJETAS  ACIERTO  HOY  FLOJAS
 algorithms               40        65%      9    8
-  grafos                 15        58%      4    5
-mensajeria               48        78%      6    5
+  graphs                 15        58%      4    5
+messaging                48        78%      6    5
   redis-streams          30        71%      5    4
   rabbitmq               18        89%      1    1
-docker::comandos         25        93%      2    0
+docker::commands         25        93%      2    0
 ```
 
 ### 8.4 Prune — local skill
