@@ -304,7 +304,7 @@ until slice 1 ships the first real one).
 **Purpose**: Wire traceability to the repo, write `CLAUDE.md`, release to `prod`, walk the
 quickstart.
 
-- [ ] T029 Point traceability at the repo in `tests/traceability/traceability.test.ts`
+- [X] T029 Point traceability at the repo in `tests/traceability/traceability.test.ts`
   - **Test**: `reads ids from specs/*/spec.md and names from *.test.ts and evals/` — a temp tree with `specs/999-x/spec.md` holding `999-US1-AS1` and no test → `readTraceabilitySources(tmp)` then `missingIds` lists it; then `every scenario and invariant id in specs/*/spec.md is named by a test or eval` over the repo root → `[]`
   - **Code**: `readTraceabilitySources(root)` in `tests/traceability/traceability.ts`: `specs/*/spec.md`, every `*.test.ts` under `src/` and `tests/`, every file under `evals/` when it exists. An id still missing is a real gap: add its test, never weaken this one
 - [ ] T030 [P] Write `CLAUDE.md` at the repo root (English, under 60 lines): develop with `pnpm aletheia`, never the installed `aletheia`; `pnpm check` before closing a task; test names carry `NNN-USx-ASy` / `INV-nn`; no comments; `#core/*` / `#shell/*` barrels; `src/core` pure; only `src/shell/db` touches `node:sqlite` and `drizzle-orm`; `pnpm release` and destructive commands are handed to Angelo; links to the constitution and `docs/adr/`
