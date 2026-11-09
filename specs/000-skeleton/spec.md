@@ -1,6 +1,6 @@
 # Feature Specification: Skeleton
 
-**Feature Branch**: `000-skeleton` | **Created**: 2026-11-08 | **Status**: Draft
+**Feature Branch**: `000-skeleton` | **Created**: 2026-11-08 | **Status**: Implemented
 **Input**: Slice 0 of `docs/design/2026-11-08-aletheia-design.md` §13: tooling, installed `aletheia` bin, SQLite + migrations, backup. Angelo exercises it with `aletheia --help` and `aletheia backup`.
 
 ## Clarifications
