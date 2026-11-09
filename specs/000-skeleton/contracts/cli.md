@@ -57,5 +57,8 @@ Not part of `aletheia`; a repo script Angelo runs from `~/me/aletheia`.
 2. Runs `pnpm check` (the six checks); a failure: `release: refused: <check> failed`.
 3. Builds `dist/aletheia.js` with the release constants, packs into `.release/`, smoke-runs
    the packed `--help` and `--version` from a temp folder, installs the tarball globally, and
-   checks `aletheia --version` from PATH.
+   checks `aletheia --version` from PATH. A failed smoke run refuses before installing:
+   `release: refused: smoke run failed: <reason>` (`--help exited <status>` or
+   `--version printed "<x>", expected "<y>"`). A mismatch after installing:
+   `release: failed: aletheia on PATH prints "<x>", expected "<y>"`.
 4. Prints `release: <version> (<commit>) installed`. Never opens a store.
