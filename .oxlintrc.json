@@ -10,7 +10,10 @@
       "error",
       {
         "patterns": [
-          { "group": ["node:sqlite", "drizzle-orm", "drizzle-orm/*"], "message": "only src/shell/db knows the database" }
+          {
+            "group": ["node:sqlite", "drizzle-orm", "drizzle-orm/*"],
+            "message": "only src/shell/db knows the database"
+          }
         ]
       }
     ]
@@ -31,7 +34,10 @@
           {
             "patterns": [
               { "group": ["node:*"], "message": "src/core performs no I/O" },
-              { "group": ["drizzle-orm", "drizzle-orm/*"], "message": "only src/shell/db knows the ORM" },
+              {
+                "group": ["drizzle-orm", "drizzle-orm/*"],
+                "message": "only src/shell/db knows the ORM"
+              },
               { "group": ["#shell/*"], "message": "src/core never imports the shell" }
             ]
           }

@@ -2,7 +2,9 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-const packageJson = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'package.json'), 'utf8'))
+const packageJson = JSON.parse(
+  readFileSync(join(import.meta.dirname, '..', 'package.json'), 'utf8'),
+)
 const checks = ['test', 'lint', 'format:check', 'typecheck', 'dead-code', 'duplication']
 
 describe('checks', () => {
