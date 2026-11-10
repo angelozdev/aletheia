@@ -25,4 +25,4 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 | 0013 | Cards, tags and reviews, with their rules in the store | accepted | 2026-11-09 |
 | 0014 | Card search with FTS5, terms built in the core | accepted | 2026-11-09 |
 | 0015 | The profile is an untracked file, read and edited in place | accepted | 2026-11-09 |
-| 0016 | Review settings in one row, with a nullable column each | proposed | 2026-11-10 |
+| 0016 | Review settings in one row, with a nullable column each | accepted | 2026-11-10 |

@@ -1,6 +1,6 @@
 # 0016. Review settings in one row, with a nullable column each
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-10
 - **Deciders:** Angelo
 - **Supersedes:** —
