@@ -1,4 +1,5 @@
 import type { Card } from '#core/cards'
+import { TAG_SEPARATOR } from '#core/tags'
 import {
   COMBINING_MARKS,
   COMMON_WORDS,
@@ -7,7 +8,6 @@ import {
   NOT_A_TERM_CHARACTER,
   SHORT_PLURAL,
   SIMILAR_CARDS_LIMIT,
-  TAG_SEPARATOR,
 } from './similar.constants.ts'
 
 function folded(text: string): string {

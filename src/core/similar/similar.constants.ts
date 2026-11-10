@@ -25,5 +25,3 @@ export const LONG_PLURAL = { ending: 'es', minLength: 5 }
 export const SHORT_PLURAL = { ending: 's', minLength: 4 }
 
 export const SIMILAR_CARDS_LIMIT = 10
-
-export const TAG_SEPARATOR = '::'

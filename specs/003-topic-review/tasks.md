@@ -78,7 +78,7 @@ Shared by the CLI tests of this slice:
 
 ## Phase 1: Setup (gate)
 
-- [ ] T001 Gate: Angelo accepts ADR-0016 (status `accepted` in `docs/adr/0016-review-settings-in-one-row-with-a-nullable-column-each.md` and `docs/adr/README.md`) and the command names of `specs/003-topic-review/research.md` R1; design §5 gains **Settings** ("session size, new cards per day and new share, one set per store, `null` until Angelo changes one; changed only through the CLI") and §9 *Input* gains "numbers go as flags (`settings set --session-size 15`); free text goes as JSON on stdin", in `docs/design/2026-11-08-aletheia-design.md` (R10); one commit each
+- [X] T001 Gate: Angelo accepts ADR-0016 (status `accepted` in `docs/adr/0016-review-settings-in-one-row-with-a-nullable-column-each.md` and `docs/adr/README.md`) and the command names of `specs/003-topic-review/research.md` R1; design §5 gains **Settings** ("session size, new cards per day and new share, one set per store, `null` until Angelo changes one; changed only through the CLI") and §9 *Input* gains "numbers go as flags (`settings set --session-size 15`); free text goes as JSON on stdin", in `docs/design/2026-11-08-aletheia-design.md` (R10); one commit each
 
 ---
 
@@ -96,7 +96,7 @@ that needs it.
 **Independent Test**: `pnpm aletheia tag list` on a `test` store with cards under `messaging::*`
 and `docker::*`.
 
-- [ ] T002 [US1] `tag list` prints the tag tree, in `src/core/tags/tags.ts` and `src/shell/cli/commands/tag-list/tag-list.ts`
+- [X] T002 [US1] `tag list` prints the tag tree, in `src/core/tags/tags.ts` and `src/shell/cli/commands/tag-list/tag-list.ts`
   - **Test**:
     - `src/core/tags/tags.test.ts`, over `tagTree(cards: Card[]): TagCount[]` with `Card` objects built from `newCard(SAMPLE_DRAFT, id, instant)` and `tags` overridden:
       - `tagTree expands every tag into itself and its ancestors` — one card tagged `a::b::c` gives `a`, `a::b` and `a::b::c`, each with 1.
