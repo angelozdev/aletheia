@@ -24,7 +24,8 @@ function countedSince(reviews: Review[], start: Date): number {
 
 function introducedSince(reviews: Review[], today: Date): number {
   return reviewsSince(reviews, today).filter(
-    ({ stateBefore, prerequisiteOf }) => stateBefore === NEW_STATE && prerequisiteOf === null,
+    ({ stateBefore, prerequisiteOf, flag }) =>
+      stateBefore === NEW_STATE && prerequisiteOf === null && policyOf(flag).countsAsIntroduced,
   ).length
 }
 

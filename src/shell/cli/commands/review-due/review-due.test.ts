@@ -399,4 +399,21 @@ describe('aletheia review due', () => {
     expect(idsOf(topic)).toEqual(['4567'])
     expect(idsOf(nextDay)).toEqual(['0123', '4567'])
   })
+
+  it("004-US2-AS3 a voided review counts toward the session's cap and not toward the day's new cards, and its card stays new", async () => {
+    await addCards(3)
+    const limits = ['--session-size', '1', '--new-per-day', '1']
+    const { session } = await list(['review', 'due', ...limits])
+    await grade({ card: '0123', flag: 'badly-written' })
+
+    const inSession = await list(['review', 'due', '--session', session, ...limits])
+    now = new Date('2026-11-12T02:01:00.000Z')
+    const nextSession = await list(['review', 'due', ...limits])
+    const voidedCard = await list(['card', 'show', '0123'])
+
+    expect(inSession).toMatchObject({ capReached: true, cards: [] })
+    expect(nextSession).toMatchObject({ heldBack: 1 })
+    expect(idsOf(nextSession)).toEqual(['4567'])
+    expect(voidedCard.state).toBe('new')
+  })
 })

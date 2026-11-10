@@ -223,6 +223,16 @@ describe('session list', () => {
       expect(withLater).toMatchObject({ cards: [], nextDue: tomorrow })
     })
 
+    it('a voided review of a new card does not count toward the day', () => {
+      const reviews = [voided('new-0', '2026-11-11T06:00:00.000Z', 'new')]
+      const limits = { ...BUILT_IN_SETTINGS, newPerDay: 1 }
+
+      const list = listOf({ scope: freshCards(3), reviews, limits })
+
+      expect(ids(list.cards)).toEqual(['new-1'])
+      expect(list.heldBack).toBe(1)
+    })
+
     it('a card voided before today is listed', () => {
       const reviews = [voided('due-0', '2026-11-11T04:59:59.999Z')]
 

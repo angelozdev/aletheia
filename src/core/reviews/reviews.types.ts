@@ -7,6 +7,7 @@ export type ReviewFlag = (typeof REVIEW_FLAGS)[number]
 export type FlagPolicy = {
   schedule: (card: Card, grade: Grade, now: Date) => Card
   hidesUntilTomorrow: boolean
+  countsAsIntroduced: boolean
 }
 
 export type DueList = { cards: Card[]; nextDue: Date | null }
