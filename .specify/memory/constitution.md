@@ -40,8 +40,8 @@ and scripts alike; a task in `tasks.md` starts with its test.
 Three layers, all mandatory: unit tests over `src/core` and repositories; CLI tests through the
 public interface (the `aletheia` commands and their output); regression evals that run a skill
 headless against a fixture frozen from a real failure. No eval is written ahead of a failure:
-the second time a skill misbehaves in real use, its state becomes a fixture and its eval, and
-that eval reruns whenever the skill or `PROFILE.md` changes. Every acceptance scenario in a spec
+the second time a skill misbehaves in real use, its state, with a frozen copy of the profile,
+becomes a fixture and its eval, and that eval reruns whenever the skill changes. Every acceptance scenario in a spec
 has an id (`NNN-USx-ASy`) and MUST appear in the name of the test or eval that covers it.
 Invariants carry stable ids (`INV-nn`). Tests MUST pass before a Spec Kit task is closed.
 Rationale: the LLM produces, the code verifies. Traceability is a `grep`, not a generator. A
@@ -121,8 +121,9 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
 - `oxlint` and `oxfmt` lint and format; `knip` finds dead code; `jscpd` finds duplication.
   One lint rule enforces Principle III: `src/core` MUST NOT import `node:*`. Code carries no
   comments; names and extracted functions explain it.
-- Code, specs, `PROFILE.md` and skills live in one directory, `~/me/aletheia`. The installed
-  release is a build artifact outside it and holds no data. Its stores live in
+- Code, specs, `PROFILE.md` and skills live in one directory, `~/me/aletheia`. `PROFILE.md` is
+  ignored by git: it is Angelo's, and the skills read and edit it in place, only with his
+  approval. The installed release is a build artifact outside it and holds no data. Its stores live in
   `~/.aletheia/<env>.sqlite`, outside the repo; the sources keep theirs in the repo's
   `data/<env>.sqlite`, ignored by git. `aletheia backup` exists from slice 0,
   copies the database into `backups/` in the same data folder, and runs before any migration
@@ -136,7 +137,8 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
   copies it into `~/.aletheia/skills/`, and
   `~/.claude/skills/az-aletheia-add` is a symlink to that copy, created once. It calls the
   installed binary so it works from any working directory, and both come from the same
-  release. Review, stats and prune are project-local skills in `.claude/skills/`.
+  release; it reads the profile from `~/me/aletheia/PROFILE.md`, the one thing it does not take
+  from the release. Review, stats and prune are project-local skills in `.claude/skills/`.
 
 ## Development Workflow
 
@@ -155,8 +157,8 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
   `proposed â†’ accepted`, superseded rather than edited. `/speckit-plan` promotes qualifying
   `research.md` decisions to ADRs before `/speckit-implement` and links them from `plan.md`.
   Specs say what; ADRs say why.
-- Skills are reviewed through evals, not by reading prompts. A prompt or `PROFILE.md` change
-  reruns the evals of the affected skill.
+- Skills are reviewed through evals, not by reading prompts. A prompt change reruns the evals
+  of the affected skill; each eval carries the profile it was frozen with.
 
 ## Governance
 
@@ -168,4 +170,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.5.1 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
+**Version**: 1.6.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-10
