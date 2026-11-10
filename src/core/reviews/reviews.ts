@@ -1,8 +1,19 @@
 import { bySaved, cardById, NEW_STATE, type Card } from '#core/cards'
-import { scheduleAfter } from '#core/scheduling'
 import { minutesAfter } from '#core/time'
-import { LEARN_AHEAD_MINUTES, LEARNING_STATES, REVIEW_STATE } from './reviews.constants.ts'
-import type { DueList, GradeCardDeps, ReviewDraft } from './reviews.types.ts'
+import {
+  FLAG_POLICIES,
+  LEARN_AHEAD_MINUTES,
+  LEARNING_STATES,
+  NO_FLAG,
+  REVIEW_STATE,
+} from './reviews.constants.ts'
+import type {
+  DueList,
+  FlagPolicy,
+  GradeCardDeps,
+  ReviewDraft,
+  ReviewFlag,
+} from './reviews.types.ts'
 
 function byDue(a: Card, b: Card): number {
   return a.due.getTime() - b.due.getTime()
@@ -58,10 +69,14 @@ export function topicList(cards: Card[], now: Date, today: Date, tomorrow: Date)
   return listOf(cards, [...due, ...notDue])
 }
 
+function policyOf(flag: ReviewFlag | null): FlagPolicy {
+  return flag === null ? NO_FLAG : FLAG_POLICIES[flag]
+}
+
 export function gradeCard(draft: ReviewDraft, { cards, reviews, now }: GradeCardDeps): Card {
   const card = cardById(cards, draft.card)
   if (draft.prerequisiteOf !== undefined) cardById(cards, draft.prerequisiteOf)
-  const graded = scheduleAfter(card, draft.grade, now)
+  const graded = policyOf(draft.flag ?? null).schedule(card, draft.grade, now)
   reviews.record(
     {
       cardId: card.id,

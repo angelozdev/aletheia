@@ -168,7 +168,7 @@ tomorrow; it costs a place in the session and introduces no card.
 
 **Independent Test**: quickstart §2.
 
-- [ ] T006 [US2] A voided review leaves the card's schedule as it was, in `src/core/reviews/reviews.ts`
+- [X] T006 [US2] A voided review leaves the card's schedule as it was, in `src/core/reviews/reviews.ts`
   - **Test**: `review-grade.test.ts`: `004-US2-AS1 review grade logs a badly-written review with both grades and leaves the card's schedule unchanged` — `it.for(['again', 'good'])`: read `card show 0123 --json` before; `grade({ grade, claudeGrade: 'hard', flag: 'badly-written' })` → exit 0; the review row has `flag: badly-written`, both grades, the answer and the rationale; `card show 0123 --json` gives the same `due`, `state`, `learningSteps`, `reps`, `lapses`, `stability`, `difficulty`, `scheduledDays` and `lastReview` as before; stdout's `state` and `due` are the old ones.
   - **Code**:
     - `src/core/reviews/reviews.types.ts`: `FlagPolicy = { schedule: (card: Card, grade: Grade, now: Date) => Card }`.

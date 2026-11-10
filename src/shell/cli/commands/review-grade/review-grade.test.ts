@@ -39,6 +39,11 @@ function reviewDue(at: string) {
   return runOnStore(cli.db, ['review', 'due', '--json'], '', { clock: () => new Date(at) })
 }
 
+async function shownCard() {
+  const { stdout } = await runOnStore(cli.db, ['card', 'show', '0123', '--json'])
+  return JSON.parse(stdout)
+}
+
 function recordedReviews() {
   return selectAll(
     cli.db,
@@ -122,6 +127,36 @@ describe('aletheia review grade', () => {
       { state: 'learning', due: TEN_MINUTES_LATER },
     ])
   })
+
+  it.for(['again', 'good'])(
+    "004-US2-AS1 review grade logs a badly-written review with both grades and leaves the card's schedule unchanged",
+    async (finalGrade) => {
+      const before = await shownCard()
+
+      const { code, stdout } = await grade({
+        grade: finalGrade,
+        claudeGrade: 'hard',
+        flag: 'badly-written',
+      })
+
+      expect(code).toBe(0)
+      expect(stdout).toBe(
+        `card: "0123"\ngrade: ${finalGrade}\nstate: ${before.state}\ndue: "${before.due}"\n`,
+      )
+      expect(
+        selectAll(cli.db, 'select grade, claude_grade, answer, rationale, flag from reviews'),
+      ).toEqual([
+        {
+          grade: finalGrade,
+          claude_grade: 'hard',
+          answer: GRADE.answer,
+          rationale: GRADE.rationale,
+          flag: 'badly-written',
+        },
+      ])
+      expect(await shownCard()).toEqual(before)
+    },
+  )
 
   it('review grade records the card a prerequisite was asked for', async () => {
     await cli.run(['card', 'add'], JSON.stringify([SAMPLE_DRAFT]))
