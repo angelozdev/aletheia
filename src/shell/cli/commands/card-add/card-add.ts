@@ -1,5 +1,5 @@
 import { addCards } from '#core/cards'
-import { cardRepository } from '#shell/db'
+import { StoreCardRepository } from '#shell/db'
 import { readJson } from '../../invocation/stdin/stdin.ts'
 import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand } from '../../main/main.types.ts'
@@ -15,7 +15,7 @@ export const cardAddCommand: CliCommand = {
       const parsed = cardListSchema.safeParse(await readJson(context))
       if (!parsed.success) throw new InvalidCardsError(parsed.error.issues)
       const ids = addCards(parsed.data, {
-        repository: cardRepository(store),
+        repository: new StoreCardRepository(store),
         randomIndex: context.randomIndex,
         now: context.clock(),
       })

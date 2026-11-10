@@ -1,6 +1,6 @@
 import { cardById, type Card } from '#core/cards'
 import { shownInstant } from '#core/time'
-import { cardRepository } from '#shell/db'
+import { StoreCardRepository } from '#shell/db'
 import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand } from '../../main/main.types.ts'
 
@@ -37,6 +37,6 @@ export const cardShowCommand: CliCommand = {
   description: 'print every field of a card',
   run: (context, options, [id]) =>
     withStore(context, options, async (store) =>
-      shownCard(cardById(cardRepository(store), id), context.timeZone),
+      shownCard(cardById(new StoreCardRepository(store), id), context.timeZone),
     ),
 }

@@ -36,7 +36,8 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
 - No comments: names and extracted functions explain the code (lint rule `local/no-comments`).
 - `src/core` is pure: no `node:*`, no I/O, no clock; time and persistence are injected.
 - Only `src/shell/db` imports `node:sqlite` and `drizzle-orm`; everywhere else the `Store` is
-  opaque (ADR-0010). `tests/support/store/` may use `node:sqlite` to arrange and inspect store
+  opaque (ADR-0010). A repository is a port `interface` owned by `src/core` and a class in
+  `src/shell/db` that implements it over a `Store` (`StoreCardRepository implements CardRepository`). `tests/support/store/` may use `node:sqlite` to arrange and inspect store
   files, never `drizzle-orm`.
 - Units import each other through their barrels, `#core/<concept>` and `#shell/<adapter>`
   (one `index.ts` per unit); inside a unit, relative `.ts` imports (ADR-0004).

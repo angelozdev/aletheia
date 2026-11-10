@@ -5,7 +5,7 @@ import { SAMPLE_DRAFT } from '../../../../tests/support/cards/cards.constants.ts
 import { openTestStore, runSql, selectAll } from '../../../../tests/support/store/store.ts'
 import { tempDir } from '../../../../tests/support/temp-dir/temp-dir.ts'
 import { closeStore } from '../database/database.ts'
-import { cardRepository } from './cards.ts'
+import { StoreCardRepository } from './cards.ts'
 
 const NOW = '2026-11-09T15:00:00.000Z'
 
@@ -44,12 +44,12 @@ beforeEach(async () => {
   closeStore(await openTestStore(path))
 })
 
-describe('cardRepository', () => {
+describe('StoreCardRepository', () => {
   it('saveAll stores a card and its tags', async () => {
     const store = await openTestStore(path)
     const now = new Date(NOW)
 
-    cardRepository(store).saveAll([newCard(SAMPLE_DRAFT, 'k7m2', now)])
+    new StoreCardRepository(store).saveAll([newCard(SAMPLE_DRAFT, 'k7m2', now)])
     closeStore(store)
 
     expect(selectAll(path, 'select * from cards')).toEqual([

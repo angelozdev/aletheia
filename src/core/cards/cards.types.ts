@@ -34,7 +34,7 @@ export type Card = CardDraft & {
 
 export type RandomIndex = (bound: number) => number
 
-export type CardRepository = {
+export interface CardRepository {
   saveAll(cards: Card[]): void
   find(id: string): Card | null
 }

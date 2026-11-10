@@ -2,7 +2,7 @@ import type { Card, CardRepository } from '#core/cards'
 import { eq, sql } from 'drizzle-orm'
 import { instantFrom, storedInstant } from '#core/time'
 import { database } from '../database/database.ts'
-import type { Store } from '../database/database.types.ts'
+import type { Database, Store } from '../database/database.types.ts'
 import { cards, cardTags } from './cards.schema.ts'
 import type { CardRow, StoredCard } from './cards.types.ts'
 
@@ -42,32 +42,37 @@ function cardFrom(row: StoredCard, tags: string[]): Card {
   }
 }
 
-export function cardRepository(store: Store): CardRepository {
-  const db = database(store)
-  return {
-    saveAll(saved) {
-      db.transaction((tx) => {
-        for (const card of saved) {
-          tx.insert(cards).values(cardRow(card)).run()
-          tx.insert(cardTags)
-            .values(card.tags.map((tag) => ({ cardId: card.id, tag })))
-            .run()
-        }
-      })
-    },
-    find(id) {
-      const row = db.select().from(cards).where(eq(cards.id, id)).get()
-      if (row === undefined) return null
-      const tags = db
-        .select({ tag: cardTags.tag })
-        .from(cardTags)
-        .where(eq(cardTags.cardId, id))
-        .orderBy(sql`rowid`)
-        .all()
-      return cardFrom(
-        row,
-        tags.map(({ tag }) => tag),
-      )
-    },
+export class StoreCardRepository implements CardRepository {
+  readonly #db: Database
+
+  constructor(store: Store) {
+    this.#db = database(store)
+  }
+
+  saveAll(saved: Card[]): void {
+    this.#db.transaction((tx) => {
+      for (const card of saved) {
+        tx.insert(cards).values(cardRow(card)).run()
+        tx.insert(cardTags)
+          .values(card.tags.map((tag) => ({ cardId: card.id, tag })))
+          .run()
+      }
+    })
+  }
+
+  find(id: string): Card | null {
+    const row = this.#db.select().from(cards).where(eq(cards.id, id)).get()
+    if (row === undefined) return null
+    return cardFrom(row, this.#tagsOf(id))
+  }
+
+  #tagsOf(id: string): string[] {
+    return this.#db
+      .select({ tag: cardTags.tag })
+      .from(cardTags)
+      .where(eq(cardTags.cardId, id))
+      .orderBy(sql`rowid`)
+      .all()
+      .map(({ tag }) => tag)
   }
 }
