@@ -23,3 +23,5 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 | 0011 | The release copies the global skill | accepted | 2026-11-09 |
 | 0012 | ts-fsrs 5 with FSRS-6 and one learning step, behind one core module | accepted | 2026-11-09 |
 | 0013 | Cards, tags and reviews, with their rules in the store | accepted | 2026-11-09 |
+| 0014 | Card search with FTS5, terms built in the core | accepted | 2026-11-09 |
+| 0015 | The profile is an untracked file, read and edited in place | accepted | 2026-11-09 |

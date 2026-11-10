@@ -38,6 +38,7 @@ export interface CardRepository {
   saveAll(cards: Card[]): void
   find(id: string): Card | null
   active(): Card[]
+  matching(terms: string[]): Card[]
 }
 
 export type AddCardsDeps = {

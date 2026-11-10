@@ -15,9 +15,10 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
   and it defaults to `prod` in `~/.aletheia/`. Aletheia's own skills (review, stats,
   prune) are the exception: they call the installed `aletheia`, because that is use, not
   development.
-- The CLI's commands: `backup`; `card add` and `review grade`, which read JSON on stdin (a
-  quoted heredoc, `<<'JSON'`); `card show <id>` and `review due`. `--help` on any of them
-  gives its usage; `specs/001-capture-and-review/contracts/cli.md` gives its output and errors.
+- The CLI's commands: `backup`; `card add`, `card search` and `review grade`, which read JSON
+  on stdin (a quoted heredoc, `<<'JSON'`); `card show <id>` and `review due`. `--help` on any
+  of them gives its usage; `specs/001-capture-and-review/contracts/cli.md` and
+  `specs/002-intake-filter/contracts/cli.md` give their output and errors.
 - `pnpm db:generate --name <name>` derives a migration from the `*.schema.ts` files;
   `pnpm exec drizzle-kit generate --custom --name <name>` makes an empty one for triggers.
   Read the SQL before committing it.
@@ -68,6 +69,8 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
 ## Data
 
 - The CLI is the only writer. Never open or edit a store directly.
+- `PROFILE.md` at the repo root is Angelo's and ignored by git (ADR-0015). The skills read it
+  and edit it only after he approves the exact line; no test or eval reads or writes it.
 - Environment: `--env` > `ALETHEIA_DB` > `ALETHEIA_ENV` > default by invocation. Every command
   prints `env: <name>` on stderr.
 - INV-01: no test or eval opens a store or writes a backup under `data/` or `~/.aletheia/`,

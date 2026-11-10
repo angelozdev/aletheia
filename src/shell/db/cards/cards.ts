@@ -1,9 +1,9 @@
 import { ACTIVE_STATUS, CardIdTakenError, type Card, type CardRepository } from '#core/cards'
-import { DrizzleQueryError, eq, sql } from 'drizzle-orm'
+import { DrizzleQueryError, eq, inArray, sql, type SQL } from 'drizzle-orm'
 import { instantFrom, storedInstant } from '#core/time'
 import { database } from '../database/database.ts'
 import type { Database, Store } from '../database/database.types.ts'
-import { TAKEN_ID } from './cards.constants.ts'
+import { TAKEN_ID, TERM_SEPARATOR } from './cards.constants.ts'
 import { cards, cardTags } from './cards.schema.ts'
 import type { CardRow, ScheduleRow, StoredCard } from './cards.types.ts'
 
@@ -39,6 +39,10 @@ function cardRow(card: Card): CardRow {
 
 function isTakenId(error: unknown): boolean {
   return error instanceof DrizzleQueryError && error.cause?.message === TAKEN_ID
+}
+
+function searchQuery(terms: string[]): string {
+  return terms.map((term) => `"${term}"*`).join(TERM_SEPARATOR)
 }
 
 function cardFrom(row: StoredCard, tags: string[]): Card {
@@ -87,7 +91,27 @@ export class StoreCardRepository implements CardRepository {
   }
 
   active(): Card[] {
-    const rows = this.#db.select().from(cards).where(eq(cards.status, ACTIVE_STATUS)).all()
+    return this.#cardsWhere(eq(cards.status, ACTIVE_STATUS))
+  }
+
+  matching(terms: string[]): Card[] {
+    if (terms.length === 0) return []
+    const ids = this.#matchingIds(searchQuery(terms))
+    const found = this.#cardsWhere(inArray(cards.id, ids))
+    const byId = new Map(found.map((card) => [card.id, card]))
+    return ids.map((id) => byId.get(id)).filter((card) => card !== undefined)
+  }
+
+  #matchingIds(query: string): string[] {
+    return this.#db
+      .all<{ id: string }>(
+        sql`select c.id from card_search s join cards c on c.id = s.card_id where card_search match ${query} and c.status = ${ACTIVE_STATUS} order by s.rank`,
+      )
+      .map(({ id }) => id)
+  }
+
+  #cardsWhere(condition: SQL): Card[] {
+    const rows = this.#db.select().from(cards).where(condition).all()
     const tags = this.#tagsByCard()
     return rows.map((row) => cardFrom(row, tags.get(row.id) ?? []))
   }

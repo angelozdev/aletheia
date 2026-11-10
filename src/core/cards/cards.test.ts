@@ -18,6 +18,7 @@ function refusingRepository(refusals: number): CardRepository & { saved: Card[][
     },
     find: () => null,
     active: () => [],
+    matching: () => [],
   }
 }
 
