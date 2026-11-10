@@ -139,9 +139,11 @@ says nothing about Angelo's memory. — _my call_
 reason, date. Used so kept cards are not proposed again without new evidence
 (§8.4). — _my call_
 
-**Profile**: a `PROFILE.md` in the repo that the add and prune skills always
-read, as context for judging usefulness (not a whitelist of topics). Initial
-content:
+**Profile**: a `PROFILE.md` at the repo root, ignored by git, that the add and
+prune skills always read, as context for judging usefulness (not a whitelist of
+topics). It is kept current from the conversation: during a capture or a review,
+the moment Angelo states his level, Claude offers the exact line to add or change
+and writes it only if he approves (spec 002, ADR-0015). Initial content:
 
 - Very strong frontend; working backend knowledge; studying AWS.
 - _Guess, not stated:_ heading toward full-stack with weight on cloud.
@@ -202,10 +204,12 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
 1. Claude reads `PROFILE.md` and drafts cards from the current conversation,
    following §6 and §7.
 2. For each draft, Claude asks the CLI for similar existing cards (text search
-   plus tags) and judges duplicates itself.
+   widened with synonyms and technical terms in Spanish and English, plus tags)
+   and judges duplicates and overlaps itself.
 3. Claude presents the drafts: type, tags, question, answer, key points,
    situation. Dubious drafts are flagged with the reason ("trivia", "ya lo sabes
-   por tu perfil", "duplica a #id", "sin situación creíble").
+   por tu perfil", "duplica a #id", "se solapa con #id", "sin situación creíble")
+   and shown with the rest, never dropped silently.
 4. Angelo approves, edits or rejects each card.
 5. Approved cards are saved through the CLI. Rejected drafts are not stored.
 
@@ -336,8 +340,11 @@ skills (Claude)  ──►  CLI (commander)  ──►  core (domain, FSRS, stat
     multi-line code.
   - Filterable, sortable queries over cards and stats, so Claude can answer
     free-form progress questions without new commands.
-- **Search for duplicates:** SQLite FTS5 plus tags. No vectors in v1. If
-  duplicates slip through at scale, `sqlite-vec` adds embeddings to the same file.
+- **Search for duplicates:** SQLite FTS5 plus tags (ADR-0014). The core turns
+  the words into terms (common words dropped, plurals made singular) matched as
+  prefixes, then orders word matches sharing a tag family, other word matches,
+  and cards sharing only a tag family. No vectors in v1. If duplicates slip
+  through at scale, `sqlite-vec` adds embeddings to the same file.
 
 ## 10. Stack
 
