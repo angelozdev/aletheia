@@ -318,7 +318,7 @@ lists use them below a one-session limit.
 
 **Independent Test**: quickstart §4.
 
-- [ ] T017 [US4] `settings show` gives each setting and whether it is the built-in default, in `src/shell/db/settings/settings.ts` and `src/shell/cli/commands/settings-show/settings-show.ts`
+- [X] T017 [US4] `settings show` gives each setting and whether it is the built-in default, in `src/shell/db/settings/settings.ts` and `src/shell/cli/commands/settings-show/settings-show.ts`
   - **Test**:
     - `src/shell/db/settings/settings.test.ts`, over a store from `openTestStore(path)`:
       - `stored reads every setting as null with no row`.
