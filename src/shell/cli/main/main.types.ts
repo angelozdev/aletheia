@@ -16,6 +16,7 @@ export type CliContext = {
   version: string
   vars: Vars
   clock: Clock
+  timeZone: string
   randomIndex: RandomIndex
   defaultEnv: string
   dataDir: string | null
@@ -26,9 +27,12 @@ export type GlobalOptions = { env?: string; json?: boolean }
 
 type CommandGroup = keyof typeof COMMAND_GROUPS
 
+type CommandArgument = { name: string; description: string }
+
 export type CliCommand = {
   group?: CommandGroup
   name: string
+  argument?: CommandArgument
   description: string
   run(context: CliContext, options: GlobalOptions, args: string[]): Promise<number>
 }

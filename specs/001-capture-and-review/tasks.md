@@ -115,7 +115,7 @@ show <id>` prints every field as written, with its dates in local time.
     - `src/shell/cli/commands/card-add/card-add.ts`: `cardAddCommand` (`group: 'card'`, `name: 'add'`, "save the cards given as JSON on stdin, all or none"), which reads the list inside `withStore` and returns `{ ids }`; `card-add.schema.ts` holds a zod schema with the shape only (its rules arrive in T004).
     - `tests/support/run-cli/run-cli.ts`: defaults `stdin: () => Promise.resolve('')`, a counting `randomIndex`, and `migrationsDir` from a new `noMigrations()` in `tests/support/fixture-migrations/fixture-migrations.ts` (an empty `tempDir`), per decision 3.
   - **Run**: `pnpm aletheia card add <<'JSON' … JSON` with the card of quickstart §1 → `ids[1]: <id>`
-- [ ] T003 [US1] `card show <id>` prints every field with its dates in local time, in `src/shell/cli/commands/card-show/card-show.ts`
+- [X] T003 [US1] `card show <id>` prints every field with its dates in local time, in `src/shell/cli/commands/card-show/card-show.ts`
   - **Test**:
     - `src/core/time/time.test.ts`: `shownInstant writes an instant in a zone's local time with its offset` — `2026-11-12T02:00:00.000Z` → `2026-11-11T21:00:00-05:00` in `America/Bogota` and `2026-11-12T03:00:00+01:00` in `Europe/Madrid`; `instantFrom reads a stored instant back` — `instantFrom('2026-11-12T02:00:00.000Z').getTime()` equals the original.
     - `tests/lint/lint.test.ts`: `fails when a file outside src/core/time imports date-fns` (a `src/core/sample/sample.ts` and a `src/shell/db/sample/sample.ts`, for `date-fns` and for `@date-fns/tz`) and `passes when src/core/time imports date-fns`.

@@ -1,10 +1,10 @@
 import type { CARD_STATES, CARD_STATUSES, CARD_TYPES } from './cards.constants.ts'
 
-type CardType = (typeof CARD_TYPES)[number]
+export type CardType = (typeof CARD_TYPES)[number]
 
-type CardStatus = (typeof CARD_STATUSES)[number]
+export type CardStatus = (typeof CARD_STATUSES)[number]
 
-type CardState = (typeof CARD_STATES)[number]
+export type CardState = (typeof CARD_STATES)[number]
 
 export type CardDraft = {
   type: CardType
@@ -36,6 +36,7 @@ export type RandomIndex = (bound: number) => number
 
 export type CardRepository = {
   saveAll(cards: Card[]): void
+  find(id: string): Card | null
 }
 
 export type AddCardsDeps = {

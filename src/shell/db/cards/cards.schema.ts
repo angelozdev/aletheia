@@ -1,21 +1,28 @@
 import { sql } from 'drizzle-orm'
 import { check, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
-import { CARD_STATES, CARD_STATUSES, CARD_TYPES } from '#core/cards'
+import {
+  CARD_STATES,
+  CARD_STATUSES,
+  CARD_TYPES,
+  type CardState,
+  type CardStatus,
+  type CardType,
+} from '#core/cards'
 import { notBlank, oneOf } from '../checks/checks.ts'
 
 export const cards = sqliteTable(
   'cards',
   {
     id: text().primaryKey(),
-    type: text().notNull(),
+    type: text().$type<CardType>().notNull(),
     question: text().notNull(),
     answer: text().notNull(),
     situation: text().notNull(),
     source: text().notNull(),
     keyPoints: text('key_points').notNull(),
-    status: text().notNull().default('active'),
+    status: text().$type<CardStatus>().notNull().default('active'),
     due: text().notNull(),
-    state: text().notNull().default('new'),
+    state: text().$type<CardState>().notNull().default('new'),
     stability: real().notNull().default(0),
     difficulty: real().notNull().default(0),
     scheduledDays: integer('scheduled_days').notNull().default(0),

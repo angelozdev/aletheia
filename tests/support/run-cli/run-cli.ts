@@ -17,6 +17,7 @@ export async function runCli(argv: string[], overrides: CliOverrides = {}): Prom
     version: 'dev',
     vars: {},
     clock: () => new Date(FIXED_INSTANT),
+    timeZone: 'America/Bogota',
     defaultEnv: 'test',
     dataDir: null,
     stdin: () => Promise.resolve(''),

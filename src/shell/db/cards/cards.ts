@@ -1,9 +1,10 @@
 import type { Card, CardRepository } from '#core/cards'
-import { storedInstant } from '#core/time'
+import { eq, sql } from 'drizzle-orm'
+import { instantFrom, storedInstant } from '#core/time'
 import { database } from '../database/database.ts'
 import type { Store } from '../database/database.types.ts'
 import { cards, cardTags } from './cards.schema.ts'
-import type { CardRow } from './cards.types.ts'
+import type { CardRow, StoredCard } from './cards.types.ts'
 
 function cardRow(card: Card): CardRow {
   return {
@@ -29,6 +30,18 @@ function cardRow(card: Card): CardRow {
   }
 }
 
+function cardFrom(row: StoredCard, tags: string[]): Card {
+  return {
+    ...row,
+    tags,
+    keyPoints: JSON.parse(row.keyPoints),
+    due: instantFrom(row.due),
+    lastReview: row.lastReview === null ? null : instantFrom(row.lastReview),
+    createdAt: instantFrom(row.createdAt),
+    updatedAt: instantFrom(row.updatedAt),
+  }
+}
+
 export function cardRepository(store: Store): CardRepository {
   const db = database(store)
   return {
@@ -41,6 +54,20 @@ export function cardRepository(store: Store): CardRepository {
             .run()
         }
       })
+    },
+    find(id) {
+      const row = db.select().from(cards).where(eq(cards.id, id)).get()
+      if (row === undefined) return null
+      const tags = db
+        .select({ tag: cardTags.tag })
+        .from(cardTags)
+        .where(eq(cardTags.cardId, id))
+        .orderBy(sql`rowid`)
+        .all()
+      return cardFrom(
+        row,
+        tags.map(({ tag }) => tag),
+      )
     },
   }
 }

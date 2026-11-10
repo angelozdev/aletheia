@@ -124,6 +124,41 @@ describe.concurrent('lint', () => {
     },
   )
 
+  const confinedLibraries = [
+    {
+      library: 'date-fns',
+      home: 'src/core/time',
+      source: "import { parseISO } from 'date-fns'\nexport const parse = parseISO\n",
+    },
+    {
+      library: '@date-fns/tz',
+      home: 'src/core/time',
+      source: "import { TZDate } from '@date-fns/tz'\nexport const Zoned = TZDate\n",
+    },
+  ]
+
+  it.for(confinedLibraries)(
+    'fails when a file outside $home imports $library',
+    async ({ source }, { expect, onTestFinished }) => {
+      const outside = ['src/core/sample/sample.ts', 'src/shell/db/sample/sample.ts']
+
+      const results = await Promise.all(
+        outside.map((path) => lintFixture(onTestFinished, { [path]: source })),
+      )
+
+      results.forEach((result, index) => expectFailure(expect, result, outside[index]))
+    },
+  )
+
+  it.for(confinedLibraries)(
+    'passes when $home imports $library',
+    async ({ home, source }, { expect, onTestFinished }) => {
+      const inside = `${home}/sample.ts`
+
+      expectPass(expect, await lintFixture(onTestFinished, { [inside]: source }), inside)
+    },
+  )
+
   it('fails a file name that is not kebab-case', async ({ expect, onTestFinished }) => {
     const result = await lintFixture(onTestFinished, {
       'src/shell/SampleFile.ts': 'export const a = 1\n',

@@ -1,5 +1,6 @@
 import { ACTIVE_STATUS, ID_ALPHABET, ID_LENGTH, NEW_STATE } from './cards.constants.ts'
-import type { AddCardsDeps, Card, CardDraft, RandomIndex } from './cards.types.ts'
+import { CardNotFoundError } from './cards.errors.ts'
+import type { AddCardsDeps, Card, CardDraft, CardRepository, RandomIndex } from './cards.types.ts'
 
 export function cardId(randomIndex: RandomIndex): string {
   return Array.from({ length: ID_LENGTH }, () =>
@@ -33,4 +34,10 @@ export function addCards(
   const cards = drafts.map((draft) => newCard(draft, cardId(randomIndex), now))
   repository.saveAll(cards)
   return cards.map(({ id }) => id)
+}
+
+export function cardById(repository: CardRepository, id: string): Card {
+  const card = repository.find(id)
+  if (card === null) throw new CardNotFoundError(id)
+  return card
 }

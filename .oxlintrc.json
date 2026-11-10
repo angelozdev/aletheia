@@ -5,7 +5,12 @@
   "rules": {
     "local/no-comments": "error",
     "sonarjs/cognitive-complexity": ["error", 15],
-    "unicorn/filename-case": ["error", { "case": "kebabCase" }],
+    "unicorn/filename-case": [
+      "error",
+      {
+        "case": "kebabCase"
+      }
+    ],
     "no-restricted-imports": [
       "error",
       {
@@ -13,6 +18,10 @@
           {
             "group": ["node:sqlite", "drizzle-orm", "drizzle-orm/*"],
             "message": "only src/shell/db knows the database"
+          },
+          {
+            "group": ["date-fns", "date-fns/*", "@date-fns/*"],
+            "message": "only src/core/time knows the date library"
           }
         ]
       }
@@ -22,7 +31,17 @@
     {
       "files": ["src/shell/db/**"],
       "rules": {
-        "no-restricted-imports": "off"
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["date-fns", "date-fns/*", "@date-fns/*"],
+                "message": "only src/core/time knows the date library"
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -47,6 +66,10 @@
               {
                 "group": ["node:sqlite", "drizzle-orm", "drizzle-orm/*"],
                 "message": "only src/shell/db knows the database"
+              },
+              {
+                "group": ["date-fns", "date-fns/*", "@date-fns/*"],
+                "message": "only src/core/time knows the date library"
               }
             ]
           }
@@ -69,6 +92,12 @@
                 "name": "node:fs/promises",
                 "importNames": ["mkdtemp"],
                 "message": "tests make temp folders with tempDir from tests/support/temp-dir, which removes them"
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["date-fns", "date-fns/*", "@date-fns/*"],
+                "message": "only src/core/time knows the date library"
               }
             ]
           }
@@ -97,6 +126,10 @@
               {
                 "group": ["drizzle-orm", "drizzle-orm/*"],
                 "message": "only src/shell/db knows the ORM"
+              },
+              {
+                "group": ["date-fns", "date-fns/*", "@date-fns/*"],
+                "message": "only src/core/time knows the date library"
               }
             ]
           }
@@ -113,6 +146,10 @@
               {
                 "group": ["node:sqlite", "drizzle-orm", "drizzle-orm/*"],
                 "message": "only src/shell/db knows the database"
+              },
+              {
+                "group": ["date-fns", "date-fns/*", "@date-fns/*"],
+                "message": "only src/core/time knows the date library"
               }
             ]
           }
@@ -127,12 +164,47 @@
           "error",
           {
             "patterns": [
-              { "group": ["node:*"], "message": "src/core performs no I/O" },
+              {
+                "group": ["node:*"],
+                "message": "src/core performs no I/O"
+              },
               {
                 "group": ["drizzle-orm", "drizzle-orm/*"],
                 "message": "only src/shell/db knows the ORM"
               },
-              { "group": ["#shell/*"], "message": "src/core never imports the shell" }
+              {
+                "group": ["#shell/*"],
+                "message": "src/core never imports the shell"
+              },
+              {
+                "group": ["date-fns", "date-fns/*", "@date-fns/*"],
+                "message": "only src/core/time knows the date library"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/core/time/**"],
+      "rules": {
+        "import/no-nodejs-modules": "error",
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["node:*"],
+                "message": "src/core performs no I/O"
+              },
+              {
+                "group": ["drizzle-orm", "drizzle-orm/*"],
+                "message": "only src/shell/db knows the ORM"
+              },
+              {
+                "group": ["#shell/*"],
+                "message": "src/core never imports the shell"
+              }
             ]
           }
         ]

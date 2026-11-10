@@ -1,10 +1,11 @@
 import { Command, CommanderError, type CommandUnknownOpts } from '@commander-js/extra-typings'
 import { backupCommand } from '../commands/backup/backup.ts'
 import { cardAddCommand } from '../commands/card-add/card-add.ts'
+import { cardShowCommand } from '../commands/card-show/card-show.ts'
 import { COMMAND_GROUPS, ExitCode } from './main.constants.ts'
 import type { CliCommand, CliContext } from './main.types.ts'
 
-const COMMANDS = [backupCommand, cardAddCommand]
+const COMMANDS = [backupCommand, cardAddCommand, cardShowCommand]
 
 function program(context: CliContext) {
   return new Command('aletheia')
@@ -37,6 +38,8 @@ export async function main(argv: string[], context: CliContext): Promise<number>
     const registered = parentOf(root, command)
       .command(command.name)
       .description(command.description)
+    if (command.argument !== undefined)
+      registered.argument(command.argument.name, command.argument.description)
     registered.action(async () => {
       exitCode = await command.run(context, root.opts(), registered.args)
     })
