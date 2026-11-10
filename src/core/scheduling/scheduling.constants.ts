@@ -4,6 +4,8 @@ import type { Grade } from './scheduling.types.ts'
 
 export const GRADES = ['again', 'hard', 'good', 'easy'] as const
 
+export const AGAIN_GRADE = 'again'
+
 export const LEARNING_STEPS = ['10m'] as const
 
 export const FSRS_STATES: Record<CardState, State> = {

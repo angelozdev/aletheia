@@ -1,11 +1,19 @@
 import { z } from 'zod'
-import { GRADES } from '#core/scheduling'
+import { MISSING_PREREQUISITE, REVIEW_FLAGS } from '#core/reviews'
+import { AGAIN_GRADE, GRADES } from '#core/scheduling'
 import { oneOf, requiredText } from '../../invocation/input/input.schema.ts'
+import { GAP_NEEDS_AGAIN } from './review-grade.constants.ts'
 
-export const reviewSchema = z.strictObject({
-  card: requiredText,
-  grade: oneOf(GRADES),
-  claudeGrade: oneOf(GRADES),
-  answer: requiredText,
-  rationale: requiredText,
-})
+export const reviewSchema = z
+  .strictObject({
+    card: requiredText,
+    grade: oneOf(GRADES),
+    claudeGrade: oneOf(GRADES),
+    answer: requiredText,
+    rationale: requiredText,
+    flag: oneOf(REVIEW_FLAGS).optional(),
+  })
+  .refine((review) => review.flag !== MISSING_PREREQUISITE || review.grade === AGAIN_GRADE, {
+    path: ['flag'],
+    message: GAP_NEEDS_AGAIN,
+  })

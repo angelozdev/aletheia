@@ -70,6 +70,7 @@ export function gradeCard(draft: ReviewDraft, { cards, reviews, now }: GradeCard
       reviewedAt: now,
       answer: draft.answer,
       rationale: draft.rationale,
+      flag: draft.flag ?? null,
     },
     graded,
   )

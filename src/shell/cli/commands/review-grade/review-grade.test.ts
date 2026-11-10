@@ -26,7 +26,7 @@ function gradeText(stdin: string, at = NOW) {
   return runOnStore(cli.db, ['review', 'grade'], stdin, { clock: () => new Date(at) })
 }
 
-function grade(fields: Record<string, string>, at = NOW) {
+function grade(fields: Record<string, unknown>, at = NOW) {
   return gradeText(JSON.stringify({ ...GRADE, ...fields }), at)
 }
 
@@ -107,6 +107,22 @@ describe('aletheia review grade', () => {
     })
   })
 
+  it('004-US1-AS1 review grade logs a missing-prerequisite Again and reschedules the card like any Again', async () => {
+    const { code } = await grade({
+      grade: 'again',
+      claudeGrade: 'again',
+      flag: 'missing-prerequisite',
+    })
+
+    expect(code).toBe(0)
+    expect(selectAll(cli.db, 'select flag from reviews')).toEqual([
+      { flag: 'missing-prerequisite' },
+    ])
+    expect(selectAll(cli.db, 'select state, due from cards')).toEqual([
+      { state: 'learning', due: TEN_MINUTES_LATER },
+    ])
+  })
+
   describe('refusals', () => {
     let cardBefore: unknown
 
@@ -156,6 +172,23 @@ describe('aletheia review grade', () => {
 
       expectRefused(run, line('invalid review: answer: is required; rationale: is required'))
     })
+
+    it.for<[Record<string, unknown>, string]>([
+      [
+        { grade: 'hard', flag: 'missing-prerequisite' },
+        'flag: missing-prerequisite needs the grade again',
+      ],
+      [{ flag: 'trivia' }, 'flag: must be missing-prerequisite or badly-written'],
+      [
+        { flag: ['missing-prerequisite', 'badly-written'] },
+        'flag: must be missing-prerequisite or badly-written',
+      ],
+    ])(
+      '004-US1-AS2 review grade refuses a missing-prerequisite that is not Again, and a flag outside the two',
+      async ([fields, message]) => {
+        expectRefused(await grade(fields), line(`invalid review: ${message}`))
+      },
+    )
 
     it('review grade refuses a field that is not a review field', async () => {
       const run = await grade({ note: 'una nota' })

@@ -1,5 +1,8 @@
 import type { Card, CardRepository, CardState } from '#core/cards'
 import type { Grade } from '#core/scheduling'
+import type { REVIEW_FLAGS } from './reviews.constants.ts'
+
+export type ReviewFlag = (typeof REVIEW_FLAGS)[number]
 
 export type DueList = { cards: Card[]; nextDue: Date | null }
 
@@ -11,6 +14,7 @@ export type Review = {
   reviewedAt: Date
   answer: string
   rationale: string
+  flag: ReviewFlag | null
 }
 
 export type ReviewDraft = {
@@ -19,6 +23,7 @@ export type ReviewDraft = {
   claudeGrade: Grade
   answer: string
   rationale: string
+  flag?: ReviewFlag
 }
 
 export interface ReviewRepository {

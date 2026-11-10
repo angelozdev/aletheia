@@ -19,6 +19,7 @@ import { StoreReviewRepository } from './reviews.ts'
 const NOW = '2026-11-09T15:00:00.000Z'
 const now = new Date(NOW)
 const card = newCard(SAMPLE_DRAFT, 'k7m2', now)
+const otherCard = newCard(SAMPLE_DRAFT, 'c4gr', now)
 
 const REVIEW: Review = {
   cardId: 'k7m2',
@@ -28,6 +29,7 @@ const REVIEW: Review = {
   reviewedAt: now,
   answer: 'ps muestra los que corren, -a todos',
   rationale: 'Cubre los dos key points, sin dudar.',
+  flag: null,
 }
 
 const VALID_REVIEW: Record<string, string> = {
@@ -106,6 +108,20 @@ describe('StoreReviewRepository', () => {
     ])
   })
 
+  it('record stores the flag', async () => {
+    const gap: Review = { ...REVIEW, grade: 'again', flag: 'missing-prerequisite' }
+    let since: Review[] = []
+
+    await withStore((store) => {
+      const reviews = new StoreReviewRepository(store)
+      reviews.record(gap, scheduleAfter(card, 'again', now))
+      since = reviews.since(now)
+    })
+
+    expect(selectAll(path, 'select flag from reviews')).toEqual([{ flag: 'missing-prerequisite' }])
+    expect(since).toEqual([gap])
+  })
+
   it('record changes nothing when the store refuses the review', async () => {
     const before = selectAll(path, SCHEDULE)
     const refused = { ...REVIEW, grade: 'perfect' as Grade }
@@ -143,6 +159,16 @@ describe('the reviews table', () => {
     expect(selectAll(path, 'select count(*) as n from reviews')).toEqual([{ n: 1 }])
   })
 
+  it('accepts a missing-prerequisite Again, a badly-written review of any grade, and a prerequisite of another card', async () => {
+    await withStore((store) => new StoreCardRepository(store).saveAll([otherCard]))
+
+    runSql(path, insertReview({ flag: 'missing-prerequisite', grade: 'again' }))
+    runSql(path, insertReview({ flag: 'badly-written', grade: 'good' }))
+    runSql(path, insertReview({ prerequisite_of: otherCard.id }))
+
+    expect(selectAll(path, 'select count(*) as n from reviews')).toEqual([{ n: 3 }])
+  })
+
   it.for<[string, Record<string, string>]>([
     ['a grade outside the four', { grade: 'perfect' }],
     ['a claude grade outside the four', { claude_grade: 'perfect' }],
@@ -150,6 +176,10 @@ describe('the reviews table', () => {
     ['a blank answer', { answer: '  ' }],
     ['a blank rationale', { rationale: '  ' }],
     ['a review for a card that does not exist', { card_id: 'zzzz' }],
+    ['a flag outside the two', { flag: 'trivia' }],
+    ['a missing prerequisite that is not Again', { flag: 'missing-prerequisite', grade: 'hard' }],
+    ['a card that is its own prerequisite', { prerequisite_of: 'k7m2' }],
+    ['a prerequisite of a card that does not exist', { prerequisite_of: 'zzzz' }],
   ])('refuses %s', ([, overrides]) => {
     expect(() => runSql(path, insertReview(overrides))).toThrow()
     expect(selectAll(path, 'select count(*) as n from reviews')).toEqual([{ n: 0 }])

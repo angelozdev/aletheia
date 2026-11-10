@@ -1,8 +1,10 @@
+import { sql } from 'drizzle-orm'
 import { check, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { CARD_STATES, type CardState } from '#core/cards'
-import { GRADES, type Grade } from '#core/scheduling'
+import { MISSING_PREREQUISITE, REVIEW_FLAGS, type ReviewFlag } from '#core/reviews'
+import { AGAIN_GRADE, GRADES, type Grade } from '#core/scheduling'
 import { cards } from '../cards/cards.schema.ts'
-import { notBlank, oneOf } from '../checks/checks.ts'
+import { notBlank, oneOf, textLiteral } from '../checks/checks.ts'
 
 export const reviews = sqliteTable(
   'reviews',
@@ -17,6 +19,8 @@ export const reviews = sqliteTable(
     reviewedAt: text('reviewed_at').notNull(),
     answer: text().notNull(),
     rationale: text().notNull(),
+    flag: text().$type<ReviewFlag>(),
+    prerequisiteOf: text('prerequisite_of').references(() => cards.id),
   },
   (table) => [
     check('reviews_grade', oneOf(table.grade, GRADES)),
@@ -24,5 +28,14 @@ export const reviews = sqliteTable(
     check('reviews_state_before', oneOf(table.stateBefore, CARD_STATES)),
     check('reviews_answer', notBlank(table.answer)),
     check('reviews_rationale', notBlank(table.rationale)),
+    check('reviews_flag', sql`${table.flag} IS NULL OR ${oneOf(table.flag, REVIEW_FLAGS)}`),
+    check(
+      'reviews_gap_is_again',
+      sql`${table.flag} IS NOT ${textLiteral(MISSING_PREREQUISITE)} OR ${table.grade} = ${textLiteral(AGAIN_GRADE)}`,
+    ),
+    check(
+      'reviews_prerequisite_of',
+      sql`${table.prerequisiteOf} IS NULL OR ${table.prerequisiteOf} <> ${table.cardId}`,
+    ),
   ],
 )

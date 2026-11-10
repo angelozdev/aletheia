@@ -39,6 +39,7 @@ function graded(cardId: string, reviewedAt: string, stateBefore: Card['state'] =
     reviewedAt: new Date(reviewedAt),
     answer: 'a',
     rationale: 'r',
+    flag: null,
   }
 }
 

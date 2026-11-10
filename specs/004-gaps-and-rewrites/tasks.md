@@ -96,7 +96,7 @@ contradictory flag is refused by the CLI and by the store.
 
 **Independent Test**: `pnpm aletheia review grade` with `"grade":"again","flag":"missing-prerequisite"`, then the same with `"grade":"hard"`.
 
-- [ ] T002 [US1] `review grade` records a `missing-prerequisite` flag, and the store refuses every contradiction of both new columns, in `src/shell/db/reviews/reviews.schema.ts` and `src/shell/cli/commands/review-grade/review-grade.schema.ts`
+- [X] T002 [US1] `review grade` records a `missing-prerequisite` flag, and the store refuses every contradiction of both new columns, in `src/shell/db/reviews/reviews.schema.ts` and `src/shell/cli/commands/review-grade/review-grade.schema.ts`
   - **Test**:
     - `src/shell/db/reviews/reviews.test.ts`, in "the reviews table":
       - `accepts a missing-prerequisite Again, a badly-written review of any grade, and a prerequisite of another card` — `insertReview({ flag: 'missing-prerequisite', grade: 'again' })`, `insertReview({ flag: 'badly-written', grade: 'good' })`, and, with a second card saved in `beforeEach`'s style, `insertReview({ prerequisite_of: '<the second id>' })`; three rows.
