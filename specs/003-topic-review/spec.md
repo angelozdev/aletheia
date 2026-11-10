@@ -112,6 +112,7 @@ Angelo says "a partir de ahora quiero sesiones de 15 y 20 % de nuevas". Claude s
 - US4 needs a schema change; the others work on the built-in defaults without it, so US4 can move to its own slice if this one outgrows two days (constitution V).
 - Every new card first graded today counts toward the day's limit, from a topic review too: the cap limits how many cards will come due in the days that follow, whatever introduced them.
 - A topic review leaves out a card graded today because showing it again the same day only inflates its record; the 001 learn-ahead rule still brings back a card graded Again.
+- One person, one store per environment: no user, no name and no card owner in the store (design §2). Settings belong to the store, so `prod` and `test` keep their own.
 - Every card is active in this slice; archived cards (slice 6) leave every list.
 - Out of scope, by slice: prerequisite cards, voided reviews and their cap exemptions (4); tag stats such as retention, due count or weak cards (5); prune, archive, rewrite, split and merge (6).
 - Command names, options, output layout and the cap constants' names are left to the plan.
