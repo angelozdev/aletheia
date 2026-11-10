@@ -172,3 +172,21 @@ Angelo again, and send the approved list again.
 When Angelo asks about a saved card ("muéstrame esa tarjeta", "¿cuándo toca?"), run
 `aletheia card show k7m2`, the id without `#` (a shell reads `#` as a comment), and answer from
 what it prints. Its instants are already in Angelo's local time; read them as printed.
+
+## Keep the profile current
+
+Only while this skill runs, listen for Angelo stating his own level: "uso Terraform a diario",
+"nunca he tocado Kubernetes", a draft rejected with "eso ya lo sé".
+Only explicit statements count: never a grade, a streak of Easy, or your guess.
+
+When he states one, end your next reply with one line offering the change, without holding
+back the drafts:
+
+- `¿Anoto en tu perfil: «<línea>»?` when no line covers that area;
+- `¿Cambio en tu perfil «<antes>» por «<después>»?` when a line already covers it, or says
+  something else ("ya domino Lambda" against "estudiando AWS"): change that line, never add a
+  second one.
+
+The profile is `~/me/aletheia/PROFILE.md`, one bullet per area in Spanish
+(`- **Terraform**: uso diario.`). Edit it only after Angelo approves that exact line, and touch
+nothing else in it. If he ignores the offer or says no, drop it and do not offer it again.

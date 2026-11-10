@@ -193,7 +193,7 @@ states his level, and writes it only if he approves.
 **Independent Test**: a review in this repo (its skill loads from the working tree): mention
 "uso Terraform a diario" and see the offer at the end of Claude's next reply (quickstart §4).
 
-- [ ] T011 [US3] Both skills offer a profile change when Angelo states his level, in `skills/az-aletheia-add/SKILL.md` and `.claude/skills/aletheia-review/SKILL.md`
+- [X] T011 [US3] Both skills offer a profile change when Angelo states his level, in `skills/az-aletheia-add/SKILL.md` and `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `tests/skills/profile.test.ts`: `002-US3-AS1 both skills offer a profile change and write it only after Angelo approves` — for each of the two skill files: the text contains `~/me/aletheia/PROFILE.md`, `¿Anoto en tu perfil`, `¿Cambio en tu perfil` and `only after Angelo approves`; neither description gains a trigger (001-US1-AS6 and 001-US2-AS7 still pass).
   - **Code**: in both skills, a section "Keep the profile current": only while this skill runs; only explicit statements of his level ("uso Terraform a diario", "nunca he tocado Kubernetes", a draft rejected with "eso ya lo sé"), never a grade, a streak or a guess; the offer is the last line of Claude's next reply, without stopping the question, the grade or the drafts: `¿Anoto en tu perfil: «<línea>»?`, or `¿Cambio en tu perfil «<antes>» por «<después>»?` when a line already covers that area; the file is `~/me/aletheia/PROFILE.md`, edited only after Angelo approves that exact line; an offer he ignores is dropped and not repeated.
   - **Run**: quickstart §4, first half, in this repo

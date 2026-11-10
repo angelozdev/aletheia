@@ -135,3 +135,21 @@ When the list runs out, run `aletheia review due` again: a card graded Again com
 minutes, while nothing else is due. Go on until it answers `count: 0`, or until Angelo stops.
 Then tell him when the next card comes, from `nextDue`. If he asks when a card comes back, run
 `aletheia card show <id>` and read its `due` as printed.
+
+## Keep the profile current
+
+Only while this skill runs, listen for Angelo stating his own level: "uso Terraform a diario",
+"nunca he tocado Kubernetes".
+Only explicit statements count: never a grade, a streak of Easy, or your guess.
+
+When he states one, end your next reply with one line offering the change, without holding
+back the question or the grade:
+
+- `¿Anoto en tu perfil: «<línea>»?` when no line covers that area;
+- `¿Cambio en tu perfil «<antes>» por «<después>»?` when a line already covers it, or says
+  something else ("ya domino Lambda" against "estudiando AWS"): change that line, never add a
+  second one.
+
+The profile is `~/me/aletheia/PROFILE.md`, one bullet per area in Spanish
+(`- **Terraform**: uso diario.`). Edit it only after Angelo approves that exact line, and touch
+nothing else in it. If he ignores the offer or says no, drop it and do not offer it again.
