@@ -240,11 +240,13 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
    card; it is offered only when the idea passes §6 and no card in the session
    covers it. — _Angelo's call, after the first real review._
 9. **Missing prerequisite** ("no recuerdo qué es un consumer group"): grade
-   Again, explain the base concept in 2–3 lines (no lesson), then look for a card
-   covering it. If one exists, pull it into this session. If not, propose it
-   through the same rules and approval as §8.1. This Again is a real failure: it
-   updates FSRS and counts toward retention, and the flag makes it count as a gap
-   rather than toward leech detection. — _my call_
+   Again, then look for a card covering the base concept. If one exists, pull it
+   into this session and ask it before explaining anything: its answer is the
+   explanation, and its grade stays honest. If not, explain the base concept in
+   2–3 lines (no lesson) and propose the card through the same rules and approval
+   as §8.1. This Again is a real failure: it updates FSRS and counts toward
+   retention, and the flag makes it count as a gap rather than toward leech
+   detection. — _my call; asking before explaining is Angelo's call, spec 004._
 10. **Badly written card** (failed because of the wording, not the knowledge):
    the review is voided (§5) and Claude proposes a rewrite on the spot.
 11. **Same-session relearning:** FSRS short-term scheduling stays on (the
