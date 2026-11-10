@@ -8,7 +8,7 @@ import { reviewGradeCommand } from '../commands/review-grade/review-grade.ts'
 import { reviewTopicCommand } from '../commands/review-topic/review-topic.ts'
 import { tagListCommand } from '../commands/tag-list/tag-list.ts'
 import { COMMAND_GROUPS, ExitCode } from './main.constants.ts'
-import type { CliCommand, CliContext } from './main.types.ts'
+import type { CliCommand, CliContext, Flags } from './main.types.ts'
 
 const COMMANDS = [
   backupCommand,
@@ -54,8 +54,10 @@ export async function main(argv: string[], context: CliContext): Promise<number>
       .description(command.description)
     if (command.argument !== undefined)
       registered.argument(command.argument.name, command.argument.description)
+    for (const option of command.options ?? []) registered.option(option.flags, option.description)
     registered.action(async () => {
-      exitCode = await command.run(context, root.opts(), registered.args)
+      const flags: Flags = registered.opts()
+      exitCode = await command.run(context, root.opts(), registered.args, flags)
     })
   }
   try {

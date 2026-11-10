@@ -1,11 +1,15 @@
+import type { z } from 'zod'
 import type { Card } from '#core/cards'
 import { sessionList } from '#core/sessions'
 import { BUILT_IN_SETTINGS } from '#core/settings'
 import { topicCards } from '#core/tags'
 import { shownInstant, startOfToday, startOfTomorrow } from '#core/time'
 import { StoreCardRepository, StoreReviewRepository, type Store } from '#shell/db'
-import type { CliContext } from '../../main/main.types.ts'
-import type { Scope } from './session.types.ts'
+import type { CliContext, Flags } from '../../main/main.types.ts'
+import { OPTION_FLAGS } from './session.constants.ts'
+import { InvalidOptionsError } from './session.errors.ts'
+import { sessionFlagsSchema } from './session.schema.ts'
+import type { Scope, SessionRequest } from './session.types.ts'
 
 function dueItem(card: Card) {
   return {
@@ -26,10 +30,24 @@ function earlier(a: Date, b: Date): Date {
   return a < b ? a : b
 }
 
-export function listSession(store: Store, context: CliContext, scope: Scope) {
+function optionMessage(issue: z.core.$ZodIssue): string {
+  return `${OPTION_FLAGS[String(issue.path[0])]}: ${issue.message}`
+}
+
+export function sessionFrom(flags: Flags, context: CliContext): SessionRequest {
   const now = context.clock()
+  const parsed = sessionFlagsSchema(now).safeParse(flags)
+  if (!parsed.success) throw new InvalidOptionsError(parsed.error.issues.map(optionMessage))
+  return { now, start: parsed.data.session ?? now }
+}
+
+export function listSession(
+  store: Store,
+  context: CliContext,
+  scope: Scope,
+  { now, start }: SessionRequest,
+) {
   const today = startOfToday(now, context.timeZone)
-  const start = now
   const active = new StoreCardRepository(store).active()
   const reviews = new StoreReviewRepository(store).since(earlier(start, today))
   const list = sessionList({

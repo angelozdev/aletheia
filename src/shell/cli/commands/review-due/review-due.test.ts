@@ -3,7 +3,7 @@ import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants
 import { uniqueIdDraw } from '../../../../../tests/support/draws/draws.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
-import { runSql } from '../../../../../tests/support/store/store.ts'
+import { insertSql, runSql } from '../../../../../tests/support/store/store.ts'
 
 const SESSION = '2026-11-11T21:00:00-05:00'
 const DUE_TODAY = '2026-11-11T20:00:00.000Z'
@@ -44,6 +44,30 @@ async function list(argv: string[]) {
 
 function idsOf(listed: { cards: { id: string }[] }): string[] {
   return listed.cards.map(({ id }) => id)
+}
+
+function gradedAt(ids: string[], reviewedAt: string): void {
+  for (const id of ids) {
+    const review = {
+      card_id: id,
+      grade: 'good',
+      claude_grade: 'good',
+      state_before: 'review',
+      reviewed_at: reviewedAt,
+      answer: 'a',
+      rationale: 'r',
+    }
+    runSql(cli.db, insertSql('reviews', review))
+  }
+}
+
+async function atTheCap(): Promise<string[]> {
+  const ids = await addDueToday(25)
+  const graded = ids.slice(0, 20)
+  gradedAt(graded, '2026-11-12T01:30:00.000Z')
+  for (const id of graded.slice(1)) arrange(id, 'review', '2026-11-20T15:00:00.000Z')
+  arrange(graded[0], 'relearning', '2026-11-12T01:40:00.000Z')
+  return ids
 }
 
 function arrange(id: string, state: string, due: string): void {
@@ -158,5 +182,40 @@ describe('aletheia review due', () => {
     await addDueToday(25)
 
     expect(await list(['review', 'topic', 'docker'])).toMatchObject({ count: 20, remaining: 5 })
+  })
+
+  it('003-US2-AS2 at the cap, review due holds only the card graded Again and due again, and says the cap is reached with 5 remaining', async () => {
+    const ids = await atTheCap()
+
+    const due = await list(['review', 'due', '--session', '2026-11-11T20:25:00-05:00'])
+
+    expect(idsOf(due)).toEqual([ids[0]])
+    expect(due).toMatchObject({ capReached: true, remaining: 5 })
+  })
+
+  it('003-US2-AS3 going on at the cap starts a new round of at most 20', async () => {
+    const ids = await atTheCap()
+    arrange(ids[0], 'review', '2026-11-20T15:00:00.000Z')
+
+    const goingOn = await list(['review', 'due'])
+    await addCards(20)
+    runSql(cli.db, `update cards set state = 'review', due = '${DUE_TODAY}' where state = 'new'`)
+    const newRound = await list(['review', 'due'])
+
+    expect(idsOf(goingOn)).toEqual(ids.slice(20))
+    expect(goingOn).toMatchObject({ capReached: false, remaining: 0 })
+    expect(newRound).toMatchObject({ count: 20, remaining: 5, capReached: false })
+  })
+
+  it('review due refuses a malformed or future --session', async () => {
+    const malformed = await run(['review', 'due', '--session', 'yesterday'])
+    const future = await run(['review', 'due', '--session', '2026-11-11T21:01:00-05:00'])
+
+    expect(malformed).toMatchObject({ code: 1, stdout: '' })
+    expect(malformed.stderr).toMatch(
+      /error: invalid options: --session: must be an instant with its offset, like 2026-11-10T10:00:00-05:00\n$/,
+    )
+    expect(future).toMatchObject({ code: 1, stdout: '' })
+    expect(future.stderr).toMatch(/error: invalid options: --session: is in the future\n$/)
   })
 })

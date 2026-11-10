@@ -29,10 +29,15 @@ type CommandGroup = keyof typeof COMMAND_GROUPS
 
 type CommandArgument = { name: string; description: string }
 
+export type CommandOption = { flags: string; description: string }
+
+export type Flags = Record<string, string | undefined>
+
 export type CliCommand = {
   group?: CommandGroup
   name: string
   argument?: CommandArgument
+  options?: CommandOption[]
   description: string
-  run(context: CliContext, options: GlobalOptions, args: string[]): Promise<number>
+  run(context: CliContext, options: GlobalOptions, args: string[], flags: Flags): Promise<number>
 }
