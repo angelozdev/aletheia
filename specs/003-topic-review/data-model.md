@@ -6,7 +6,7 @@ reasons are in [research.md](./research.md).
 
 ## Settings: table `settings`
 
-One row at most, written by `settings set` (ADR-0016, proposed).
+One row at most, written by `settings set` (ADR-0016).
 
 | Column | Type | Rule |
 |---|---|---|

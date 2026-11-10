@@ -367,7 +367,7 @@ lists use them below a one-session limit.
 
 ## Phase 10: Close
 
-- [ ] T021 Update `CLAUDE.md` and the contract: Commands names `tag list`, `review topic`, `settings show|set`, the session options and `specs/003-topic-review/contracts/cli.md`; `specs/003-topic-review/contracts/cli.md` gets any message or quoting a task changed; `pnpm check` green, traceability included; commit `docs: close slice 3 tasks`
+- [X] T021 Update `CLAUDE.md` and the contract: Commands names `tag list`, `review topic`, `settings show|set`, the session options and `specs/003-topic-review/contracts/cli.md`; `specs/003-topic-review/contracts/cli.md` gets any message or quoting a task changed; `pnpm check` green, traceability included; commit `docs: close slice 3 tasks`
 - [ ] T022 Hand off: Angelo merges `003-topic-review` into `main` and runs `pnpm release` from a clean `main` (give him the commands, run neither); the release backs up `prod` before the `settings` migration; then quickstart §5 in `prod`, and the Measures of `specs/003-topic-review/quickstart.md` after two weeks (SC-002 to SC-006)
 
 ---
