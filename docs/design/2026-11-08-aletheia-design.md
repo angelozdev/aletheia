@@ -126,7 +126,10 @@ any dispute (a dispute changed the grade when the two differ), the card's state
 before the review, timestamp, Angelo's answer, Claude's grading rationale, and
 flags: `missing-prerequisite`, `badly-written`. — _Storing the answer, rationale
 and flags is my call; they power stats and pruning. Claude's rating and the
-state before were added in spec 001: neither can be rebuilt later._
+state before were added in spec 001: neither can be rebuilt later._ The answer is
+stored as Claude's summary of what Angelo said, not his words: every claim, right
+or wrong, and what he said he did not know, without filler, hedges or the
+questions he asked after the grade (decided after the first real review).
 
 A review flagged `badly-written` is **voided**: it is logged, but it does not
 update FSRS and does not count toward retention or leech detection, because it

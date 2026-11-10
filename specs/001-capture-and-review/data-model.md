@@ -48,7 +48,7 @@ One row per recorded grade, never changed and never deleted (INV-02).
 | claude_grade | text | same four: the grade Claude gave. A dispute changed the grade when the two differ |
 | state_before | text | the card's `state` when Angelo answered |
 | reviewed_at | text, instant | |
-| answer | text | Angelo's answer, not blank |
+| answer | text | Claude's summary of Angelo's answer: his claims, right or wrong, not his words; not blank |
 | rationale | text | Claude's reason, not blank |
 
 ## Card states
