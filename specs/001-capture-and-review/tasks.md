@@ -150,7 +150,7 @@ show <id>` prints every field as written, with its dates in local time.
   - **Test**: `src/shell/db/cards/cards.test.ts`: `saveAll refuses an id that is taken and stores none` → throws `CardIdTakenError`. `src/core/cards/cards.test.ts`: `addCards draws again when an id is taken` (a fake repository that refuses the first list) and `addCards gives up after five draws` → `NoFreeCardIdError`, `no free card id after 5 draws`. `card-add.test.ts`: `a second card add with the same draws gets another id` — two runs on one store print `ids[1]: "0123"` and `ids[1]: "4567"`.
   - **Code**: `CardIdTakenError` and `NoFreeCardIdError` in `src/core/cards/cards.errors.ts`, `MAX_ID_DRAWS = 5` in `cards.constants.ts`; the repository turns the store's primary-key refusal into `CardIdTakenError`; `addCards` redraws every id of the list and tries again. Add the error line to `contracts/cli.md`.
   - **Run**: `pnpm aletheia card add` twice; two different ids
-- [ ] T008 [US1] The store refuses to delete a card, in `migrations/<timestamp>_cards_never_deleted/migration.sql`
+- [X] T008 [US1] The store refuses to delete a card, in `migrations/<timestamp>_cards_never_deleted/migration.sql`
   - **Test**: `src/shell/db/cards/cards.test.ts`: `INV-02 the store refuses to delete a card` — after `saveAll`, `runSql(path, 'delete from cards')` throws `cards are never deleted` and the row is still there; an `update cards set due = …` passes.
   - **Code**: `pnpm exec drizzle-kit generate --custom --name cards_never_deleted`; write `CREATE TRIGGER cards_never_deleted BEFORE DELETE ON cards BEGIN SELECT RAISE(ABORT, 'cards are never deleted'); END;` and commit the folder.
   - **Run**: `pnpm test -t INV-02`

@@ -116,6 +116,19 @@ describe('StoreCardRepository', () => {
 
     expect(selectAll(path, 'select id from cards')).toEqual([{ id: 'k7m2' }])
   })
+
+  it('INV-02 the store refuses to delete a card', async () => {
+    const store = await openTestStore(path)
+    new StoreCardRepository(store).saveAll([newCard(SAMPLE_DRAFT, 'k7m2', new Date(NOW))])
+    closeStore(store)
+
+    expect(() => runSql(path, 'delete from cards')).toThrow('cards are never deleted')
+    runSql(path, "update cards set due = '2026-11-10T15:00:00.000Z'")
+
+    expect(selectAll(path, 'select id, due from cards')).toEqual([
+      { id: 'k7m2', due: '2026-11-10T15:00:00.000Z' },
+    ])
+  })
 })
 
 describe('the cards table', () => {
