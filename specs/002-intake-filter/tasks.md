@@ -204,7 +204,7 @@ states his level, and writes it only if he approves.
 
 ## Phase 8: Close
 
-- [ ] T012 Update `CLAUDE.md` (Commands: `card search` reads JSON on stdin; Data: `PROFILE.md` is untracked and edited by the skills only with Angelo's approval) and `contracts/cli.md` with any message a task changed; `pnpm check` green, traceability included; commit `docs: close slice 2 tasks`
+- [X] T012 Update `CLAUDE.md` (Commands: `card search` reads JSON on stdin; Data: `PROFILE.md` is untracked and edited by the skills only with Angelo's approval) and `contracts/cli.md` with any message a task changed; `pnpm check` green, traceability included; commit `docs: close slice 2 tasks`
 - [ ] T013 Hand off: Angelo merges `002-intake-filter` into `main` and runs `pnpm release` from a clean `main` (give him the commands, run neither); then quickstart §2 to §4 in `prod`, and the Measures table of `specs/002-intake-filter/quickstart.md` after two weeks (SC-002)
 
 ---
