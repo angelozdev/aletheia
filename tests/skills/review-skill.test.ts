@@ -76,4 +76,18 @@ describe('the aletheia-review skill', () => {
     ])
       expect(skill.text).toContain(text)
   })
+
+  it('004-US2-AS4 aletheia-review voids a review whose wording decided the answer, right or wrong, says why, and lets Angelo dispute it', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    for (const text of [
+      '"flag":"badly-written"',
+      'right or wrong',
+      'read two ways',
+      'gives its answer away',
+      'not today',
+      'dispute',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })
