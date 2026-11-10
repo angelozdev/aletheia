@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { fakeRunner } from '../../../../tests/support/fake-runner/fake-runner.ts'
 import type { RunCall } from '../../../../tests/support/fake-runner/fake-runner.types.ts'
 import { captureStream } from '../../../../tests/support/streams/streams.ts'
+import { SkillCopyFailedError } from '../skill-copy/skill-copy.errors.ts'
 import { release } from './release.ts'
+import type { ReleaseDeps } from './release.types.ts'
 
 const repoRoot = '/r'
 const checks = ['test', 'lint', 'format:check', 'typecheck', 'dead-code', 'duplication']
@@ -20,6 +22,7 @@ const tempDir = '/t'
 const tarball = '/r/.release/aletheia-0.0.0.tgz'
 const packedBin = '/t/package/dist/aletheia.js'
 const released = '0.0.0 (2033257)'
+const skillCopy = '/s/az-aletheia-add'
 const packedWithoutMigrations = ['package/package.json', 'package/dist/aletheia.js']
 const onGreenMain = {
   ...onCleanMain,
@@ -31,8 +34,16 @@ const onGreenMain = {
   'aletheia --version': { stdout: `${released}\n` },
 }
 
-async function releaseWith(responses: Parameters<typeof fakeRunner>[0]) {
+async function releaseWith(
+  responses: Parameters<typeof fakeRunner>[0],
+  overrides: Partial<Pick<ReleaseDeps, 'copySkill'>> = {},
+) {
   const runner = fakeRunner(responses)
+  let callsBeforeCopy: number | undefined
+  const copySkill = vi.fn(() => {
+    callsBeforeCopy = runner.calls.length
+    return skillCopy
+  })
   let callsBeforeBuild: number | undefined
   const build = vi.fn(async () => {
     callsBeforeBuild = runner.calls.length
@@ -50,8 +61,10 @@ async function releaseWith(responses: Parameters<typeof fakeRunner>[0]) {
     repoRoot,
     makeTempDir: () => tempDir,
     removeTempDir,
+    copySkill,
     stdout,
     stderr,
+    ...overrides,
   })
   return {
     code,
@@ -62,6 +75,8 @@ async function releaseWith(responses: Parameters<typeof fakeRunner>[0]) {
     callsBeforeBuild,
     removeTempDir,
     callsBeforeRemoval,
+    copySkill,
+    callsBeforeCopy,
   }
 }
 
@@ -139,7 +154,7 @@ describe('release from a clean green main', () => {
     ])
     expect(result).toMatchObject({
       code: 0,
-      stdout: `release: ${released} installed\n`,
+      stdout: `release: ${released} installed\nrelease: skill az-aletheia-add copied to ${skillCopy}\n`,
       stderr: '',
     })
   })
@@ -226,5 +241,60 @@ describe('release temp folder', () => {
 
     expect(result.stderr).toContain('release: failed: aletheia on PATH prints')
     expectTempDirRemovedLast(result)
+  })
+})
+
+describe('release copies the global skill', () => {
+  it('001-US1-AS7 release copies the skill after the install check and names its folder', async () => {
+    const result = await releaseWith(onGreenMain)
+
+    expect(result.copySkill).toHaveBeenCalledOnce()
+    expect(result.callsBeforeCopy).toBe(result.calls.length)
+    expect(commandLines(result.calls).at(-1)).toBe('aletheia --version')
+    expect(result.stdout).toBe(
+      `release: ${released} installed\nrelease: skill az-aletheia-add copied to ${skillCopy}\n`,
+    )
+  })
+
+  it.for<[string, Parameters<typeof fakeRunner>[0]]>([
+    ['off main', { 'git rev-parse --abbrev-ref HEAD': { stdout: 'feature\n' } }],
+    ['with a red check', { ...onCleanMain, 'pnpm run lint': { status: 1 } }],
+    ['with a failed smoke run', { ...onGreenMain, [`node ${packedBin} --help`]: { status: 1 } }],
+    [
+      'with a PATH mismatch',
+      { ...onGreenMain, 'aletheia --version': { stdout: '0.0.0 (1111111)\n' } },
+    ],
+  ])(
+    '001-US1-AS7 a release refused or failed before installing never copies the skill: %s',
+    async ([, responses]) => {
+      const result = await releaseWith(responses)
+
+      expect(result.code).toBe(1)
+      expect(result.copySkill).not.toHaveBeenCalled()
+    },
+  )
+
+  it('001-US1-AS7 a failed copy exits 1 with its message', async () => {
+    const failure = new SkillCopyFailedError(skillCopy, new Error('EACCES: permission denied'))
+
+    const result = await releaseWith(onGreenMain, {
+      copySkill: () => {
+        throw failure
+      },
+    })
+
+    expect(result.code).toBe(1)
+    expect(result.stderr).toBe(`${failure.message}\n`)
+  })
+
+  it('INV-01 release refuses before its first step with no skill copier', async () => {
+    const result = await releaseWith(onGreenMain, { copySkill: null })
+
+    expect(result).toMatchObject({
+      code: 1,
+      stdout: '',
+      stderr: 'release: refused: skill copies are disabled here (under vitest)\n',
+      calls: [],
+    })
   })
 })

@@ -10,6 +10,7 @@ export type ReleaseDeps = {
   repoRoot: string
   makeTempDir(): string
   removeTempDir(dir: string): void
+  copySkill: (() => string) | null
   stdout: Output
   stderr: Output
 }

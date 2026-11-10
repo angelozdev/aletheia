@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import { ExitCode, releaseVersion, type Release } from '#shell/cli'
 import { BUNDLE_FILE } from '../build/build.constants.ts'
 import type { Runner } from '../runner/runner.types.ts'
+import { SKILL_NAME } from '../skill-copy/skill-copy.constants.ts'
 import {
   CHECK_SCRIPT,
   CHECK_SEPARATOR,
@@ -23,6 +24,7 @@ import {
   PackedVersionMismatchError,
   PathMismatchError,
   ReleaseError,
+  SkillCopiesDisabledError,
   UncommittedChangesError,
 } from './release.errors.ts'
 import type { PackageJson, ReleaseDeps } from './release.types.ts'
@@ -87,6 +89,8 @@ async function install(run: Runner, tarball: string, dir: string, expected: stri
 }
 
 async function releaseSteps(deps: ReleaseDeps): Promise<void> {
+  const { copySkill } = deps
+  if (copySkill === null) throw new SkillCopiesDisabledError()
   await assertOnMain(deps)
   await assertCleanTree(deps)
   await assertChecksPass(deps)
@@ -103,6 +107,8 @@ async function releaseSteps(deps: ReleaseDeps): Promise<void> {
     deps.removeTempDir(dir)
   }
   deps.stdout.write(`release: ${expected} installed\n`)
+  const folder = copySkill()
+  deps.stdout.write(`release: skill ${SKILL_NAME} copied to ${folder}\n`)
 }
 
 export async function release(deps: ReleaseDeps): Promise<number> {
