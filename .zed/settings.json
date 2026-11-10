@@ -1,10 +1,46 @@
 {
   "languages": {
     "TypeScript": {
-      "language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."]
+      "language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."],
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath", "{buffer_path}"]
+        }
+      }
     },
     "TSX": {
-      "language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."]
+      "language_servers": ["typescript-ls", "!vtsls", "!typescript-language-server", "..."],
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath", "{buffer_path}"]
+        }
+      }
+    },
+    "JavaScript": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath", "{buffer_path}"]
+        }
+      }
+    },
+    "JSON": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath", "{buffer_path}"]
+        }
+      }
+    },
+    "JSONC": {
+      "formatter": {
+        "external": {
+          "command": "pnpm",
+          "arguments": ["exec", "oxfmt", "--stdin-filepath", "{buffer_path}"]
+        }
+      }
     }
   },
   "lsp": {

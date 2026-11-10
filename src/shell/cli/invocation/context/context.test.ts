@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { noMigrations } from '../../../../../tests/support/fixture-migrations/fixture-migrations.ts'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
 import { tempDir } from '../../../../../tests/support/temp-dir/temp-dir.ts'
 import { REPO_ROOT } from '../../bin/bin.constants.ts'
@@ -38,11 +39,14 @@ describe('invocation context', () => {
   })
 
   it('000-US1-AS3 the source context defaults to test under <repoRoot>/data and the release context to prod under <home>/.aletheia', () => {
-    expect(sourceContext({ repoRoot: '/r', vars: {}, home: '/h' })).toMatchObject({
+    const source = sourceContext({ repoRoot: '/r', vars: {}, home: '/h' })
+    const release = releasedContext(released({}))
+
+    expect(source).toMatchObject({
       defaultEnv: 'test',
       dataDir: '/r/data',
     })
-    expect(releasedContext(released({}))).toMatchObject({
+    expect(release).toMatchObject({
       defaultEnv: 'prod',
       dataDir: '/h/.aletheia',
     })
@@ -59,17 +63,17 @@ describe('invocation context', () => {
     const home = tempDir('aletheia-home-')
     const entryDir = join(REPO_ROOT, 'dist')
 
-    const { code, stderr } = await runCli(
-      ['backup'],
-      releasedContext({ ...released({}), home, entryDir }),
-    )
+    const { code, stderr } = await runCli(['backup'], {
+      ...releasedContext({ ...released({}), home, entryDir }),
+      migrationsDir: noMigrations(),
+    })
 
     expect(code).toBe(0)
     expect(stderr).toBe('env: prod\n')
-    expect(existsSync(join(home, '.aletheia', 'prod.sqlite'))).toBe(true)
-    expect(readdirSync(join(home, '.aletheia', 'backups'))).toEqual([
-      expect.stringMatching(/^prod-.+\.sqlite$/),
-    ])
+    const prodStore = join(home, '.aletheia', 'prod.sqlite')
+    const backups = join(home, '.aletheia', 'backups')
+    expect(existsSync(prodStore)).toBe(true)
+    expect(readdirSync(backups)).toEqual([expect.stringMatching(/^prod-.+\.sqlite$/)])
   })
 
   it('INV-01 under vitest the contexts have no data folder, so named envs are refused', async () => {
@@ -90,6 +94,7 @@ describe('invocation context', () => {
     expect(
       (await runCli(['backup'], { ...source, vars: { ...vars, ALETHEIA_ENV: 'x' } })).stderr,
     ).toBe(refusal('ALETHEIA_ENV: x'))
-    expect(existsSync(join(repoRoot, 'data'))).toBe(false)
+    const repoData = join(repoRoot, 'data')
+    expect(existsSync(repoData)).toBe(false)
   })
 })

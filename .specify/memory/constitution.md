@@ -75,12 +75,13 @@ Rationale: each removed piece is one fewer reason to stop using the system; each
 is one more piece to maintain and one more place to be wrong.
 
 ### VII. English System, Spanish Content
-Code, identifiers, CLI commands, ids, commits, tests, specs, this constitution, `CLAUDE.md`,
-skill files and docs MUST be in English. Card content (question, answer, key points,
-situation, tags, archive reasons), `PROFILE.md`, skill output to the user and the conversation
-MUST be in Spanish, keeping technical terms in English.
+Code, identifiers, CLI commands, ids, tags, commits, tests, specs, this constitution,
+`CLAUDE.md`, skill files and docs MUST be in English. Card content (question, answer, key
+points, situation, archive reasons), `PROFILE.md`, skill output to the user and the
+conversation MUST be in Spanish, keeping technical terms in English.
 Rationale: the system is portable and readable by any tool; the content is what Angelo studies,
-in the language he thinks in, with the terms he will meet at work.
+in the language he thinks in, with the terms he will meet at work. A tag names a topic of the
+system, not something to study: in English it has one spelling and needs no accent.
 
 ### VIII. Conversation, Not Commands
 Angelo talks; Claude picks the skill and runs the CLI. No ritual MAY depend on Angelo
@@ -106,8 +107,10 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
 
 - TypeScript on Node 26, `pnpm`, `node:sqlite` through Drizzle ORM
   (`drizzle-orm/node-sqlite`), `zod` at the CLI edge, `commander` with
-  `@commander-js/extra-typings`, `ts-fsrs` for scheduling, `@toon-format/toon` for output,
-  `vitest`. Development and tests run the sources through Node's native type stripping; the
+  `@commander-js/extra-typings`, `ts-fsrs` for scheduling, `date-fns` for dates,
+  `@toon-format/toon` for output, `vitest`. `ts-fsrs` and `date-fns` are each imported by one
+  core module only. Instants are stored in UTC and shown in the local time of whoever runs
+  the CLI. Development and tests run the sources through Node's native type stripping; the
   installed `aletheia` is a release, a bundle of `main` packed and installed globally by
   `pnpm release`. The schema lives in TypeScript as the source of truth; `drizzle-kit generate`
   derives numbered SQL migration files, reviewed and committed, applied at startup by
@@ -129,9 +132,11 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
   sets `ALETHEIA_ENV=test`, and the sources default to `test` however they run. Every command prints `env: <name>` on stderr; stdout stays clean.
   Tests use `:memory:`; evals copy fixtures to a temp path. Neither may reach `prod.sqlite`.
 - The CLI performs no network calls.
-- Only `az-aletheia-add` is a global skill: its source lives in this repo and is symlinked
-  into `~/.claude/skills/`, and it calls the installed binary so it works from any working
-  directory. Review, stats and prune are project-local skills in `.claude/skills/`.
+- Only `az-aletheia-add` is a global skill: its source lives in this repo, `pnpm release`
+  copies it into `~/.aletheia/skills/`, and
+  `~/.claude/skills/az-aletheia-add` is a symlink to that copy, created once. It calls the
+  installed binary so it works from any working directory, and both come from the same
+  release. Review, stats and prune are project-local skills in `.claude/skills/`.
 
 ## Development Workflow
 
@@ -163,4 +168,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.4.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
+**Version**: 1.5.1 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09

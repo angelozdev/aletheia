@@ -24,9 +24,8 @@ function firstColumn(path: string, query: string): unknown[] {
 
 describe('migrations', () => {
   it('000-US4-AS1 a new store is created with every migration applied', async () => {
-    const store = await newStore(
-      writeMigrations(tempDir('aletheia-migrations-'), FIXTURE_MIGRATIONS),
-    )
+    const migrationsDir = writeMigrations(tempDir('aletheia-migrations-'), FIXTURE_MIGRATIONS)
+    const store = await newStore(migrationsDir)
 
     expect(
       firstColumn(

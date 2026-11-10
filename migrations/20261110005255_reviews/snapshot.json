@@ -1,0 +1,444 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "683a6708-9198-4d4b-a2b2-105097aeeb7c",
+  "prevIds": ["e407d84f-265c-40e2-a084-58574f481f5b"],
+  "ddl": [
+    {
+      "name": "card_tags",
+      "entityType": "tables"
+    },
+    {
+      "name": "cards",
+      "entityType": "tables"
+    },
+    {
+      "name": "reviews",
+      "entityType": "tables"
+    },
+    {
+      "table": "card_tags",
+      "name": "card_id",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "card_tags",
+      "name": "tag",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "id",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "type",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "question",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "answer",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "situation",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "source",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "key_points",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "status",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'active'",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "due",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "state",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'new'",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "stability",
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "difficulty",
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "scheduled_days",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "learning_steps",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "reps",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "lapses",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "last_review",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "created_at",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "cards",
+      "name": "updated_at",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "reviews",
+      "name": "id",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "reviews",
+      "name": "card_id",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "reviews",
+      "name": "grade",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "reviews",
+      "name": "claude_grade",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "reviews",
+      "name": "state_before",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "reviews",
+      "name": "reviewed_at",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "reviews",
+      "name": "answer",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "reviews",
+      "name": "rationale",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "card_tags",
+      "name": "fk_card_tags_card_id_cards_id_fk",
+      "columns": ["card_id"],
+      "tableTo": "cards",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "reviews",
+      "name": "fk_reviews_card_id_cards_id_fk",
+      "columns": ["card_id"],
+      "tableTo": "cards",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "card_tags",
+      "name": "card_tags_pk",
+      "columns": ["card_id", "tag"],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_pk",
+      "columns": ["id"],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "reviews",
+      "name": "reviews_pk",
+      "columns": ["id"],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "card_tags",
+      "name": "card_tags_tag",
+      "value": "length(\"tag\") > 0 AND \"tag\" NOT GLOB '*[^a-z0-9:-]*'",
+      "entityType": "checks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_id",
+      "value": "length(\"id\") = 4 AND \"id\" NOT GLOB '*[^0-9a-hjkmnp-tv-z]*'",
+      "entityType": "checks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_type",
+      "value": "\"type\" IN ('concept','comparison','command','scenario','code')",
+      "entityType": "checks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_question",
+      "value": "length(trim(\"question\")) > 0",
+      "entityType": "checks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_answer",
+      "value": "length(trim(\"answer\")) > 0",
+      "entityType": "checks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_situation",
+      "value": "length(trim(\"situation\")) > 0",
+      "entityType": "checks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_source",
+      "value": "length(trim(\"source\")) > 0",
+      "entityType": "checks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_key_points",
+      "value": "json_valid(\"key_points\") AND json_array_length(\"key_points\") BETWEEN 1 AND 3",
+      "entityType": "checks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_status",
+      "value": "\"status\" IN ('active','archived')",
+      "entityType": "checks"
+    },
+    {
+      "table": "cards",
+      "name": "cards_state",
+      "value": "\"state\" IN ('new','learning','review','relearning')",
+      "entityType": "checks"
+    },
+    {
+      "table": "reviews",
+      "name": "reviews_grade",
+      "value": "\"grade\" IN ('again','hard','good','easy')",
+      "entityType": "checks"
+    },
+    {
+      "table": "reviews",
+      "name": "reviews_claude_grade",
+      "value": "\"claude_grade\" IN ('again','hard','good','easy')",
+      "entityType": "checks"
+    },
+    {
+      "table": "reviews",
+      "name": "reviews_state_before",
+      "value": "\"state_before\" IN ('new','learning','review','relearning')",
+      "entityType": "checks"
+    },
+    {
+      "table": "reviews",
+      "name": "reviews_answer",
+      "value": "length(trim(\"answer\")) > 0",
+      "entityType": "checks"
+    },
+    {
+      "table": "reviews",
+      "name": "reviews_rationale",
+      "value": "length(trim(\"rationale\")) > 0",
+      "entityType": "checks"
+    }
+  ],
+  "renames": []
+}

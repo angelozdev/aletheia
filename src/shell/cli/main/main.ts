@@ -1,9 +1,19 @@
-import { Command, CommanderError } from '@commander-js/extra-typings'
+import { Command, CommanderError, type CommandUnknownOpts } from '@commander-js/extra-typings'
 import { backupCommand } from '../commands/backup/backup.ts'
-import { ExitCode } from './main.constants.ts'
-import type { CliContext } from './main.types.ts'
+import { cardAddCommand } from '../commands/card-add/card-add.ts'
+import { cardShowCommand } from '../commands/card-show/card-show.ts'
+import { reviewDueCommand } from '../commands/review-due/review-due.ts'
+import { reviewGradeCommand } from '../commands/review-grade/review-grade.ts'
+import { COMMAND_GROUPS, ExitCode } from './main.constants.ts'
+import type { CliCommand, CliContext } from './main.types.ts'
 
-const COMMANDS = [backupCommand]
+const COMMANDS = [
+  backupCommand,
+  cardAddCommand,
+  cardShowCommand,
+  reviewDueCommand,
+  reviewGradeCommand,
+]
 
 function program(context: CliContext) {
   return new Command('aletheia')
@@ -17,20 +27,30 @@ function program(context: CliContext) {
     })
 }
 
+type Program = ReturnType<typeof program>
+
 function exitCodeOf(error: CommanderError): number {
   return error.exitCode === ExitCode.Success ? ExitCode.Success : ExitCode.Failure
+}
+
+function parentOf(root: Program, command: CliCommand): CommandUnknownOpts {
+  if (command.group === undefined) return root
+  const existing = root.commands.find((candidate) => candidate.name() === command.group)
+  return existing ?? root.command(command.group).description(COMMAND_GROUPS[command.group])
 }
 
 export async function main(argv: string[], context: CliContext): Promise<number> {
   let exitCode: number = ExitCode.Success
   const root = program(context)
   for (const command of COMMANDS) {
-    root
+    const registered = parentOf(root, command)
       .command(command.name)
       .description(command.description)
-      .action(async () => {
-        exitCode = await command.run(context, root.opts())
-      })
+    if (command.argument !== undefined)
+      registered.argument(command.argument.name, command.argument.description)
+    registered.action(async () => {
+      exitCode = await command.run(context, root.opts(), registered.args)
+    })
   }
   try {
     await root.parseAsync(argv, { from: 'user' })

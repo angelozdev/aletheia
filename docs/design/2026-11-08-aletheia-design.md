@@ -107,7 +107,7 @@ out.
 | answer           | full answer shown after grading, 1–3 lines                             |
 | key points       | 1–3 tightly coupled points; the grading rubric                         |
 | situation        | the credible situation where knowing this matters                      |
-| tags             | one or more hierarchical tags, e.g. `mensajeria::redis-streams`        |
+| tags             | one or more hierarchical tags, e.g. `messaging::redis-streams`         |
 | source           | where it was captured (repo or study context) — _my call_              |
 | status           | `active` or `archived`                                                 |
 | archive reason   | required when archived                                                 |
@@ -116,13 +116,17 @@ out.
 | timestamps       | created, updated, archived                                             |
 
 **Tags** are hierarchical with `::` as separator (Anki convention). Filtering by
-a tag includes all descendants: `mensajeria` covers `mensajeria::rabbitmq`.
+a tag includes all descendants: `messaging` covers `messaging::rabbitmq`.
+Tags are written in English, like the rest of the system (constitution 1.5.0);
+Angelo names a topic in Spanish and Claude finds its tag.
 A card may carry several tags (a Redis-vs-RabbitMQ card lives under both).
 
-**Review log** (one row per graded review): card, rating, timestamp, Angelo's
-answer, Claude's grading rationale, whether the grade was changed after a
-dispute, and flags: `missing-prerequisite`, `badly-written`. — _Storing the
-answer, rationale and flags is my call; they power stats and pruning._
+**Review log** (one row per graded review): card, rating, Claude's rating before
+any dispute (a dispute changed the grade when the two differ), the card's state
+before the review, timestamp, Angelo's answer, Claude's grading rationale, and
+flags: `missing-prerequisite`, `badly-written`. — _Storing the answer, rationale
+and flags is my call; they power stats and pruning. Claude's rating and the
+state before were added in spec 001: neither can be rebuilt later._
 
 A review flagged `badly-written` is **voided**: it is logged, but it does not
 update FSRS and does not count toward retention or leech detection, because it
@@ -257,11 +261,11 @@ Illustrative shape (not a spec of columns or wording):
 ```
 TEMA                     TARJETAS  ACIERTO  HOY  FLOJAS
 algorithms               40        65%      9    8
-  grafos                 15        58%      4    5
-mensajeria               48        78%      6    5
+  graphs                 15        58%      4    5
+messaging                48        78%      6    5
   redis-streams          30        71%      5    4
   rabbitmq               18        89%      1    1
-docker::comandos         25        93%      2    0
+docker::commands         25        93%      2    0
 ```
 
 ### 8.4 Prune — local skill
@@ -334,7 +338,7 @@ My calls, mirroring diarium where it applies:
 
 - Node 26 with native TypeScript execution for development and tests, pnpm, vitest.
 - SQLite through `node:sqlite` with Drizzle's `node-sqlite` driver (as diarium).
-- `ts-fsrs` for scheduling.
+- `ts-fsrs` for scheduling; `date-fns` for dates, each behind one core module.
 - `commander` with `@commander-js/extra-typings` for the CLI (typed subcommands,
   generated `--help`).
 - `@toon-format/toon` for TOON output.
@@ -348,8 +352,10 @@ My calls, mirroring diarium where it applies:
   repo's `data/`, gitignored (ADR-0008). Separate database for tests.
 - Installed bin `aletheia` on PATH: a release, built from `main` with `pnpm release`, packed
   and installed globally, so development in the repo never reaches it (spec 000).
-- `az-aletheia-add` source lives in this repo and is symlinked into
-  `~/.claude/skills/`, so the skill and the CLI it calls are versioned together.
+- `az-aletheia-add` source lives in this repo. `pnpm release` copies it into
+  `~/.aletheia/skills/az-aletheia-add/`, and `~/.claude/skills/az-aletheia-add` is a
+  symlink to that copy, created once (spec 001). The skill and the CLI it calls come from
+  the same release; a symlink into the repo would follow the working tree instead.
   (Other `az-*` skills live in `~/dotfiles`; this one is coupled to the CLI.)
 - Local skills in `.claude/skills/` of the repo.
 - Backups of the database file into `backups/` in the same data folder; nothing in iCloud
@@ -394,3 +400,16 @@ can use.
 - Prerequisite relations: cards that wait until their base card is solid.
 - Claude rephrasing the question on each review so Angelo remembers the concept,
   not the wording. Raised, not decided.
+- Jev (TypeSafe AI), a model that returns a typed decision instead of text, as a
+  judge: asked per key point whether the answer covers it, with the code deriving
+  the grade; or as the judge in the review skill's evals. Not used for now:
+  Claude already grades in the conversation at no cost, the CLI makes no network
+  calls, and the stored grades (Claude's next to Angelo's final one) will show
+  whether grading needs help. It would be a new dependency and an ADR. Raised
+  2026-11-09, not decided.
+- Moving to `ts-fsrs` 6 and its new scheduler. Slice 1 pins 5.4.2 with FSRS-6
+  (ADR-0012): 6.0.0 was twelve days old, its new API defaults to FSRS-7, which
+  spaces reviews far wider (a first Good comes back in 4.8 days instead of 2, a
+  first Easy in 54 instead of 8), and the API slice 1 uses is deprecated there.
+  To be thought through later: which model, the new card fields
+  (`stabilityFast`), and replaying the review log with its `Reschedule`.

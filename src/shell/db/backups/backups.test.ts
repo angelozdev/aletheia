@@ -77,7 +77,8 @@ describe('backupStore', () => {
       [...seeded.slice(1), 'prod-2026-11-08T21-04-05-123Z.sqlite'].toSorted(),
     )
     for (const name of seeded.slice(1)) {
-      expect(readFileSync(join(folder, name), 'utf8')).toBe(name)
+      const kept = join(folder, name)
+      expect(readFileSync(kept, 'utf8')).toBe(name)
     }
     closeStore(db)
   })

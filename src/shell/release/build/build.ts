@@ -9,6 +9,10 @@ export async function buildRelease(release: Release): Promise<void> {
     platform: 'node',
     external: [NODE_BUILTINS],
     transform: { define: { [RELEASE_CONSTANT]: JSON.stringify(release) } },
-    output: { file: join(release.repoRoot, BUNDLE_FILE), format: 'esm' },
+    output: {
+      file: join(release.repoRoot, BUNDLE_FILE),
+      format: 'esm',
+      minify: true,
+    },
   })
 }

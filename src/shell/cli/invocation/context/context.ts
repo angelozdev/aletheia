@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto'
 import { join } from 'node:path'
 import {
   DEV_VERSION,
@@ -34,6 +35,8 @@ function invocationContext(
     version,
     vars: invocation.vars,
     clock: () => new Date(),
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    randomIndex: randomInt,
     defaultEnv,
     dataDir: outsideVitest(invocation.vars, dataDir),
     migrationsDir,

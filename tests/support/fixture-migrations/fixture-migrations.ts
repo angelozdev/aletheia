@@ -1,5 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { tempDir } from '../temp-dir/temp-dir.ts'
 import { MIGRATION_FILE } from './fixture-migrations.constants.ts'
 import type { FixtureMigrations } from './fixture-migrations.types.ts'
 
@@ -9,4 +10,8 @@ export function writeMigrations(dir: string, migrations: FixtureMigrations): str
     writeFileSync(join(dir, name, MIGRATION_FILE), sql)
   }
   return dir
+}
+
+export function noMigrations(): string {
+  return tempDir('aletheia-migrations-')
 }

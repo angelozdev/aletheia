@@ -29,8 +29,9 @@ function lintFixture(
     cpSync(join(REPO_ROOT, 'tools'), join(dir, 'tools'), { recursive: true })
   symlinkSync(join(REPO_ROOT, 'node_modules'), join(dir, 'node_modules'))
   for (const [path, content] of Object.entries(files)) {
-    mkdirSync(dirname(join(dir, path)), { recursive: true })
-    writeFileSync(join(dir, path), content)
+    const file = join(dir, path)
+    mkdirSync(dirname(file), { recursive: true })
+    writeFileSync(file, content)
   }
   return runOxlint(dir, [...new Set(Object.keys(files).map((path) => path.split('/')[0]))])
 }
@@ -121,6 +122,71 @@ describe.concurrent('lint', () => {
 
       expectFailure(expect, outside, 'src/shell/cli/sample.ts')
       expectPass(expect, inside, 'src/shell/db/sample.ts')
+    },
+  )
+
+  const callHelpers = ['f', 'g', 'h']
+    .map((name) => `export const ${name} = (...x: unknown[]) => x\n`)
+    .join('')
+
+  it.for([
+    ['three calls deep', 'export const a = f(g(h(1)))\n'],
+    ['three calls deep through await', 'export async function a() { return f(g(await h(1))) }\n'],
+    ['three calls deep through new', 'export const a = f(g(new Date(1)))\n'],
+  ])('fails a call nested %s', async ([, code], { expect, onTestFinished }) => {
+    const result = await lintFixture(onTestFinished, { 'src/shell/sample.ts': callHelpers + code })
+
+    expectFailure(expect, result, 'no-nested-calls')
+  })
+
+  it.for([
+    ['two calls deep', 'export const a = f(g(1))\n'],
+    ['two calls deep through await', 'export async function a() { return f(await g(1)) }\n'],
+    ['calls chained on a call', 'export const a = f(g(1)).map(h)\n'],
+    ['calls inside a callback', 'export const a = f(() => g(h(1)))\n'],
+  ])('passes a call %s', async ([, code], { expect, onTestFinished }) => {
+    const result = await lintFixture(onTestFinished, { 'src/shell/sample.ts': callHelpers + code })
+
+    expectPass(expect, result, 'src/shell/sample.ts')
+  })
+
+  const confinedLibraries = [
+    {
+      library: 'date-fns',
+      home: 'src/core/time',
+      source: "import { parseISO } from 'date-fns'\nexport const parse = parseISO\n",
+    },
+    {
+      library: '@date-fns/tz',
+      home: 'src/core/time',
+      source: "import { TZDate } from '@date-fns/tz'\nexport const Zoned = TZDate\n",
+    },
+    {
+      library: 'ts-fsrs',
+      home: 'src/core/scheduling',
+      source: "import { fsrs } from 'ts-fsrs'\nexport const scheduler = fsrs\n",
+    },
+  ]
+
+  it.for(confinedLibraries)(
+    'fails when a file outside $home imports $library',
+    async ({ source }, { expect, onTestFinished }) => {
+      const outside = ['src/core/sample/sample.ts', 'src/shell/db/sample/sample.ts']
+
+      const results = await Promise.all(
+        outside.map((path) => lintFixture(onTestFinished, { [path]: source })),
+      )
+
+      results.forEach((result, index) => expectFailure(expect, result, outside[index]))
+    },
+  )
+
+  it.for(confinedLibraries)(
+    'passes when $home imports $library',
+    async ({ home, source }, { expect, onTestFinished }) => {
+      const inside = `${home}/sample.ts`
+
+      expectPass(expect, await lintFixture(onTestFinished, { [inside]: source }), inside)
     },
   )
 

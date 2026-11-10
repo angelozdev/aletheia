@@ -1,0 +1,118 @@
+---
+name: az-aletheia-add
+description: Use when Angelo wants to keep something from the current conversation as spaced-repetition cards in Aletheia, from any repo. Triggers on "guarda esto", "haz una tarjeta", "añade esto a aletheia", "guárdalo en aletheia", "hazme tarjetas de esto". Drafts cards, shows every draft for approval, and saves only the approved ones through the installed aletheia CLI.
+---
+
+# az-aletheia-add
+
+Turn what Angelo just learned into cards for his daily review. You draft, he decides, the
+`aletheia` CLI stores. Talk to Angelo in Spanish. Card content is Spanish with technical terms
+in English; tags are English.
+
+## Rules
+
+- Nothing is saved without Angelo's approval of that exact card.
+- The `aletheia` CLI is the only writer. Never open, read or edit a store file, never write SQL,
+  never choose an environment: plain `aletheia` writes to Angelo's real deck.
+- Every question about a card is answered by running `aletheia`, never from memory.
+
+## 1. Draft
+
+Draft from the conversation, one card per idea worth remembering. Fewer, better cards beat many.
+A card enters only if it follows all of these:
+
+1. **One idea or mechanism.** An unrelated "and also" is a second card.
+2. **An answer of one to three lines.** Longer means it is not one idea yet.
+3. **A question that stands alone.** It names the technology, and the variant when it matters
+   ("una cola _classic_ de RabbitMQ"). No "esto", "lo de antes", "nuestro proyecto".
+4. **A credible situation** where knowing it matters. If you cannot name one, drop the card.
+5. **Not trivia.** No dates, versions, who created what, or things used once a year and found
+   in seconds.
+
+Pick the granularity between too broad and too atomic:
+
+- Too broad: "¿Qué es un consumer group en Redis Streams?"
+- Too atomic: "En un consumer group, ¿cuántos consumidores reciben cada mensaje?" → "Uno."
+- Balanced: "En Redis Streams, ¿cómo reparte un consumer group los mensajes entre sus
+  consumidores, y qué tiene que hacer un consumidor para que Redis dé un mensaje por
+  procesado?" → "Cada mensaje va a un solo consumidor. El consumidor confirma con `XACK`;
+  hasta entonces el mensaje queda en la lista de pendientes (PEL)."
+
+### The five types
+
+| type | Shape | Example question |
+|---|---|---|
+| `concept` | how something works or what it guarantees | "En PostgreSQL, ¿qué garantiza `SERIALIZABLE` que `REPEATABLE READ` no?" |
+| `comparison` | X vs Y on one specific dimension | "En Kafka y RabbitMQ classic, ¿qué pasa con un mensaje después de que el consumidor lo confirma?" |
+| `command` | which command or flag does a specific thing | "En Docker, ¿qué diferencia hay entre `docker ps` y `docker ps -a`?" |
+| `scenario` | given a concrete situation, what do you do | "Un pod de Kubernetes queda en `CrashLoopBackOff` sin logs útiles. ¿Qué miras primero y con qué comando?" |
+| `code` | read a short snippet: its output, its complexity or its bug | "En JavaScript, ¿qué imprime `[1, 10, 2].sort()` y por qué?" |
+
+A `code` question carries its snippet in a fenced block inside the question.
+
+### The fields
+
+- `type`: one of the five above.
+- `question`, `answer`: as above; the answer is what Angelo will be shown after he answers.
+- `keyPoints`: one to three short points the answer must contain; review grades against them.
+- `situation`: one sentence, the moment where this matters ("Un contenedor se cayó y no aparece
+  en `docker ps`.").
+- `tags`: one or more, in English, lowercase `a`–`z`, digits and dashes, in segments joined by
+  `::`, from general to specific: `docker::commands`, `messaging::redis-streams`. No accents,
+  no `ñ`, no uppercase. Angelo may name a topic in Spanish; you find its English tag.
+- `source`: the name of the repo you are in, or the study context when there is no repo
+  ("libro Designing Data-Intensive Applications").
+
+## 2. Show every draft
+
+Before saving anything, show each draft numbered, with every field:
+
+```
+1. command · docker::commands
+   Pregunta: En Docker, ¿qué diferencia hay entre `docker ps` y `docker ps -a`?
+   Respuesta: `ps` muestra solo los contenedores en ejecución; `-a` incluye los detenidos.
+   Key points: `ps`: solo en ejecución · `-a`: incluye detenidos
+   Situación: Un contenedor se cayó y no aparece en `docker ps`.
+```
+
+Ask Angelo to approve, edit or reject each one. Apply his edits exactly. A rejected draft is
+dropped and never stored. If he approves none, save nothing.
+
+## 3. Save the approved cards
+
+Send every approved card in one call, a JSON list on stdin through a quoted heredoc, so
+backticks, accents and multi-line code arrive untouched:
+
+```sh
+aletheia card add <<'JSON'
+[
+  {
+    "type": "command",
+    "question": "En Docker, ¿qué diferencia hay entre `docker ps` y `docker ps -a`?",
+    "answer": "`ps` muestra solo los contenedores en ejecución; `-a` incluye los detenidos.",
+    "keyPoints": ["`ps`: solo en ejecución", "`-a`: incluye detenidos"],
+    "situation": "Un contenedor se cayó y no aparece en `docker ps`.",
+    "tags": ["docker::commands"],
+    "source": "diarium"
+  }
+]
+JSON
+```
+
+The JSON must be valid: escape `"` and `\` inside strings and write line breaks as `\n`. Send
+only these seven fields.
+
+stdout gives the ids in the order sent, `ids[2]: k7m2,p3x9` (an id of digits only comes
+quoted: `"0123"`). Tell Angelo each saved card by its id written `#k7m2`.
+
+The list is saved whole or not at all. If the command exits 1, nothing was stored: read the
+`error:` line on stderr, for example
+`error: card 2: situation: is required; tags[0]: use a-z, digits and dashes, in segments joined by ::`
+(cards are numbered from 1 in the list you sent), fix those drafts, show the fixed ones to
+Angelo again, and send the approved list again.
+
+## 4. Questions about a card
+
+When Angelo asks about a saved card ("muéstrame esa tarjeta", "¿cuándo toca?"), run
+`aletheia card show k7m2`, the id without `#` (a shell reads `#` as a comment), and answer from
+what it prints. Its instants are already in Angelo's local time; read them as printed.

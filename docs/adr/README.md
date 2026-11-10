@@ -20,3 +20,6 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 | 0008 | Installed data in a home dotfolder, development data in the repo | accepted | 2026-11-09 |
 | 0009 | Backups in the data folder, not iCloud Drive | accepted | 2026-11-09 |
 | 0010 | The store is opaque outside the db adapter | accepted | 2026-11-09 |
+| 0011 | The release copies the global skill | accepted | 2026-11-09 |
+| 0012 | ts-fsrs 5 with FSRS-6 and one learning step, behind one core module | accepted | 2026-11-09 |
+| 0013 | Cards, tags and reviews, with their rules in the store | accepted | 2026-11-09 |

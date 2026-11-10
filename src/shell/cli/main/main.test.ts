@@ -43,7 +43,8 @@ describe('main', () => {
 
     expect(code).toBe(0)
     expect(stderr).toBe('env: staging\n')
-    expect(existsSync(join(dataDir, 'staging.sqlite'))).toBe(true)
+    const staging = join(dataDir, 'staging.sqlite')
+    expect(existsSync(staging)).toBe(true)
     expect(existsSync(db)).toBe(false)
   })
 

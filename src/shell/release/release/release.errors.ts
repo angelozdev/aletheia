@@ -28,6 +28,12 @@ export class NotOnMainError extends ReleaseRefusedError {
   }
 }
 
+export class SkillCopiesDisabledError extends ReleaseRefusedError {
+  constructor() {
+    super('skill copies are disabled here (under vitest)')
+  }
+}
+
 export class UncommittedChangesError extends ReleaseRefusedError {
   constructor() {
     super('uncommitted changes')

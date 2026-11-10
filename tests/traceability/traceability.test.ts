@@ -8,8 +8,9 @@ import { missingIds, readTraceabilitySources } from './traceability.ts'
 function tempTree(files: Record<string, string>): string {
   const root = tempDir('aletheia-traceability-')
   for (const [path, content] of Object.entries(files)) {
-    mkdirSync(dirname(join(root, path)), { recursive: true })
-    writeFileSync(join(root, path), content)
+    const file = join(root, path)
+    mkdirSync(dirname(file), { recursive: true })
+    writeFileSync(file, content)
   }
   return root
 }
@@ -44,10 +45,14 @@ describe('traceability', () => {
       'evals/c/c.md': 'INV-99 holds',
     })
 
-    expect(missingIds(readTraceabilitySources(root))).toEqual(['999-US1-AS1', '999-US1-AS4'])
+    const sources = readTraceabilitySources(root)
+
+    expect(missingIds(sources)).toEqual(['999-US1-AS1', '999-US1-AS4'])
   })
 
   it('every scenario and invariant id in specs/*/spec.md is named by a test or eval', () => {
-    expect(missingIds(readTraceabilitySources(REPO_ROOT))).toEqual([])
+    const sources = readTraceabilitySources(REPO_ROOT)
+
+    expect(missingIds(sources)).toEqual([])
   })
 })
