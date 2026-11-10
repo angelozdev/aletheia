@@ -1,7 +1,8 @@
-import { NEW_STATE, type Card } from '#core/cards'
+import { cardById, NEW_STATE, type Card } from '#core/cards'
+import { scheduleAfter } from '#core/scheduling'
 import { minutesAfter } from '#core/time'
 import { LEARN_AHEAD_MINUTES, LEARNING_STATES, REVIEW_STATE } from './reviews.constants.ts'
-import type { DueList } from './reviews.types.ts'
+import type { DueList, GradeCardDeps, ReviewDraft } from './reviews.types.ts'
 
 function byDue(a: Card, b: Card): number {
   return a.due.getTime() - b.due.getTime()
@@ -38,4 +39,22 @@ export function dueList(cards: Card[], now: Date, tomorrow: Date): DueList {
   const listed = new Set(due)
   const leftOut = cards.filter((card) => !listed.has(card))
   return { cards: due, nextDue: earliestDue(leftOut) }
+}
+
+export function gradeCard(draft: ReviewDraft, { cards, reviews, now }: GradeCardDeps): Card {
+  const card = cardById(cards, draft.card)
+  const graded = scheduleAfter(card, draft.grade, now)
+  reviews.record(
+    {
+      cardId: card.id,
+      grade: draft.grade,
+      claudeGrade: draft.claudeGrade,
+      stateBefore: card.state,
+      reviewedAt: now,
+      answer: draft.answer,
+      rationale: draft.rationale,
+    },
+    graded,
+  )
+  return graded
 }

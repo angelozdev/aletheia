@@ -2,7 +2,12 @@ import { join } from 'node:path'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { CardIdTakenError, newCard, type CardType } from '#core/cards'
 import { SAMPLE_DRAFT } from '../../../../tests/support/cards/cards.constants.ts'
-import { openTestStore, runSql, selectAll } from '../../../../tests/support/store/store.ts'
+import {
+  insertSql,
+  openTestStore,
+  runSql,
+  selectAll,
+} from '../../../../tests/support/store/store.ts'
 import { tempDir } from '../../../../tests/support/temp-dir/temp-dir.ts'
 import { closeStore } from '../database/database.ts'
 import { StoreCardRepository } from './cards.ts'
@@ -26,17 +31,12 @@ const VALID_CARD: Record<string, string> = {
 
 let path: string
 
-function quoted(value: string): string {
-  return `'${value.replaceAll("'", "''")}'`
-}
-
 function insertCard(overrides: Record<string, string> = {}): string {
-  const row = { ...VALID_CARD, ...overrides }
-  return `insert into cards (${Object.keys(row).join(', ')}) values (${Object.values(row).map(quoted).join(', ')})`
+  return insertSql('cards', { ...VALID_CARD, ...overrides })
 }
 
 function insertTag(tag: string, cardId = VALID_CARD.id): string {
-  return `insert into card_tags (card_id, tag) values (${quoted(cardId)}, ${quoted(tag)})`
+  return insertSql('card_tags', { card_id: cardId, tag })
 }
 
 beforeEach(async () => {

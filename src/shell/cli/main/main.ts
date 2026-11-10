@@ -3,10 +3,17 @@ import { backupCommand } from '../commands/backup/backup.ts'
 import { cardAddCommand } from '../commands/card-add/card-add.ts'
 import { cardShowCommand } from '../commands/card-show/card-show.ts'
 import { reviewDueCommand } from '../commands/review-due/review-due.ts'
+import { reviewGradeCommand } from '../commands/review-grade/review-grade.ts'
 import { COMMAND_GROUPS, ExitCode } from './main.constants.ts'
 import type { CliCommand, CliContext } from './main.types.ts'
 
-const COMMANDS = [backupCommand, cardAddCommand, cardShowCommand, reviewDueCommand]
+const COMMANDS = [
+  backupCommand,
+  cardAddCommand,
+  cardShowCommand,
+  reviewDueCommand,
+  reviewGradeCommand,
+]
 
 function program(context: CliContext) {
   return new Command('aletheia')

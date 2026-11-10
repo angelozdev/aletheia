@@ -32,3 +32,13 @@ export function selectAll(path: string, sql: string): Row[] {
     db.close()
   }
 }
+
+function quoted(value: string): string {
+  return `'${value.replaceAll("'", "''")}'`
+}
+
+export function insertSql(table: string, row: Record<string, string>): string {
+  const columns = Object.keys(row).join(', ')
+  const values = Object.values(row).map(quoted).join(', ')
+  return `insert into ${table} (${columns}) values (${values})`
+}

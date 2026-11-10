@@ -5,7 +5,21 @@ import { database } from '../database/database.ts'
 import type { Database, Store } from '../database/database.types.ts'
 import { TAKEN_ID } from './cards.constants.ts'
 import { cards, cardTags } from './cards.schema.ts'
-import type { CardRow, StoredCard } from './cards.types.ts'
+import type { CardRow, ScheduleRow, StoredCard } from './cards.types.ts'
+
+export function scheduleRow(card: Card): ScheduleRow {
+  return {
+    due: storedInstant(card.due),
+    state: card.state,
+    stability: card.stability,
+    difficulty: card.difficulty,
+    scheduledDays: card.scheduledDays,
+    learningSteps: card.learningSteps,
+    reps: card.reps,
+    lapses: card.lapses,
+    lastReview: card.lastReview === null ? null : storedInstant(card.lastReview),
+  }
+}
 
 function cardRow(card: Card): CardRow {
   return {
@@ -17,15 +31,7 @@ function cardRow(card: Card): CardRow {
     source: card.source,
     keyPoints: JSON.stringify(card.keyPoints),
     status: card.status,
-    due: storedInstant(card.due),
-    state: card.state,
-    stability: card.stability,
-    difficulty: card.difficulty,
-    scheduledDays: card.scheduledDays,
-    learningSteps: card.learningSteps,
-    reps: card.reps,
-    lapses: card.lapses,
-    lastReview: card.lastReview === null ? null : storedInstant(card.lastReview),
+    ...scheduleRow(card),
     createdAt: storedInstant(card.createdAt),
     updatedAt: storedInstant(card.updatedAt),
   }
