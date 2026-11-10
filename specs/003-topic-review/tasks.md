@@ -262,7 +262,7 @@ a topic review is not capped.
     - `sessionList`: if `topic` is false, the budget is `max(0, newPerDay - introduced today)`. New cards past the budget, in saved order, leave the scope before `dueList` runs. `heldBack` is their count.
     - `nextDue` takes the earlier of its value and `tomorrow` when `heldBack > 0`.
   - **Run**: quickstart §3, first call
-- [ ] T012 [US3] A topic review includes its new cards without the daily limit, in `src/core/sessions/sessions.ts`
+- [X] T012 [US3] A topic review includes its new cards without the daily limit, in `src/core/sessions/sessions.ts`
   - **Test**: `review-topic.test.ts`: `003-US3-AS3 review topic includes all 15 new cards of the topic, even after 10 were introduced today`. There are 25 cards via `uniqueIdDraw()`. Ten are tagged `docker` and arranged as review due `2026-11-14T15:00:00.000Z`, with reviews inserted today and `state_before = 'new'`. Fifteen are new, tagged `messaging`. `review topic messaging --json` → `count: 15`, `heldBack: 0`.
   - **Code**: none expected beyond T011's `topic` branch. If the test passes at once, check it fails with the budget forced on for topics, then restore.
   - **Run**: `pnpm test -t 003-US3-AS3`

@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { taggedDrafts } from '../../../../../tests/support/cards/cards.ts'
+import { uniqueIdDraw } from '../../../../../tests/support/draws/draws.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
-import { runSql, selectAll } from '../../../../../tests/support/store/store.ts'
+import { insertSql, runSql, selectAll } from '../../../../../tests/support/store/store.ts'
 
 let now: Date
 let cli: StoreCli
@@ -22,6 +23,20 @@ async function addTagged(tagLists: string[][]): Promise<void> {
 
 function arrange(id: string, state: string, due: string): void {
   runSql(cli.db, `update cards set state = '${state}', due = '${due}' where id = '${id}'`)
+}
+
+function introducedToday(id: string): void {
+  arrange(id, 'review', '2026-11-14T15:00:00.000Z')
+  const review = {
+    card_id: id,
+    grade: 'good',
+    claude_grade: 'good',
+    state_before: 'new',
+    reviewed_at: '2026-11-11T15:00:00.000Z',
+    answer: 'a',
+    rationale: 'r',
+  }
+  runSql(cli.db, insertSql('reviews', review))
 }
 
 function messagingCards(count: number): Promise<void> {
@@ -146,5 +161,18 @@ describe('aletheia review topic', () => {
       nextDue: '2026-11-14T10:00:00-05:00',
       cards: [],
     })
+  })
+
+  it('003-US3-AS3 review topic includes all 15 new cards of the topic, even after 10 were introduced today', async () => {
+    cli = cliOnTempStore({ clock: () => now, randomIndex: uniqueIdDraw() })
+    const docker = Array.from({ length: 10 }, () => ['docker'])
+    const messaging = Array.from({ length: 15 }, () => ['messaging'])
+    await addTagged([...docker, ...messaging])
+    const dockerCards = selectAll(cli.db, 'select id from cards order by rowid limit 10')
+    for (const { id } of dockerCards) introducedToday(String(id))
+
+    const { stdout } = await run(['review', 'topic', 'messaging', '--json'])
+
+    expect(JSON.parse(stdout)).toMatchObject({ count: 15, heldBack: 0 })
   })
 })
