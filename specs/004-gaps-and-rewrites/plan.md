@@ -15,7 +15,7 @@ columns on `reviews` and an update trigger on the search index. The review skill
 from bad wording, pulls or offers the prerequisite, voids, and rewrites only with Angelo's
 approval. No new dependency. Decisions in [research.md](./research.md);
 [ADR-0017](../../docs/adr/0017-a-review-carries-one-flag-and-the-card-it-was-a-prerequisite-of.md)
-is proposed and waits for Angelo.
+is accepted.
 
 ## Technical Context
 
@@ -63,7 +63,7 @@ _Gate before Phase 0, re-checked after Phase 1. Constitution 1.6.0._
 | VIII. Conversation, not commands | Pass. "no recuerdo qué es X" and "la pregunta está mal" need no command; every question about a card runs `aletheia`. |
 | IX. Quality over volume | Pass. A gap feeds the deck only through `az-aletheia-add`'s approval; a rewrite is saved only after Angelo approves the exact text. |
 | Technology Constraints | Pass. `card edit` takes JSON validated with `zod`; the custom migrations hold only triggers, which Drizzle cannot express. |
-| ADRs | 0002–0016 `accepted` and respected; 0014's update trigger arrives as it foresaw. 0017 `proposed`. |
+| ADRs | 0002–0016 `accepted` and respected; 0014's update trigger arrives as it foresaw. 0017 `accepted`. |
 
 Re-check after Phase 1: unchanged. The data model adds two columns with `CHECK`s and two
 triggers' worth of custom SQL; the contract adds one command and two optional fields, and
@@ -117,7 +117,7 @@ folders (ADR-0004), one folder per module (ADR-0007), the store opaque outside `
 
 ## Delivery order (vertical slices for `/speckit-tasks`)
 
-Before step 1: Angelo accepts ADR-0017 and the names (R1), and design §5 catches up (R10), each
+Before step 1, done: Angelo accepted ADR-0017 and the names (R1), and design §5 caught up (R10), each
 in its own commit.
 
 1. **A gap is logged** (004-US1-AS1; AS2 for the flag rules): the two migrations of R2,

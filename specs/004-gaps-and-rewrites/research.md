@@ -1,7 +1,7 @@
 # Research: Gaps and Rewrites
 
-Decisions marked **Angelo** were his, in the spec's Clarifications; the rest wait for his review
-with ADR-0017. Nothing here needs a new dependency.
+Decisions marked **Angelo** were his, in the spec's Clarifications; he approved the rest
+with ADR-0017 on 2026-11-10. Nothing here needs a new dependency.
 
 ## R1. Two optional fields on `review grade`, one new command `card edit`
 
@@ -21,7 +21,7 @@ with ADR-0017. Nothing here needs a new dependency.
 
 ## R2. The review log: two nullable columns, rebuilt, triggers restored
 
-- **Decision** (ADR-0017, proposed): `reviews` gains `flag` and `prerequisite_of`, with
+- **Decision** (ADR-0017): `reviews` gains `flag` and `prerequisite_of`, with
   `CHECK`s for the flag's values, a gap being Again, and a card not being its own prerequisite;
   `prerequisite_of` references `cards(id)`. `drizzle-kit generate` rebuilds the table to add the
   `CHECK`s (seen in a spike: create `__new_reviews`, copy, drop, rename), which drops
