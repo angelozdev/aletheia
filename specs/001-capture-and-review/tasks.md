@@ -80,7 +80,7 @@ Shared by the CLI tests of this slice, each created by the first task that needs
 **Purpose**: The decisions this slice builds on are accepted. No behavior, so no test (named
 exception).
 
-- [ ] T001 Gate: once Angelo accepts ADRs 0011–0013, change `**Status:** proposed` to `accepted` in `docs/adr/0011-the-release-copies-the-global-skill.md`, `docs/adr/0012-ts-fsrs-5-with-fsrs-6-and-one-learning-step.md`, `docs/adr/0013-cards-tags-and-reviews-with-rules-in-the-store.md` and in the index of `docs/adr/README.md`; commit `docs(adr): accept 0011-0013`. Do not start T002 before Angelo says so.
+- [X] T001 Gate: once Angelo accepts ADRs 0011–0013, change `**Status:** proposed` to `accepted` in `docs/adr/0011-the-release-copies-the-global-skill.md`, `docs/adr/0012-ts-fsrs-5-with-fsrs-6-and-one-learning-step.md`, `docs/adr/0013-cards-tags-and-reviews-with-rules-in-the-store.md` and in the index of `docs/adr/README.md`; commit `docs(adr): accept 0011-0013`. Do not start T002 before Angelo says so.
 
 ---
 

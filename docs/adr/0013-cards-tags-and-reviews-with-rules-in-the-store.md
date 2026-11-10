@@ -1,6 +1,6 @@
 # 0013. Cards, tags and reviews, with their rules in the store
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-09
 - **Deciders:** Angelo
 - **Supersedes:** —

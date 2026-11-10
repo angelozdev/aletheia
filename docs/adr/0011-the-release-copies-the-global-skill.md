@@ -1,6 +1,6 @@
 # 0011. The release copies the global skill
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-09
 - **Deciders:** Angelo
 - **Supersedes:** —

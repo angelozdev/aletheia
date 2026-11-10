@@ -1,6 +1,6 @@
 # 0012. ts-fsrs 5 with FSRS-6 and one learning step, behind one core module
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-09
 - **Deciders:** Angelo
 - **Supersedes:** —
