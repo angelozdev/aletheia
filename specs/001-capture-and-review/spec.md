@@ -14,6 +14,8 @@
 - Q: May a tag carry accents or `ñ`? → A: No: only `a`–`z`, digits and dashes. `mensajería` is refused, so a topic has one spelling and the tag tree never splits on an accent.
 - Q: What does a review keep that cannot be rebuilt later? → A: The grade Claude gave, next to Angelo's final one, and the card's state before the review. A dispute changed the grade when the two grades differ, so that flag is no longer stored. Decided while planning (research R4).
 - Q: In which language are tags written? → A: English (`messaging::redis-streams`), like the rest of the system (constitution 1.5.0). Angelo names a topic in Spanish and Claude finds its tag.
+- Q: Does a review keep Angelo's answer word for word? → A: No: Claude stores a summary of one to three lines with every claim he made, right or wrong, and what he said he did not know, without filler, repetitions, hedges ("no estoy seguro") or the questions he asked after the grade. Hedging that weighed on the grade goes in the rationale. Decided after the first review in `prod`, whose dictated answer was stored verbatim.
+- Q: When a doubt during a review reveals something worth learning, what does Claude do? → A: It says so in one line ("esto vale una tarjeta: …, ¿la agregamos?") and, if Angelo agrees, drafts and saves it through `az-aletheia-add`, shown and approved like any capture. Only when the idea passes the card quality rules and no card in the session covers it; most doubts make no card. Asked after the first review in `prod`, where the doubt "¿qué es el userland y cómo usa un contenedor Linux el kernel en un Mac?" deserved a card.
 - Q: In which time are instants stored and shown? → A: Stored in UTC, always; shown in the local time of whoever runs the CLI, so Claude never converts a time zone. "Today" stays the local day.
 
 ## User Scenarios & Testing _(mandatory)_
@@ -62,16 +64,16 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 - **FR-002**: Every card MUST get a short, stable, unique id that Angelo can quote in chat.
 - **FR-003**: A saved card MUST start active and new, due at once.
 - **FR-004**: The due list MUST hold new cards, studied cards whose due date is on or before Angelo's local today, and (re)learning cards whose instant has passed or, when nothing else is due, ends within 20 minutes.
-- **FR-005**: Recording a grade MUST append a review (card, final grade, Claude's grade, the card's state before, instant, Angelo's answer, Claude's rationale) and reschedule the card with FSRS, short-term steps on, with one 10-minute learning step.
+- **FR-005**: Recording a grade MUST append a review (card, final grade, Claude's grade, the card's state before, instant, a summary of Angelo's answer, Claude's rationale) and reschedule the card with FSRS, short-term steps on, with one 10-minute learning step.
 - **FR-006**: `az-aletheia-add` MUST show every draft before saving, write its tags in English, save only what Angelo approves (with his edits), store nothing he rejects, and write to `prod` through the installed `aletheia`.
-- **FR-007**: The review skill MUST work on `prod` through the installed `aletheia`, ask it for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, wait for Angelo's reply after every grade and record his final grade (Claude's unless he disputes it); then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, and show the next card when he says so, until nothing is due or Angelo stops.
+- **FR-007**: The review skill MUST work on `prod` through the installed `aletheia`, ask it for the due list, show one question at a time without its answer or key points, grade by the rules of design §8.2, show the grade, the reason and the full answer, wait for Angelo's reply after every grade and record his final grade (Claude's unless he disputes it); then answer his doubts about that card in 2–3 lines each, with no lesson and without changing the grade, offer a doubt worth remembering as a new card and save it through `az-aletheia-add` only if Angelo approves it, and show the next card when he says so, until nothing is due or Angelo stops.
 - **FR-008**: Every question about a card or what is due MUST be answered by running `aletheia` (constitution VIII).
 - **FR-009**: `pnpm release` MUST copy `az-aletheia-add` from the released commit into `~/.aletheia/skills/az-aletheia-add/`, replacing the previous copy whole or not at all (written to a partial folder beside it, then renamed, as backups do) and writing nothing under `~/.claude/`. **INV-01** covers this copy: under vitest the release refuses to write it unless given a folder, as backups are refused.
 
 ### Key Entities
 
 - **Card**: id, type, question, answer, key points, situation, tags, source, status (active in this slice), FSRS scheduling state, created and updated instants.
-- **Review**: one per recorded grade: card, Angelo's final grade, the grade Claude gave (a dispute changed it when they differ), the card's state before the review, instant, Angelo's answer, Claude's rationale.
+- **Review**: one per recorded grade: card, Angelo's final grade, the grade Claude gave (a dispute changed it when they differ), the card's state before the review, instant, a summary of Angelo's answer, Claude's rationale.
 - **Grade**: Again, Hard, Good or Easy.
 
 ## Success Criteria _(mandatory)_

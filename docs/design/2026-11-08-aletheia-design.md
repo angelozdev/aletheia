@@ -126,7 +126,10 @@ any dispute (a dispute changed the grade when the two differ), the card's state
 before the review, timestamp, Angelo's answer, Claude's grading rationale, and
 flags: `missing-prerequisite`, `badly-written`. — _Storing the answer, rationale
 and flags is my call; they power stats and pruning. Claude's rating and the
-state before were added in spec 001: neither can be rebuilt later._
+state before were added in spec 001: neither can be rebuilt later._ The answer is
+stored as Claude's summary of what Angelo said, not his words: every claim, right
+or wrong, and what he said he did not know, without filler, hedges or the
+questions he asked after the grade (decided after the first real review).
 
 A review flagged `badly-written` is **voided**: it is logged, but it does not
 update FSRS and does not count toward retention or leech detection, because it
@@ -223,22 +226,28 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
 5. Claude states the grade and why, then shows the full answer.
 6. Angelo may dispute the grade; Claude adjusts before recording it.
 7. The rating is recorded through the CLI; FSRS computes the next due date.
-8. **Missing prerequisite** ("no recuerdo qué es un consumer group"): grade
+8. **A card from a doubt:** when one of Angelo's doubts about the card reveals an
+   idea worth remembering for what he is learning, Claude says so in a line
+   ("esto vale una tarjeta: …, ¿la agregamos?") and, if he agrees, drafts and
+   saves it through §8.1, with the same rules and approval. Most doubts make no
+   card; it is offered only when the idea passes §6 and no card in the session
+   covers it. — _Angelo's call, after the first real review._
+9. **Missing prerequisite** ("no recuerdo qué es un consumer group"): grade
    Again, explain the base concept in 2–3 lines (no lesson), then look for a card
    covering it. If one exists, pull it into this session. If not, propose it
    through the same rules and approval as §8.1. This Again is a real failure: it
    updates FSRS and counts toward retention, and the flag makes it count as a gap
    rather than toward leech detection. — _my call_
-9. **Badly written card** (failed because of the wording, not the knowledge):
+10. **Badly written card** (failed because of the wording, not the knowledge):
    the review is voided (§5) and Claude proposes a rewrite on the spot.
-10. **Same-session relearning:** FSRS short-term scheduling stays on (the
+11. **Same-session relearning:** FSRS short-term scheduling stays on (the
     `ts-fsrs` default). A card that becomes due again during the session, such
     as one graded Again, is shown again before the session ends. Re-shows do not
     count toward the session cap. — _my call_
-11. **Session cap:** about 20 cards, because every card passes through Claude
+12. **Session cap:** about 20 cards, because every card passes through Claude
     and costs context. The cap is soft: when reached, Claude says how many
     remain and asks whether to continue. — _my call_
-12. **New cards per day cap**, so a big capture session does not flood reviews.
+13. **New cards per day cap**, so a big capture session does not flood reviews.
     Default 10, configurable. It applies to general review only: topic review
     includes the tag's new cards without the cap, and cards pulled in as
     prerequisites or created by a rewrite, split or merge are exempt. All caps
@@ -400,6 +409,15 @@ can use.
 - Prerequisite relations: cards that wait until their base card is solid.
 - Claude rephrasing the question on each review so Angelo remembers the concept,
   not the wording. Raised, not decided.
+- Visual explanations: for a technically dense question or doubt, Claude offers,
+  with Angelo's permission, a quick visual made to his level: an analogy, a
+  mental image or an animated diagram (system calls as a request crossing the
+  user/kernel boundary). Story: a chat about system calls left the idea unclear.
+  Open: whether it is an Aletheia skill or a global one (the constitution allows
+  one global skill), what it produces (a local HTML page opened in the browser,
+  a claude.ai artifact, which leaves the Mac, or a HyperFrames video), and how it
+  reads Angelo's level (`PROFILE.md`, slice 2). Raised 2026-11-09, to be
+  specified as its own slice or within slice 4.
 - Jev (TypeSafe AI), a model that returns a typed decision instead of text, as a
   judge: asked per key point whether the answer covers it, with the code deriving
   the grade; or as the judge in the review skill's evals. Not used for now:
