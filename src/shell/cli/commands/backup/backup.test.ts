@@ -7,7 +7,10 @@ import {
   FAILING_MIGRATIONS,
   FIXTURE_MIGRATIONS,
 } from '../../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
-import { writeMigrations } from '../../../../../tests/support/fixture-migrations/fixture-migrations.ts'
+import {
+  noMigrations,
+  writeMigrations,
+} from '../../../../../tests/support/fixture-migrations/fixture-migrations.ts'
 import type { FixtureMigrations } from '../../../../../tests/support/fixture-migrations/fixture-migrations.types.ts'
 import { FIXED_INSTANT } from '../../../../../tests/support/run-cli/run-cli.constants.ts'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
@@ -130,7 +133,7 @@ describe('aletheia backup', () => {
   })
 
   it('000-US3-AS3 an unwritable backup folder exits 1 with no copy left and the store unchanged', async () => {
-    closeStore(await openTestStore(db))
+    closeStore(await openTestStore(db, noMigrations()))
     runSql(
       db,
       "create table notes (id integer primary key, body text); insert into notes (body) values ('first')",

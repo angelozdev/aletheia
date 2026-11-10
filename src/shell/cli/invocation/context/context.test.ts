@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { noMigrations } from '../../../../../tests/support/fixture-migrations/fixture-migrations.ts'
 import { runCli } from '../../../../../tests/support/run-cli/run-cli.ts'
 import { tempDir } from '../../../../../tests/support/temp-dir/temp-dir.ts'
 import { REPO_ROOT } from '../../bin/bin.constants.ts'
@@ -59,10 +60,10 @@ describe('invocation context', () => {
     const home = tempDir('aletheia-home-')
     const entryDir = join(REPO_ROOT, 'dist')
 
-    const { code, stderr } = await runCli(
-      ['backup'],
-      releasedContext({ ...released({}), home, entryDir }),
-    )
+    const { code, stderr } = await runCli(['backup'], {
+      ...releasedContext({ ...released({}), home, entryDir }),
+      migrationsDir: noMigrations(),
+    })
 
     expect(code).toBe(0)
     expect(stderr).toBe('env: prod\n')

@@ -1,15 +1,22 @@
+import type { RandomIndex } from '#core/cards'
+import type { COMMAND_GROUPS } from './main.constants.ts'
+
 export type Output = { write(chunk: string): unknown }
 
 export type Vars = Record<string, string | undefined>
 
 type Clock = () => Date
 
+type Stdin = () => Promise<string>
+
 export type CliContext = {
   stdout: Output
   stderr: Output
+  stdin: Stdin
   version: string
   vars: Vars
   clock: Clock
+  randomIndex: RandomIndex
   defaultEnv: string
   dataDir: string | null
   migrationsDir: string
@@ -17,8 +24,11 @@ export type CliContext = {
 
 export type GlobalOptions = { env?: string; json?: boolean }
 
+type CommandGroup = keyof typeof COMMAND_GROUPS
+
 export type CliCommand = {
+  group?: CommandGroup
   name: string
   description: string
-  run(context: CliContext, options: GlobalOptions): Promise<number>
+  run(context: CliContext, options: GlobalOptions, args: string[]): Promise<number>
 }

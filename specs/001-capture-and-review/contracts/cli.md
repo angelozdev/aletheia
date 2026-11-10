@@ -48,6 +48,9 @@ ids[2]: k7m2,p3x9
 
 JSON: `{"ids":["k7m2","p3x9"]}`
 
+An id made of digits only is quoted, as TOON quotes any string that reads as a number:
+`ids[1]: "0123"`, and `id: "0123"` in `card show`.
+
 Errors, with nothing stored:
 
 - `error: invalid JSON on stdin: <reason>` (also when stdin is empty)
