@@ -80,6 +80,6 @@ Taken after the release, on Angelo's Mac.
 
 | Criterion | Command | Result | Limit |
 |-----------|---------|--------|-------|
-| SC-002 | "guarda esto" to a saved id | | 2 min |
+| SC-002 | "guarda esto" to a saved id | 2026-11-09, Angelo's report: met | 2 min |
 | SC-003 | `review due`, `card show`, `card add` and `review grade` on a temp store with 1,000 cards (`ALETHEIA_DB`) | 2026-11-09, from the sources: `pnpm aletheia` 0.86–0.90 s each (about 0.4 s of it is pnpm's own start); `node src/shell/cli/bin/bin.ts` about 0.48 s each | 1 s each |
-| SC-004 | a review of 10 due cards: inputs beyond answers, disputes, doubts and "sigue" | | 0 |
+| SC-004 | a review of 10 due cards: inputs beyond answers, disputes, doubts and "sigue" | 2026-11-09, Angelo's report: met (how many cards were due was not recorded) | 0 |
