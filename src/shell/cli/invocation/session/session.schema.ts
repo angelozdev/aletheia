@@ -1,22 +1,32 @@
 import { z } from 'zod'
 import { instantFrom } from '#core/time'
 import {
+  DEFAULT_VALUE,
   IN_THE_FUTURE,
   INSTANT_WITH_OFFSET,
-  MAX_PERCENT,
+  LIMIT_RULES,
   NOT_AN_INSTANT,
-  WHOLE_FROM_ONE,
-  WHOLE_FROM_ZERO,
+  OR_DEFAULT,
   WHOLE_NUMBER,
-  WHOLE_PERCENT,
 } from './session.constants.ts'
+import type { LimitRule } from './session.types.ts'
 
-function wholeNumber(message: string, min: number, max = Infinity) {
+function wholeNumber({ min, max }: LimitRule, message: string) {
   return z
     .string()
     .regex(WHOLE_NUMBER, message)
     .transform(Number)
     .refine((value) => value >= min && value <= max, message)
+}
+
+function limit(rule: LimitRule) {
+  return wholeNumber(rule, rule.message).optional()
+}
+
+function setting(rule: LimitRule) {
+  const message = `${rule.message}${OR_DEFAULT}`
+  const forget = z.literal(DEFAULT_VALUE).transform(() => null)
+  return z.union([forget, wholeNumber(rule, message)], { error: message }).optional()
 }
 
 export function sessionFlagsSchema(now: Date) {
@@ -27,8 +37,14 @@ export function sessionFlagsSchema(now: Date) {
       .transform(instantFrom)
       .refine((start) => start <= now, IN_THE_FUTURE)
       .optional(),
-    sessionSize: wholeNumber(WHOLE_FROM_ONE, 1).optional(),
-    newPerDay: wholeNumber(WHOLE_FROM_ZERO, 0).optional(),
-    newShare: wholeNumber(WHOLE_PERCENT, 0, MAX_PERCENT).optional(),
+    sessionSize: limit(LIMIT_RULES.sessionSize),
+    newPerDay: limit(LIMIT_RULES.newPerDay),
+    newShare: limit(LIMIT_RULES.newShare),
   })
 }
+
+export const settingFlagsSchema = z.object({
+  sessionSize: setting(LIMIT_RULES.sessionSize),
+  newPerDay: setting(LIMIT_RULES.newPerDay),
+  newShare: setting(LIMIT_RULES.newShare),
+})

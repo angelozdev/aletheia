@@ -4,7 +4,7 @@ import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand } from '../../main/main.types.ts'
 import { SHOWN_SETTINGS } from './settings-show.constants.ts'
 
-function shownSettings(stored: StoredSettings) {
+export function shownSettings(stored: StoredSettings) {
   return {
     settings: SHOWN_SETTINGS.map(({ key, name }) => ({
       name,

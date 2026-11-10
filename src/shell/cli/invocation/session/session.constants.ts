@@ -1,13 +1,17 @@
 import type { CommandOption } from '../../main/main.types.ts'
 
+export const LIMIT_OPTIONS: CommandOption[] = [
+  { flags: '--session-size <n>', description: 'the most cards a session holds' },
+  { flags: '--new-per-day <n>', description: 'the most new cards introduced per day' },
+  { flags: '--new-share <percent>', description: 'the share of a session kept for new cards' },
+]
+
 export const SESSION_OPTIONS: CommandOption[] = [
   {
     flags: '--session <instant>',
     description: 'the session printed by the first list of this round',
   },
-  { flags: '--session-size <n>', description: 'the most cards this session holds' },
-  { flags: '--new-per-day <n>', description: 'the most new cards introduced today' },
-  { flags: '--new-share <percent>', description: 'the share of the session kept for new cards' },
+  ...LIMIT_OPTIONS,
 ]
 
 export const OPTION_FLAGS: Record<string, string> = {
@@ -19,13 +23,17 @@ export const OPTION_FLAGS: Record<string, string> = {
 
 export const WHOLE_NUMBER = /^\d+$/
 
-export const WHOLE_FROM_ONE = 'must be a whole number, 1 or more'
+const MAX_PERCENT = 100
 
-export const WHOLE_FROM_ZERO = 'must be a whole number, 0 or more'
+export const LIMIT_RULES = {
+  sessionSize: { message: 'must be a whole number, 1 or more', min: 1, max: Infinity },
+  newPerDay: { message: 'must be a whole number, 0 or more', min: 0, max: Infinity },
+  newShare: { message: 'must be a whole number from 0 to 100', min: 0, max: MAX_PERCENT },
+} as const
 
-export const WHOLE_PERCENT = 'must be a whole number from 0 to 100'
+export const DEFAULT_VALUE = 'default'
 
-export const MAX_PERCENT = 100
+export const OR_DEFAULT = `, or ${DEFAULT_VALUE}`
 
 export const INSTANT_WITH_OFFSET =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})$/

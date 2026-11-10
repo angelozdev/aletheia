@@ -30,14 +30,14 @@ function earlier(a: Date, b: Date): Date {
   return a < b ? a : b
 }
 
-function optionMessage(issue: z.core.$ZodIssue): string {
-  return `${OPTION_FLAGS[String(issue.path[0])]}: ${issue.message}`
+export function optionMessages(issues: z.core.$ZodIssue[]): string[] {
+  return issues.map((issue) => `${OPTION_FLAGS[String(issue.path[0])]}: ${issue.message}`)
 }
 
 export function sessionFrom(flags: Flags, context: CliContext): SessionRequest {
   const now = context.clock()
   const parsed = sessionFlagsSchema(now).safeParse(flags)
-  if (!parsed.success) throw new InvalidOptionsError(parsed.error.issues.map(optionMessage))
+  if (!parsed.success) throw new InvalidOptionsError(optionMessages(parsed.error.issues))
   const { session, ...limits } = parsed.data
   return { now, start: session ?? now, limits }
 }
