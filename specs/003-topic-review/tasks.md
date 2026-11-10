@@ -223,7 +223,7 @@ and Angelo can set its size for one session.
     - `session.errors.ts`: `InvalidOptionsError(messages: string[])` → `invalid options: <flag>: <message>`, joined by `FIELD_SEPARATOR`, in the contract's order.
     - Both list commands take `options: SESSION_OPTIONS`, and `listSession` uses the parsed start.
   - **Run**: quickstart §2, the call with `--session`
-- [ ] T009 [US2] `--session-size` sets the size for one session, in `src/shell/cli/invocation/session/session.schema.ts`
+- [X] T009 [US2] `--session-size` sets the size for one session, in `src/shell/cli/invocation/session/session.schema.ts`
   - **Test**: `review-due.test.ts`: `003-US2-AS4 a session of 10 holds 10 of 25 and the next session holds 20 again` — `review due --session-size 10 --json` → `count: 10`, `remaining: 15`; `review due --json` → `count: 20`. `review due refuses a session size below 1` — `--session-size 0`, `-1`, `1.5` and `ten` each → `error: invalid options: --session-size: must be a whole number, 1 or more\n`.
   - **Code**: `SESSION_OPTIONS` gains `--session-size <n>`. A whole number is `^\d+$` turned into a number, then checked against its minimum. `WHOLE_FROM_ONE = 'must be a whole number, 1 or more'`. `listSession` takes `limits = { ...BUILT_IN_SETTINGS, ...oneSession }`.
   - **Run**: quickstart §2

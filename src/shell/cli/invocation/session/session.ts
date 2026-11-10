@@ -38,14 +38,15 @@ export function sessionFrom(flags: Flags, context: CliContext): SessionRequest {
   const now = context.clock()
   const parsed = sessionFlagsSchema(now).safeParse(flags)
   if (!parsed.success) throw new InvalidOptionsError(parsed.error.issues.map(optionMessage))
-  return { now, start: parsed.data.session ?? now }
+  const { session, ...limits } = parsed.data
+  return { now, start: session ?? now, limits }
 }
 
 export function listSession(
   store: Store,
   context: CliContext,
   scope: Scope,
-  { now, start }: SessionRequest,
+  { now, start, limits }: SessionRequest,
 ) {
   const today = startOfToday(now, context.timeZone)
   const active = new StoreCardRepository(store).active()
@@ -58,7 +59,7 @@ export function listSession(
     today,
     tomorrow: startOfTomorrow(now, context.timeZone),
     start,
-    limits: BUILT_IN_SETTINGS,
+    limits: { ...BUILT_IN_SETTINGS, ...limits },
   })
   const shown = (instant: Date) => shownInstant(instant, context.timeZone)
   return {

@@ -218,4 +218,26 @@ describe('aletheia review due', () => {
     expect(future).toMatchObject({ code: 1, stdout: '' })
     expect(future.stderr).toMatch(/error: invalid options: --session: is in the future\n$/)
   })
+
+  it('003-US2-AS4 a session of 10 holds 10 of 25 and the next session holds 20 again', async () => {
+    await addDueToday(25)
+
+    const ofTen = await list(['review', 'due', '--session-size', '10'])
+    const next = await list(['review', 'due'])
+
+    expect(ofTen).toMatchObject({ count: 10, remaining: 15 })
+    expect(next).toMatchObject({ count: 20, remaining: 5 })
+  })
+
+  it.for(['0', '-1', '1.5', 'ten'])(
+    'review due refuses a session size below 1: %s',
+    async (size) => {
+      const refused = await run(['review', 'due', '--session-size', size])
+
+      expect(refused).toMatchObject({ code: 1, stdout: '' })
+      expect(refused.stderr).toMatch(
+        /error: invalid options: --session-size: must be a whole number, 1 or more\n$/,
+      )
+    },
+  )
 })
