@@ -36,7 +36,8 @@ export const cardShowCommand: CliCommand = {
   argument: { name: '<id>', description: 'the id of the card' },
   description: 'print every field of a card',
   run: (context, options, [id]) =>
-    withStore(context, options, async (store) =>
-      shownCard(cardById(new StoreCardRepository(store), id), context.timeZone),
-    ),
+    withStore(context, options, async (store) => {
+      const card = cardById(new StoreCardRepository(store), id)
+      return shownCard(card, context.timeZone)
+    }),
 }

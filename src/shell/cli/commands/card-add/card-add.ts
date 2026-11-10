@@ -19,7 +19,8 @@ export const cardAddCommand: CliCommand = {
   description: 'save the cards given as JSON on stdin, all or none',
   run: (context, options) =>
     withStore(context, options, async (store) => {
-      const ids = addCards(draftsFrom(await readJson(context)), {
+      const drafts = draftsFrom(await readJson(context))
+      const ids = addCards(drafts, {
         repository: new StoreCardRepository(store),
         randomIndex: context.randomIndex,
         now: context.clock(),
