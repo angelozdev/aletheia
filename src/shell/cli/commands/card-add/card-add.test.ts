@@ -13,8 +13,12 @@ beforeEach(() => {
   db = join(tempDir('aletheia-cli-'), 'store.sqlite')
 })
 
+function cardAddText(stdin: string, argv: string[] = []) {
+  return runOnStore(db, ['card', 'add', ...argv], stdin)
+}
+
 function cardAdd(cards: unknown, argv: string[] = []) {
-  return runOnStore(db, ['card', 'add', ...argv], JSON.stringify(cards))
+  return cardAddText(JSON.stringify(cards), argv)
 }
 
 function cardWithout(field: string): Record<string, unknown> {
@@ -120,5 +124,22 @@ describe('aletheia card add', () => {
     ])
 
     expectRefused(run, 'card 1: situation: is required | card 3: tags: must have at least one tag')
+  })
+
+  it.for([
+    ['malformed JSON', 'not json'],
+    ['malformed JSON over several lines, on one error line', 'not\njson\n'],
+    ['an empty stdin', ''],
+  ])('card add refuses %s', async ([, stdin]) => {
+    const { code, stdout, stderr } = await cardAddText(stdin)
+
+    expect(code).toBe(1)
+    expect(stdout).toBe('')
+    expect(stderr).toMatch(/\nerror: invalid JSON on stdin: [^\n]+\n$/)
+    expect(storedCards()).toEqual([{ n: 0 }])
+  })
+
+  it.for(['{}', '[]'])('card add refuses anything but a list of cards: %s', async (stdin) => {
+    expectRefused(await cardAddText(stdin), 'expected a list of one or more cards')
   })
 })

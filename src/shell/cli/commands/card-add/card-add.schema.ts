@@ -43,4 +43,4 @@ const cardSchema = z.strictObject({
   tags,
 })
 
-export const cardListSchema = z.array(cardSchema)
+export const cardListSchema = z.array(cardSchema).min(1)

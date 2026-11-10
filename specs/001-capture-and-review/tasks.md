@@ -142,7 +142,7 @@ show <id>` prints every field as written, with its dates in local time.
   - **Test**: `card-add.test.ts`: `001-US1-AS3 one invalid card among several stores none` — three cards, the second without `situation` → exit 1, `error: card 2: situation: is required`, 0 rows; the first and the third invalid → `card 1: … | card 3: …`. `src/shell/db/cards/cards.test.ts`: `001-US1-AS3 saveAll stores every card or none` — a list whose second card the store refuses (a type cast to `'cloze'`) throws and leaves 0 rows.
   - **Code**: `InvalidCardsError` names each invalid card by its position from 1, cards joined by ` | `. The transaction of T002 already holds the store half; fix it if the test shows otherwise.
   - **Run**: `pnpm aletheia card add` with two cards, one without `situation`
-- [ ] T006 [US1] Malformed JSON on stdin exits 1 with nothing stored, in `src/shell/cli/invocation/stdin/stdin.ts`
+- [X] T006 [US1] Malformed JSON on stdin exits 1 with nothing stored, in `src/shell/cli/invocation/stdin/stdin.ts`
   - **Test**: `card-add.test.ts`: `card add refuses malformed JSON` — stdin `not json` → exit 1, stderr holds a line starting `error: invalid JSON on stdin: `, 0 rows; `card add refuses an empty stdin` → the same line; `card add refuses anything but a list of cards` — `{}` and `[]` → `error: expected a list of one or more cards`.
   - **Code**: `src/shell/cli/invocation/stdin/stdin.errors.ts`: `InvalidJsonError` → `invalid JSON on stdin: <reason>`, thrown by `readJson`; `ExpectedCardListError` in `card-add.errors.ts`.
   - **Run**: `echo 'not json' | pnpm aletheia card add; echo $?` → `1`

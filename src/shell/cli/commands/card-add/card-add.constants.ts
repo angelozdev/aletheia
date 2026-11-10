@@ -15,3 +15,5 @@ export const NOT_A_CARD_FIELD = 'is not a card field'
 export const FIELD_SEPARATOR = '; '
 
 export const CARD_SEPARATOR = ' | '
+
+export const EXPECTED_CARD_LIST = 'expected a list of one or more cards'
