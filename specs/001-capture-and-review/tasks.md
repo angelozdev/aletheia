@@ -146,7 +146,7 @@ show <id>` prints every field as written, with its dates in local time.
   - **Test**: `card-add.test.ts`: `card add refuses malformed JSON` — stdin `not json` → exit 1, stderr holds a line starting `error: invalid JSON on stdin: `, 0 rows; `card add refuses an empty stdin` → the same line; `card add refuses anything but a list of cards` — `{}` and `[]` → `error: expected a list of one or more cards`.
   - **Code**: `src/shell/cli/invocation/stdin/stdin.errors.ts`: `InvalidJsonError` → `invalid JSON on stdin: <reason>`, thrown by `readJson`; `ExpectedCardListError` in `card-add.errors.ts`.
   - **Run**: `echo 'not json' | pnpm aletheia card add; echo $?` → `1`
-- [ ] T007 [US1] An id that is taken is drawn again, in `src/core/cards/cards.ts`
+- [X] T007 [US1] An id that is taken is drawn again, in `src/core/cards/cards.ts`
   - **Test**: `src/shell/db/cards/cards.test.ts`: `saveAll refuses an id that is taken and stores none` → throws `CardIdTakenError`. `src/core/cards/cards.test.ts`: `addCards draws again when an id is taken` (a fake repository that refuses the first list) and `addCards gives up after five draws` → `NoFreeCardIdError`, `no free card id after 5 draws`. `card-add.test.ts`: `a second card add with the same draws gets another id` — two runs on one store print `ids[1]: "0123"` and `ids[1]: "4567"`.
   - **Code**: `CardIdTakenError` and `NoFreeCardIdError` in `src/core/cards/cards.errors.ts`, `MAX_ID_DRAWS = 5` in `cards.constants.ts`; the repository turns the store's primary-key refusal into `CardIdTakenError`; `addCards` redraws every id of the list and tries again. Add the error line to `contracts/cli.md`.
   - **Run**: `pnpm aletheia card add` twice; two different ids

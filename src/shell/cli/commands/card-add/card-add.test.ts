@@ -142,4 +142,13 @@ describe('aletheia card add', () => {
   it.for(['{}', '[]'])('card add refuses anything but a list of cards: %s', async (stdin) => {
     expectRefused(await cardAddText(stdin), 'expected a list of one or more cards')
   })
+
+  it('a second card add with the same draws gets another id', async () => {
+    const first = await cardAdd([SAMPLE_DRAFT])
+    const second = await cardAdd([SAMPLE_DRAFT])
+
+    expect(first.stdout).toBe('ids[1]: "0123"\n')
+    expect(second.stdout).toBe('ids[1]: "4567"\n')
+    expect(storedCards()).toEqual([{ n: 2 }])
+  })
 })

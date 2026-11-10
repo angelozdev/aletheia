@@ -1,14 +1,10 @@
 import { main } from '#shell/cli'
+import { countingDraw } from '../draws/draws.ts'
 import { SHIPPED_MIGRATIONS } from '../fixture-migrations/fixture-migrations.constants.ts'
 import { noMigrations } from '../fixture-migrations/fixture-migrations.ts'
 import { captureStream } from '../streams/streams.ts'
 import { FIXED_INSTANT } from './run-cli.constants.ts'
 import type { CliOverrides, CliRun } from './run-cli.types.ts'
-
-function countingDraw(): (bound: number) => number {
-  let draws = 0
-  return (bound) => draws++ % bound
-}
 
 export async function runCli(argv: string[], overrides: CliOverrides = {}): Promise<CliRun> {
   const stdout = captureStream()

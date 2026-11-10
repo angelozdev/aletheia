@@ -12,6 +12,8 @@ export const ID_ALPHABET = '0123456789abcdefghjkmnpqrstvwxyz'
 
 export const ID_LENGTH = 4
 
+export const MAX_ID_DRAWS = 5
+
 export const MIN_KEY_POINTS = 1
 
 export const MAX_KEY_POINTS = 3

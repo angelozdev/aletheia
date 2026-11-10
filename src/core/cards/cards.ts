@@ -1,5 +1,11 @@
-import { ACTIVE_STATUS, ID_ALPHABET, ID_LENGTH, NEW_STATE } from './cards.constants.ts'
-import { CardNotFoundError } from './cards.errors.ts'
+import {
+  ACTIVE_STATUS,
+  ID_ALPHABET,
+  ID_LENGTH,
+  MAX_ID_DRAWS,
+  NEW_STATE,
+} from './cards.constants.ts'
+import { CardIdTakenError, CardNotFoundError, NoFreeCardIdError } from './cards.errors.ts'
 import type { AddCardsDeps, Card, CardDraft, CardRepository, RandomIndex } from './cards.types.ts'
 
 export function cardId(randomIndex: RandomIndex): string {
@@ -27,13 +33,26 @@ export function newCard(draft: CardDraft, id: string, now: Date): Card {
   }
 }
 
-export function addCards(
+function savedWithFreshIds(
   drafts: CardDraft[],
   { repository, randomIndex, now }: AddCardsDeps,
-): string[] {
+): string[] | null {
   const cards = drafts.map((draft) => newCard(draft, cardId(randomIndex), now))
-  repository.saveAll(cards)
+  try {
+    repository.saveAll(cards)
+  } catch (error) {
+    if (error instanceof CardIdTakenError) return null
+    throw error
+  }
   return cards.map(({ id }) => id)
+}
+
+export function addCards(drafts: CardDraft[], deps: AddCardsDeps): string[] {
+  for (let draw = 0; draw < MAX_ID_DRAWS; draw++) {
+    const ids = savedWithFreshIds(drafts, deps)
+    if (ids !== null) return ids
+  }
+  throw new NoFreeCardIdError(MAX_ID_DRAWS)
 }
 
 export function cardById(repository: CardRepository, id: string): Card {

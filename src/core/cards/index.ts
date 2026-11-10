@@ -6,6 +6,7 @@ export {
   MIN_KEY_POINTS,
   TAG_PATTERN,
 } from './cards.constants.ts'
+export { CardIdTakenError } from './cards.errors.ts'
 export { addCards, cardById, newCard } from './cards.ts'
 export type {
   Card,

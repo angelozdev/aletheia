@@ -60,6 +60,8 @@ Errors, with nothing stored:
 - `error: card 2: situation: is required; tags[0]: use a-z, digits and dashes, in segments joined by ::`
   A card is named by its position in the list, from 1. Fields of one card are joined by `; `,
   cards by ` | `.
+- `error: no free card id after 5 draws`: an id already taken is drawn again, five times at
+  most, for the whole list
 
 ## `aletheia card show <id>`
 

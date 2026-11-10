@@ -1,8 +1,9 @@
-import type { Card, CardRepository } from '#core/cards'
-import { eq, sql } from 'drizzle-orm'
+import { CardIdTakenError, type Card, type CardRepository } from '#core/cards'
+import { DrizzleQueryError, eq, sql } from 'drizzle-orm'
 import { instantFrom, storedInstant } from '#core/time'
 import { database } from '../database/database.ts'
 import type { Database, Store } from '../database/database.types.ts'
+import { TAKEN_ID } from './cards.constants.ts'
 import { cards, cardTags } from './cards.schema.ts'
 import type { CardRow, StoredCard } from './cards.types.ts'
 
@@ -30,6 +31,10 @@ function cardRow(card: Card): CardRow {
   }
 }
 
+function isTakenId(error: unknown): boolean {
+  return error instanceof DrizzleQueryError && error.cause?.message === TAKEN_ID
+}
+
 function cardFrom(row: StoredCard, tags: string[]): Card {
   return {
     ...row,
@@ -50,6 +55,15 @@ export class StoreCardRepository implements CardRepository {
   }
 
   saveAll(saved: Card[]): void {
+    try {
+      this.#insertAll(saved)
+    } catch (error) {
+      if (isTakenId(error)) throw new CardIdTakenError()
+      throw error
+    }
+  }
+
+  #insertAll(saved: Card[]): void {
     this.#db.transaction((tx) => {
       for (const card of saved) {
         tx.insert(cards).values(cardRow(card)).run()

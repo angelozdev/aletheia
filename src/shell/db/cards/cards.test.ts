@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { newCard, type CardType } from '#core/cards'
+import { CardIdTakenError, newCard, type CardType } from '#core/cards'
 import { SAMPLE_DRAFT } from '../../../../tests/support/cards/cards.constants.ts'
 import { openTestStore, runSql, selectAll } from '../../../../tests/support/store/store.ts'
 import { tempDir } from '../../../../tests/support/temp-dir/temp-dir.ts'
@@ -95,6 +95,26 @@ describe('StoreCardRepository', () => {
 
     expect(selectAll(path, 'select count(*) as n from cards')).toEqual([{ n: 0 }])
     expect(selectAll(path, 'select count(*) as n from card_tags')).toEqual([{ n: 0 }])
+  })
+
+  it('saveAll refuses an id that is taken and stores none', async () => {
+    const store = await openTestStore(path)
+    const now = new Date(NOW)
+    const repository = new StoreCardRepository(store)
+    repository.saveAll([newCard(SAMPLE_DRAFT, 'k7m2', now)])
+
+    try {
+      expect(() =>
+        repository.saveAll([
+          newCard(SAMPLE_DRAFT, 'p3x9', now),
+          newCard(SAMPLE_DRAFT, 'k7m2', now),
+        ]),
+      ).toThrow(CardIdTakenError)
+    } finally {
+      closeStore(store)
+    }
+
+    expect(selectAll(path, 'select id from cards')).toEqual([{ id: 'k7m2' }])
   })
 })
 
