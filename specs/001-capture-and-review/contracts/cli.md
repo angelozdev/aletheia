@@ -31,14 +31,16 @@ stdin, a list of one or more cards:
 ]
 ```
 
-| Field | Rule |
-|---|---|
-| type | `concept`, `comparison`, `command`, `scenario` or `code` |
-| question, answer, situation, source | text, not blank |
-| keyPoints | 1 to 3 texts, none blank |
-| tags | 1 or more, none repeated, each matching the grammar in data-model.md |
+| Field | Rule | Message when broken |
+|---|---|---|
+| type | `concept`, `comparison`, `command`, `scenario` or `code` | `must be concept, comparison, command, scenario or code` |
+| question, answer, situation, source | text, not blank | `is required` |
+| keyPoints | 1 to 3 texts, none blank | `must have 1 to 3 items`; `keyPoints[<i>]: is required` |
+| tags | 1 or more, none repeated, each matching the grammar in data-model.md | `must have at least one tag`; `tags[<i>]: use a-z, digits and dashes, in segments joined by ::`; `tags[<i>]: is repeated` |
 
-Any other field is refused. Every card starts `active` and `new`, due at once.
+A missing field is `is required`. Any other field is refused: `<field>: is not a card field`.
+A card's messages follow the order of this table. Every card starts `active` and `new`, due at
+once.
 
 stdout, the ids in the order of the input:
 
