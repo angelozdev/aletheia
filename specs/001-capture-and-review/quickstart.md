@@ -61,8 +61,8 @@ ln -s ~/.aletheia/skills/az-aletheia-add ~/.claude/skills/az-aletheia-add   # on
 aletheia review due               # env: prod; backup: … (before migrating); migrated: …; count: 0
 ```
 
-The first `aletheia` in `prod` after this release backs the store up and applies the two
-migrations.
+The first `aletheia` in `prod` after this release backs the store up and applies the four
+migrations: `cards`, `cards_never_deleted`, `reviews` and `reviews_never_change`.
 
 ## 5. The slice, as Angelo uses it (SC-001, SC-002, SC-004)
 
