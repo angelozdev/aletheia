@@ -400,3 +400,10 @@ can use.
 - Prerequisite relations: cards that wait until their base card is solid.
 - Claude rephrasing the question on each review so Angelo remembers the concept,
   not the wording. Raised, not decided.
+- Jev (TypeSafe AI), a model that returns a typed decision instead of text, as a
+  judge: asked per key point whether the answer covers it, with the code deriving
+  the grade; or as the judge in the review skill's evals. Not used for now:
+  Claude already grades in the conversation at no cost, the CLI makes no network
+  calls, and the stored grades (Claude's next to Angelo's final one) will show
+  whether grading needs help. It would be a new dependency and an ADR. Raised
+  2026-11-09, not decided.

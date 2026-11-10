@@ -73,3 +73,47 @@ installed `aletheia`. Decisions marked **Angelo** were his, taken with options o
   the shell. One object per grade means one schema and an error that names the field.
 - **Alternatives**: `add`, `show`, `due`, `grade` (offered, declined); JSON as an argument
   (the design allowed it); flags for the grades and stdin for the text (two inputs to validate).
+
+## R9. Where the skills live
+
+- **Decision**: the global skill's source is `skills/az-aletheia-add/SKILL.md` at the repo
+  root; the review skill is `.claude/skills/aletheia-review/SKILL.md`. Both call the installed
+  `aletheia` and never `pnpm aletheia`, `--env` or a store path (001-US1-AS6, 001-US2-AS7).
+- **Rationale**: under `.claude/skills/` the add skill would also load in this repo from the
+  working tree, beside or instead of the released copy, and the skill and the CLI must come
+  from the same release (constitution, Technology Constraints). Review is project-local by the
+  design (§4).
+- **Alternatives**: `.claude/skills/az-aletheia-add/` (the working tree's draft would reach
+  Angelo's captures in this repo).
+
+## R10. The release copies the global skill (ADR-0011)
+
+- **Decision**: after the global install and its PATH check, `release()` copies
+  `skills/az-aletheia-add/` from the repo into `<skills folder>/az-aletheia-add.partial`,
+  swaps it for the previous copy and prints where it is. The skills folder is
+  `~/.aletheia/skills/`, injected; the release entry passes none under vitest and `release()`
+  refuses to copy without one (INV-01). Nothing is written under `~/.claude/`; the link there
+  is Angelo's, created once.
+- **Rationale**: FR-009 and 001-US1-AS7. The release runs from a clean `main`, so the tree is
+  the released commit. The copy is the step that can fail, and it writes beside the live
+  folder, so a failure leaves the previous copy whole. Copying after the install keeps the
+  skill from running ahead of the CLI it calls.
+- **Alternatives**: shipping the skill in the tarball and copying from pnpm's global folder
+  (a path pnpm owns and changes between majors); a link into the repo (follows the working
+  tree); copying before the install (a failed install would leave a newer skill over an older
+  CLI).
+
+## R11. Claude grades by category; Jev deferred
+
+- **Decision**: the review skill grades in the conversation with the four FSRS grades of
+  design §8.2, checking the answer against the card's key points and the type's rule (§7). No
+  judge model or API is called, and no numeric score is produced.
+- **Rationale**: FSRS takes exactly four grades, so a score would need invented thresholds to
+  become one. Claude is already in the conversation, explains the grade and answers doubts; a
+  judge model would add a network call per answer, a key and a dependency (the CLI makes no
+  network calls), and still need Claude for the explanation. `claude_grade` next to `grade`
+  (R4) measures how often and in which direction Angelo disputes, which is the evidence that
+  would justify a judge.
+- **Alternatives**: Jev by TypeSafe AI as a typed judge per key point, or as the judge of the
+  skill's evals. Angelo asked; deferred, not rejected, and noted in design §14. What is known
+  of it comes from search summaries read on 2026-11-09, not from its documentation.
