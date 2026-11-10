@@ -170,7 +170,7 @@ the slice.
 
 **Independent Test**: `git check-ignore PROFILE.md` succeeds; `pnpm test -t 002-US2`.
 
-- [ ] T008 [P] [US2] Git ignores `PROFILE.md` at the repo root, in `.gitignore`
+- [X] T008 [P] [US2] Git ignores `PROFILE.md` at the repo root, in `.gitignore`
   - **Test**: `tests/skills/profile.test.ts`: `002-US2-AS2 git ignores PROFILE.md at the repo root` — `execFileSync('git', ['check-ignore', '-q', 'PROFILE.md'], { cwd: REPO_ROOT })` does not throw, and the same call for `skills/PROFILE.md` throws (only the root file is ignored). The file need not exist.
   - **Code**: `.gitignore` gains `/PROFILE.md`.
   - **Run**: `git check-ignore -v PROFILE.md`
