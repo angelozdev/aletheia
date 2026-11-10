@@ -1,4 +1,4 @@
-import { cardById, NEW_STATE, type Card } from '#core/cards'
+import { bySaved, cardById, NEW_STATE, type Card } from '#core/cards'
 import { scheduleAfter } from '#core/scheduling'
 import { minutesAfter } from '#core/time'
 import { LEARN_AHEAD_MINUTES, LEARNING_STATES, REVIEW_STATE } from './reviews.constants.ts'
@@ -6,10 +6,6 @@ import type { DueList, GradeCardDeps, ReviewDraft } from './reviews.types.ts'
 
 function byDue(a: Card, b: Card): number {
   return a.due.getTime() - b.due.getTime()
-}
-
-function bySaved(a: Card, b: Card): number {
-  return a.createdAt.getTime() - b.createdAt.getTime() || a.id.localeCompare(b.id)
 }
 
 function earliestDue(cards: Card[]): Date | null {

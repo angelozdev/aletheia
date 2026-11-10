@@ -247,7 +247,7 @@ a topic review is not capped.
 
 **Independent Test**: quickstart §3, first call.
 
-- [ ] T011 [US3] A general review holds back new cards beyond the day's budget, in `src/core/sessions/sessions.ts`
+- [X] T011 [US3] A general review holds back new cards beyond the day's budget, in `src/core/sessions/sessions.ts`
   - **Test**:
     - `sessions.test.ts`:
       - `sessionList keeps the first saved new cards within the budget and counts the rest as held back`.

@@ -23,12 +23,19 @@ function dueReviews(count: number, prefix = 'due'): Card[] {
   )
 }
 
-function graded(cardId: string, reviewedAt: string): Review {
+function freshCards(count: number): Card[] {
+  return Array.from({ length: count }, (_, index) => {
+    const created = new Date(Date.UTC(2026, 10, 1, 10, index))
+    return newCard(SAMPLE_DRAFT, `new-${index}`, created)
+  })
+}
+
+function graded(cardId: string, reviewedAt: string, stateBefore: Card['state'] = 'review'): Review {
   return {
     cardId,
     grade: 'good',
     claudeGrade: 'good',
-    stateBefore: 'review',
+    stateBefore,
     reviewedAt: new Date(reviewedAt),
     answer: 'a',
     rationale: 'r',
@@ -107,5 +114,47 @@ describe('session list', () => {
     ]
 
     expect(listOf({ scope }).nextDue).toEqual(new Date('2026-11-13T15:00:00.000Z'))
+  })
+
+  it('sessionList keeps the first saved new cards within the budget and counts the rest as held back', () => {
+    const fresh = freshCards(15)
+    const firstSaved = fresh.slice(0, 10)
+
+    const list = listOf({ scope: fresh.toReversed() })
+
+    expect(ids(list.cards)).toEqual(ids(firstSaved))
+    expect(list).toMatchObject({ remaining: 0, heldBack: 5 })
+  })
+
+  it('sessionList counts as introduced today the reviews since the start of today whose state before was new', () => {
+    const reviews = [
+      ...['a', 'b', 'c', 'd'].map((id) => graded(id, '2026-11-11T15:00:00.000Z', 'new')),
+      graded('yesterday', '2026-11-11T04:59:59.999Z', 'new'),
+      graded('studied', '2026-11-11T15:00:00.000Z', 'review'),
+    ]
+
+    const list = listOf({ scope: freshCards(15), reviews })
+
+    expect(list.cards).toHaveLength(6)
+    expect(list.heldBack).toBe(9)
+  })
+
+  it('sessionList brings back a learning card within 20 minutes when only held-back new cards are left', () => {
+    const step = studied('step', 'learning', '2026-11-12T02:10:00.000Z')
+    const limits = { ...BUILT_IN_SETTINGS, newPerDay: 0 }
+
+    const list = listOf({ scope: [...freshCards(3), step], limits })
+
+    expect(ids(list.cards)).toEqual(['step'])
+    expect(list.heldBack).toBe(3)
+  })
+
+  it('sessionList names the start of tomorrow as nextDue when new cards are held back and nothing comes sooner', () => {
+    const later = studied('later', 'review', '2026-11-14T15:00:00.000Z')
+    const limits = { ...BUILT_IN_SETTINGS, newPerDay: 0 }
+
+    const list = listOf({ scope: [...freshCards(3), later], limits })
+
+    expect(list).toMatchObject({ cards: [], heldBack: 3, nextDue: tomorrow })
   })
 })

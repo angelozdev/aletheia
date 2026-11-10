@@ -46,13 +46,13 @@ function idsOf(listed: { cards: { id: string }[] }): string[] {
   return listed.cards.map(({ id }) => id)
 }
 
-function gradedAt(ids: string[], reviewedAt: string): void {
+function gradedAt(ids: string[], reviewedAt: string, stateBefore = 'review'): void {
   for (const id of ids) {
     const review = {
       card_id: id,
       grade: 'good',
       claude_grade: 'good',
-      state_before: 'review',
+      state_before: stateBefore,
       reviewed_at: reviewedAt,
       answer: 'a',
       rationale: 'r',
@@ -68,6 +68,15 @@ async function atTheCap(): Promise<string[]> {
   for (const id of graded.slice(1)) arrange(id, 'review', '2026-11-20T15:00:00.000Z')
   arrange(graded[0], 'relearning', '2026-11-12T01:40:00.000Z')
   return ids
+}
+
+async function addIntroducedToday(introduced: number, fresh: number): Promise<string[]> {
+  useUniqueIds()
+  const ids = await addCards(introduced + fresh)
+  const introducedIds = ids.slice(0, introduced)
+  gradedAt(introducedIds, '2026-11-11T15:00:00.000Z', 'new')
+  for (const id of introducedIds) arrange(id, 'review', '2026-11-14T15:00:00.000Z')
+  return ids.slice(introduced)
 }
 
 function arrange(id: string, state: string, due: string): void {
@@ -240,4 +249,35 @@ describe('aletheia review due', () => {
       )
     },
   )
+
+  it('003-US3-AS1 review due introduces the 10 new cards saved first and holds 5 back until tomorrow', async () => {
+    useUniqueIds()
+    const ids = await addCards(15)
+
+    const due = await list(['review', 'due'])
+
+    expect(idsOf(due)).toEqual(ids.slice(0, 10))
+    expect(due).toMatchObject({ count: 10, heldBack: 5, remaining: 0 })
+  })
+
+  it('003-US3-AS2 new cards first graded today count, in any review, and the next local day starts at 10 again', async () => {
+    await addIntroducedToday(4, 10)
+
+    const today = await list(['review', 'due'])
+    now = new Date('2026-11-13T02:00:00.000Z')
+    const nextDay = await list(['review', 'due'])
+
+    expect(today).toMatchObject({ count: 6, heldBack: 4 })
+    expect(nextDay).toMatchObject({ count: 10, heldBack: 0 })
+  })
+
+  it('nothing due but new cards held back: the list is empty, says how many wait and names tomorrow', async () => {
+    await addIntroducedToday(10, 3)
+
+    expect(await list(['review', 'due'])).toMatchObject({
+      count: 0,
+      heldBack: 3,
+      nextDue: '2026-11-12T00:00:00-05:00',
+    })
+  })
 })

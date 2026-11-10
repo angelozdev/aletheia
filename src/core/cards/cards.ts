@@ -60,3 +60,7 @@ export function cardById(repository: CardRepository, id: string): Card {
   if (card === null) throw new CardNotFoundError(id)
   return card
 }
+
+export function bySaved(a: Card, b: Card): number {
+  return a.createdAt.getTime() - b.createdAt.getTime() || a.id.localeCompare(b.id)
+}
