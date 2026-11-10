@@ -288,7 +288,7 @@ all back.
 
 **Independent Test**: quickstart §3, second call.
 
-- [ ] T015 [US3] The session spreads its share of new cards, in `src/core/sessions/sessions.ts`
+- [X] T015 [US3] The session spreads its share of new cards, in `src/core/sessions/sessions.ts`
   - **Test**: `sessions.test.ts`:
     - `003-US3-AS5 with 100 reviews due and 50 new, a session of 20 holds 18 reviews and 2 new, the 10th and the 20th`. Places 10 and 20 are new and the rest are reviews in due order; `remaining: 90`, `heldBack: 40`.
     - `sessionList places the i-th of k share places at ceil(i × size / k)` — size 20 at 20 % → 5, 10, 15, 20.

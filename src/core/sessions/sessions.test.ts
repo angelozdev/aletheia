@@ -157,4 +157,52 @@ describe('session list', () => {
 
     expect(list).toMatchObject({ cards: [], heldBack: 3, nextDue: tomorrow })
   })
+
+  describe('share of new cards', () => {
+    function newPlaces(list: SessionList): number[] {
+      return list.cards.flatMap((card, index) => (card.state === 'new' ? [index + 1] : []))
+    }
+
+    it('003-US3-AS5 with 100 reviews due and 50 new, a session of 20 holds 18 reviews and 2 new, the 10th and the 20th', () => {
+      const reviews = dueReviews(100)
+      const fresh = freshCards(50)
+      const expected = [...reviews.slice(0, 9), fresh[0], ...reviews.slice(9, 18), fresh[1]]
+
+      const list = listOf({ scope: [...reviews, ...fresh] })
+
+      expect(ids(list.cards)).toEqual(ids(expected))
+      expect(list).toMatchObject({ remaining: 90, heldBack: 40 })
+    })
+
+    it('sessionList places the i-th of k share places at ceil(i × size / k)', () => {
+      const limits = { ...BUILT_IN_SETTINGS, newShare: 20 }
+      const scope = [...dueReviews(30), ...freshCards(10)]
+
+      const list = listOf({ scope, limits })
+
+      expect(newPlaces(list)).toEqual([5, 10, 15, 20])
+    })
+
+    it('sessionList keeps share places already passed in the session', () => {
+      const reviews = Array.from({ length: 10 }, (_, index) =>
+        graded(`done-${index}`, '2026-11-12T01:30:00.000Z'),
+      )
+      const scope = [...dueReviews(30), ...freshCards(5)]
+
+      const list = listOf({ scope, reviews })
+
+      expect(list.cards).toHaveLength(10)
+      expect(newPlaces(list)).toEqual([10])
+    })
+
+    it('sessionList gives the daily limit the last word', () => {
+      const limits = { ...BUILT_IN_SETTINGS, sessionSize: 200 }
+      const scope = [...dueReviews(300), ...freshCards(50)]
+
+      const list = listOf({ scope, limits })
+
+      expect(list.cards).toHaveLength(200)
+      expect(newPlaces(list)).toHaveLength(10)
+    })
+  })
 })
