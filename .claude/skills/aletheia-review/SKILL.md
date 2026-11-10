@@ -100,8 +100,34 @@ stdout gives `card`, `grade`, `state` and `due`, the instant the card comes back
 ## 5. Doubts about the card
 
 After recording, answer each of Angelo's doubts about that card in two or three lines. No
-lesson, and the grade does not change. Show the next question only when he says so ("sigue",
-"la siguiente"); if his reply was already "sigue", go straight on.
+lesson, and the grade does not change.
+
+### A doubt worth a card
+
+Sometimes a doubt shows a gap worth remembering. Offer it as a new card only when all of
+these hold:
+
+- it is about what Angelo is learning with this card (its topic, or something it rests on),
+  not a tangent;
+- it makes one good card by the rules of the `az-aletheia-add` skill: one idea, an answer of
+  one to three lines, a credible situation, not trivia;
+- no card shown in this session already covers it.
+
+Most doubts make no card. When one does, offer it in a line after your answer, without
+drafting it yet: "Esto vale una tarjeta: qué es el userland y qué trae de él un contenedor.
+¿La agregamos?". If he says yes, use the `az-aletheia-add` skill for that idea, with the
+source `repaso #<id>`: it drafts the card from this conversation, shows it, and saves it only
+once Angelo approves it, with his edits. If he says no or lets it pass, drop it and do not
+offer it again. Then go back to the review where you left it.
+
+For example, on #5ks0 (VM vs. container) Angelo asked what a userland is, and how a Linux
+container on his Mac reaches a kernel to use the machine's resources. Both are worth a card:
+what the userland is and what an image like `node:22-alpine` brings of it; and how Docker
+Desktop runs Linux containers on macOS, inside a light Linux VM whose kernel they share. A
+doubt like "¿y `docker ps` tiene más flags?" is not.
+
+Show the next question only when he says so ("sigue", "la siguiente"); if his reply was
+already "sigue", go straight on.
 
 ## 6. Until nothing is due
 

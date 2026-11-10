@@ -13,4 +13,10 @@ describe('the aletheia-review skill', () => {
       expect(skill.text).toContain(command)
     for (const forbidden of DEVELOPMENT_ONLY) expect(skill.text).not.toContain(forbidden)
   })
+
+  it('aletheia-review hands a doubt worth a card to az-aletheia-add', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    expect(skill.text).toContain('az-aletheia-add')
+  })
 })
