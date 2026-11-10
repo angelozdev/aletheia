@@ -1,5 +1,6 @@
 import type { Card } from '#core/cards'
 import { TAG_SEPARATOR } from './tags.constants.ts'
+import { NoActiveCardUnderError } from './tags.errors.ts'
 import type { TagCount } from './tags.types.ts'
 
 function withAncestors(tag: string): string[] {
@@ -29,8 +30,12 @@ function isUnder(tag: string, topicTag: string): boolean {
   return tag === topicTag || tag.startsWith(`${topicTag}${TAG_SEPARATOR}`)
 }
 
+function covers(card: Card, topicTag: string): boolean {
+  return card.tags.some((tag) => isUnder(tag, topicTag))
+}
+
 export function topicCards(cards: Card[], topic: string[]): Card[] {
-  return cards.filter((card) =>
-    card.tags.some((tag) => topic.some((topicTag) => isUnder(tag, topicTag))),
-  )
+  const uncovered = topic.filter((topicTag) => !cards.some((card) => covers(card, topicTag)))
+  if (uncovered.length > 0) throw new NoActiveCardUnderError(uncovered)
+  return cards.filter((card) => topic.some((topicTag) => covers(card, topicTag)))
 }

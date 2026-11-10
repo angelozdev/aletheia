@@ -156,7 +156,7 @@ spec's order, and refuses what it cannot answer.
     - `src/core/reviews/reviews.ts`: `topicList(cards: Card[], now: Date, today: Date, tomorrow: Date): DueList` — the cards of `dueList(cards, now, tomorrow)`, then the `review` cards with `due >= tomorrow` whose `lastReview` is `null` or before `today`, by due. `nextDue` is the earliest `due` among the cards not listed. Export it.
     - `review-topic.ts` calls `topicList` with `startOfToday` and `startOfTomorrow`.
   - **Run**: quickstart §1, first two checks
-- [ ] T005 [US1] `review topic` refuses a malformed tag or a tag with no active card, and names the next due when it lists nothing, in `src/shell/cli/commands/review-topic/review-topic.schema.ts` and `src/core/tags/tags.errors.ts`
+- [X] T005 [US1] `review topic` refuses a malformed tag or a tag with no active card, and names the next due when it lists nothing, in `src/shell/cli/commands/review-topic/review-topic.schema.ts` and `src/core/tags/tags.errors.ts`
   - **Test**: `review-topic.test.ts`: `003-US1-AS7 review topic refuses a malformed tag or one with no active card, naming it; all graded today lists nothing and names the next due`. With cards under `messaging`:
     - `review topic messaging::Redis docker::` → exit 1, stdout empty, stderr ends `error: invalid topic: messaging::Redis: use a-z, digits and dashes, in segments joined by ::; docker::: use a-z, digits and dashes, in segments joined by ::\n`.
     - `review topic kafka messaging nats` → `error: no active card under kafka, nats\n`.

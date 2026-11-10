@@ -124,4 +124,27 @@ describe('aletheia review topic', () => {
     expect(atNow).toEqual(['cdef', '89ab'])
     expect(later).toEqual(['4567', 'cdef', '89ab'])
   })
+
+  it('003-US1-AS7 review topic refuses a malformed tag or one with no active card, naming it; all graded today lists nothing and names the next due', async () => {
+    await messagingCards(2)
+
+    const malformed = await run(['review', 'topic', 'messaging::Redis', 'docker::'])
+    const uncovered = await run(['review', 'topic', 'kafka', 'messaging', 'nats'])
+    runSql(cli.db, "update cards set state = 'review', last_review = '2026-11-11T15:00:00.000Z'")
+    arrange('0123', 'review', '2026-11-14T15:00:00.000Z')
+    arrange('4567', 'review', '2026-11-20T15:00:00.000Z')
+    const allGraded = await run(['review', 'topic', 'messaging', '--json'])
+
+    expect(malformed).toMatchObject({ code: 1, stdout: '' })
+    expect(malformed.stderr).toMatch(
+      /error: invalid topic: messaging::Redis: use a-z, digits and dashes, in segments joined by ::; docker::: use a-z, digits and dashes, in segments joined by ::\n$/,
+    )
+    expect(uncovered).toMatchObject({ code: 1, stdout: '' })
+    expect(uncovered.stderr).toMatch(/error: no active card under kafka, nats\n$/)
+    expect(JSON.parse(allGraded.stdout)).toMatchObject({
+      count: 0,
+      nextDue: '2026-11-14T10:00:00-05:00',
+      cards: [],
+    })
+  })
 })
