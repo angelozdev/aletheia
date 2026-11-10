@@ -269,6 +269,13 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
     store and changed through the CLI, only after Angelo approves the exact change.
     A limit he names for one session ("hoy solo 10") wins over a setting. —
     _Angelo's call, spec 003._
+16. **Varied questions:** Claude rephrases a card's question on every review, so
+    Angelo recalls the concept rather than recognizing the wording. The key points
+    stay as stored and grading checks them; the review log keeps the question as
+    asked. A miss caused by Claude's rephrasing is voided without rewriting the
+    card. Three stored variants per card were rejected: triple the reading at
+    capture, a backfill of every existing card, and forced variants that turn into
+    hints. — _Angelo's call, 2026-11-10, slice 5._
 
 ### 8.3 Stats — local skill
 
@@ -419,8 +426,12 @@ can use.
 | 2   | Intake filter: profile, quality rules, duplicate search, dubious flags                                          | Claude flags junk and duplicates when proposing              |
 | 3   | Topic review: hierarchical tags, ahead-of-schedule review, caps                                                 | "repasemos mensajería"                                       |
 | 4   | Gaps and badly written cards in review: prerequisite card, voided review, rewrite                               | "no recuerdo qué es X"                                       |
-| 5   | Progress: tag tree, retention, weak, gaps, sorting, free-form queries                                           | "¿qué tengo flojo?"                                          |
-| 6   | Prune: candidates, archive with reason, restore, keep, replace, split, merge                                    | run the prune skill                                          |
+| 5   | Varied questions: Claude rephrases each question per review, key points fixed, the question as asked logged    | a card seen before comes back worded differently             |
+| 6   | Progress: tag tree, retention, weak, gaps, sorting, free-form queries                                           | "¿qué tengo flojo?"                                          |
+| 7   | Prune: candidates, archive with reason, restore, keep, replace, split, merge                                    | run the prune skill                                          |
+
+Renumbered 2026-11-10, when varied questions became slice 5: progress moved from 5
+to 6 and prune from 6 to 7. Specs 000–003 and ADRs up to 0016 use the old numbers.
 
 ## 14. Future, not v1
 
@@ -432,8 +443,6 @@ can use.
   the start instant the CLI prints and Claude repeats on every call (spec 003). Only
   if losing that instant, after a `/compact` for example, causes real trouble more
   than once. Raised 2026-11-10.
-- Claude rephrasing the question on each review so Angelo remembers the concept,
-  not the wording. Raised, not decided.
 - Visual explanations: for a technically dense question or doubt, Claude offers,
   with Angelo's permission, a quick visual made to his level: an analogy, a
   mental image or an animated diagram (system calls as a request crossing the

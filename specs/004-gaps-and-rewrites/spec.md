@@ -41,7 +41,7 @@ Claude proposes clearer wording for #9p3x: the same knowledge, now naming the va
 1. **004-US3-AS1** Given an active card, When any of its type, question, answer, key points, situation or tags is edited, Then `card show` gives the new values and the others unchanged, with the same id, source, schedule and reviews, and the edit instant as its last update.
 2. **004-US3-AS2** Given an edit that breaks a card rule (001 FR-001), names no field to change, names a field that cannot change (id, source, schedule), or names a card that does not exist, When it is saved, Then it exits 1 naming each problem and the card is unchanged.
 3. **004-US3-AS3** Given an edited card, When the deck is searched for a word of its new text, Then it is found; a word only in its old text no longer finds it.
-4. **004-US3-AS4** Given the review skill file, When it is read, Then it proposes a rewrite only when the card still asks for the same knowledge, shows the exact before and after, and saves through the installed `aletheia` only after Angelo approves, with his edits; when the fix would change what the key points mean, it says the card needs replacing, which arrives with slice 6, and leaves it as is.
+4. **004-US3-AS4** Given the review skill file, When it is read, Then it proposes a rewrite only when the card still asks for the same knowledge, shows the exact before and after, and saves through the installed `aletheia` only after Angelo approves, with his edits; when the fix would change what the key points mean, it says the card needs replacing, which arrives with slice 7, and leaves it as is.
 
 ### Edge Cases
 
@@ -61,7 +61,7 @@ Claude proposes clearer wording for #9p3x: the same knowledge, now naming the va
 - **FR-003**: A review MAY name the card it was asked as the prerequisite of, which must exist and be another card. A card whose first review in a session is a prerequisite one does not count toward that session's cap; a new card first graded as a prerequisite does not count toward the day's new cards.
 - **FR-004**: The CLI MUST edit an active card in place: any of type, question, answer, key points, situation and tags, under the rules of 001 FR-001, keeping its id, source, schedule and reviews; the search sees the new text at once (002 FR-002). An invalid edit changes nothing.
 - **FR-005**: On a failure from a missing base concept, the review skill MUST grade Again with the flag, search the deck through the CLI for a card covering the concept, and either ask that card next and record it as the failed card's prerequisite, or explain the concept in two or three lines and offer the card through `az-aletheia-add`, saved only with Angelo's approval. A card found is asked before anything is explained: its answer is the explanation. At most one prerequisite per failed card, and none already shown in the session.
-- **FR-006**: On a failure from the wording, the review skill MUST say why in a line, record the review voided and propose a rewrite of the same knowledge, showing the exact before and after, saved only after Angelo approves it. A fix that changes what the key points mean waits for slice 6. Angelo MAY dispute a voiding or ask for one.
+- **FR-006**: On a failure from the wording, the review skill MUST say why in a line, record the review voided and propose a rewrite of the same knowledge, showing the exact before and after, saved only after Angelo approves it. A fix that changes what the key points mean waits for slice 7. Angelo MAY dispute a voiding or ask for one.
 - **FR-007**: The effect of each flag on scheduling, on the lists and on both caps MUST be computed by the CLI and covered by its tests; the skill only says which flag applies (constitution II). Every question about a card MUST be answered by running `aletheia` (constitution VIII).
 
 ### Key Entities
@@ -82,9 +82,10 @@ Claude proposes clearer wording for #9p3x: the same knowledge, now naming the va
 
 ## Assumptions
 
-- Every card is active in this slice; archive, replace, split and merge arrive with slice 6, and so does a rewrite whose meaning changes.
+- Every card is active in this slice; archive, replace, split and merge arrive with slice 7, and so does a rewrite whose meaning changes.
+- Claude asks each question as stored; rephrasing it on every review, and voiding a miss caused by the rephrasing, arrive with slice 5 (design §8.2 step 16).
 - The text before a rewrite is not kept; the voided review's rationale records why the card was rewritten.
-- Gap counts, retention and leech detection are read in slices 5 and 6; this slice records the flags they read, and voided reviews stay out of both.
+- Gap counts, retention and leech detection are read in slices 6 and 7; this slice records the flags they read, and voided reviews stay out of both.
 - A prerequisite card created during a review follows the daily cap like any capture: the design exempts cards pulled in as prerequisites, not those created.
 - US1 and US2 need a schema change; US3 does not.
 - Command names, options, output fields and the flags' stored form are left to the plan.
