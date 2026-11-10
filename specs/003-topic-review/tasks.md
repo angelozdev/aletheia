@@ -270,7 +270,7 @@ a topic review is not capped.
   - **Test**: `review-due.test.ts`: `003-US3-AS4 asking for 20 new today, with 4 introduced, holds at most 16; the next session is back to 10 a day` — 34 cards via `uniqueIdDraw()`. Four were introduced today (as in AS2) and 30 are new. `review due --new-per-day 20 --json` → 16 new. `review due --json` → 6 new. `review due refuses a daily limit below 0` — `--new-per-day -1` → `error: invalid options: --new-per-day: must be a whole number, 0 or more\n`.
   - **Code**: `SESSION_OPTIONS` gains `--new-per-day <n>`; `WHOLE_FROM_ZERO`.
   - **Run**: `pnpm aletheia review due --new-per-day 20`
-- [ ] T014 [US3] `aletheia-review` mentions the held-back cards and passes a daily limit Angelo names, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T014 [US3] `aletheia-review` mentions the held-back cards and passes a daily limit Angelo names, in `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `review-skill.test.ts`: `aletheia-review mentions held-back new cards and passes a daily limit Angelo names for the session`. The text contains `heldBack`, `--new-per-day` and `hoy dame 20 nuevas`.
   - **Code**:
     - Section 1: with `heldBack > 0`, say in a line how many new cards wait for tomorrow. With `count: 0` and `heldBack > 0`, say so, and when the next card comes, from `nextDue`.

@@ -62,8 +62,16 @@ When Angelo names a size for this review ("hoy solo 10"), pass `--session-size 1
 call of the round, the first one included. If you lose `session` (after a `/compact`), call
 without `--session`: that starts a new round.
 
+### New cards per day
+
+A general review introduces at most 10 new cards per local day; a topic review is not limited.
+With `heldBack` above 0, say in a line how many new cards wait for tomorrow. When Angelo asks
+for more for this review ("hoy dame 20 nuevas"), pass `--new-per-day 20` on every call of the
+round.
+
 With `count: 0`, tell Angelo there is nothing to review and when the next card comes, from
-`nextDue` (`null` means the deck is empty). Stop there.
+`nextDue` (`null` means the deck is empty); with `heldBack` above 0, say also how many new cards
+wait for tomorrow. Stop there.
 
 ## 2. One question at a time
 
