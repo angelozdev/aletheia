@@ -18,18 +18,36 @@ in English; tags are English.
   `aletheia card search` or `aletheia card show`, never from memory or from earlier in the
   session.
 
+## 0. Read the profile
+
+Before drafting, read `~/me/aletheia/PROFILE.md`: Angelo's level by area and what counts as
+already known. It is context for judging whether a card is useful, not a whitelist of topics.
+If it cannot be read, say so in one line and draft without it, flagging nothing as already
+known.
+
 ## 1. Draft
 
 Draft from the conversation, one card per idea worth remembering. Fewer, better cards beat many.
-A card enters only if it follows all of these:
+Every draft is held to these rules:
 
 1. **One idea or mechanism.** An unrelated "and also" is a second card.
 2. **An answer of one to three lines.** Longer means it is not one idea yet.
 3. **A question that stands alone.** It names the technology, and the variant when it matters
    ("una cola _classic_ de RabbitMQ"). No "esto", "lo de antes", "nuestro proyecto".
-4. **A credible situation** where knowing it matters. If you cannot name one, drop the card.
+4. **A credible situation** where knowing it matters.
 5. **Not trivia.** No dates, versions, who created what, or things used once a year and found
    in seconds.
+6. **Not already known**, judged against the profile and the similar cards.
+7. **No duplicate**, judged by the search (step 2).
+
+Rules 1–3 are about shape: fix a draft that breaks one before showing it, by splitting,
+shortening or rephrasing. Rules 4–7 are about worth: never drop a draft for breaking one; flag
+it with its reason, in Spanish, and let Angelo decide:
+
+- `⚠ sin situación creíble: <por qué>`
+- `⚠ trivia: <por qué>`
+- `⚠ ya lo sabes por tu perfil: <qué línea>`
+- `⚠ duplica a #<id>` or `⚠ se solapa con #<id>: …` (step 2)
 
 Pick the granularity between too broad and too atomic:
 

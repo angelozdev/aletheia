@@ -22,4 +22,15 @@ describe('the az-aletheia-add skill', () => {
       skill.text.indexOf('## 3. Show every draft'),
     )
   })
+
+  it('002-US2-AS1 az-aletheia-add reads the profile before drafting and flags junk with its reason', () => {
+    const skill = readSkill('skills/az-aletheia-add/SKILL.md')
+
+    for (const text of ['trivia', 'ya lo sabes por tu perfil', 'sin situación creíble'])
+      expect(skill.text).toContain(text)
+    expect(skill.text.indexOf('~/me/aletheia/PROFILE.md')).toBeGreaterThan(-1)
+    expect(skill.text.indexOf('~/me/aletheia/PROFILE.md')).toBeLessThan(
+      skill.text.indexOf('## 1. Draft'),
+    )
+  })
 })
