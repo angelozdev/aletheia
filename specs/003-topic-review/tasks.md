@@ -227,7 +227,7 @@ and Angelo can set its size for one session.
   - **Test**: `review-due.test.ts`: `003-US2-AS4 a session of 10 holds 10 of 25 and the next session holds 20 again` — `review due --session-size 10 --json` → `count: 10`, `remaining: 15`; `review due --json` → `count: 20`. `review due refuses a session size below 1` — `--session-size 0`, `-1`, `1.5` and `ten` each → `error: invalid options: --session-size: must be a whole number, 1 or more\n`.
   - **Code**: `SESSION_OPTIONS` gains `--session-size <n>`. A whole number is `^\d+$` turned into a number, then checked against its minimum. `WHOLE_FROM_ONE = 'must be a whole number, 1 or more'`. `listSession` takes `limits = { ...BUILT_IN_SETTINGS, ...oneSession }`.
   - **Run**: quickstart §2
-- [ ] T010 [US2] `aletheia-review` repeats the session, stops at the cap and asks, and passes a size Angelo names, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T010 [US2] `aletheia-review` repeats the session, stops at the cap and asks, and passes a size Angelo names, in `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `review-skill.test.ts`: `003-US2-AS5 aletheia-review stops at the cap, says how many remain, goes on only if Angelo says so, and passes a session size he names`. The text contains `--session`, `capReached`, `remaining`, `--session-size` and `hoy solo 10`.
   - **Code**:
     - Section 1: the first list prints `session`. Keep it, and pass `--session <instant>` on every later list call of the round, with any one-session limit.

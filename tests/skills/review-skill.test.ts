@@ -27,4 +27,11 @@ describe('the aletheia-review skill', () => {
     for (const text of ['aletheia tag list', 'aletheia review topic', 'top-level tags'])
       expect(skill.text).toContain(text)
   })
+
+  it('003-US2-AS5 aletheia-review stops at the cap, says how many remain, goes on only if Angelo says so, and passes a session size he names', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    for (const text of ['--session', 'capReached', 'remaining', '--session-size', 'hoy solo 10'])
+      expect(skill.text).toContain(text)
+  })
 })

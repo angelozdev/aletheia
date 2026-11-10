@@ -43,9 +43,24 @@ aletheia review topic messaging::redis-streams databases::redis
 When no tag covers the topic, say so and name the top-level tags (those without `::`) from the
 list, so he can pick one. Never guess a tag, and never fall back to the general review.
 
-Both lists print `count`, `nextDue` and `cards`, already in the order to study them. Each card
-has `id`, `type`, `tags`, `question`, `keyPoints` and `answer`. A topic's cards are reviewed
-like due cards, through sections 2 to 6, even those not due yet.
+Both lists print `session`, `count`, `remaining`, `heldBack`, `capReached`, `nextDue` and
+`cards`, already in the order to study them. Each card has `id`, `type`, `tags`, `question`,
+`keyPoints` and `answer`. A topic's cards are reviewed like due cards, through sections 2 to 6,
+even those not due yet.
+
+### The session
+
+A session holds at most 20 cards. The first list of a round prints `session`, the instant it
+began. Keep it, and pass it on every later list call of that round, with the same command and
+tags:
+
+```sh
+aletheia review due --session 2026-11-10T10:00:00-05:00
+```
+
+When Angelo names a size for this review ("hoy solo 10"), pass `--session-size 10` on every
+call of the round, the first one included. If you lose `session` (after a `/compact`), call
+without `--session`: that starts a new round.
 
 With `count: 0`, tell Angelo there is nothing to review and when the next card comes, from
 `nextDue` (`null` means the deck is empty). Stop there.
@@ -151,10 +166,16 @@ already "sigue", go straight on.
 
 ## 6. Until nothing is due
 
-When the list runs out, run the same command again (`aletheia review due`, or `aletheia review
-topic` with the same tags): a card graded Again comes back within minutes, while nothing else
-is due. Go on until it answers `count: 0`, or until Angelo stops.
-Then tell him when the next card comes, from `nextDue`. If he asks when a card comes back, run
+When the list runs out, run the same command again with `--session` (`aletheia review due`, or
+`aletheia review topic` with the same tags): a card graded Again comes back within minutes,
+while nothing else is due. Go on until it answers `count: 0`, or until Angelo stops.
+
+With `capReached: true`, the session has graded its size. Once its cards run out and
+`remaining` is above 0, tell Angelo how many cards remain and ask whether to go on. Go on only
+if he says so, with a call without `--session` and without one-session limits: a new round, as
+if the session had just started. Otherwise stop there.
+
+When you stop, tell him when the next card comes, from `nextDue`. If he asks when a card comes back, run
 `aletheia card show <id>` and read its `due` as printed.
 
 ## Keep the profile current
