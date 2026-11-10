@@ -36,6 +36,11 @@ function shownCard() {
   return listed(['card', 'show', '0123'])
 }
 
+async function search(words: string) {
+  const { stdout } = await cli.run(['card', 'search', '--json'], JSON.stringify({ words }))
+  return JSON.parse(stdout)
+}
+
 function edit(fields: Record<string, unknown>) {
   return cli.run(['card', 'edit', '--json'], JSON.stringify({ card: '0123', ...fields }))
 }
@@ -88,4 +93,14 @@ describe('aletheia card edit', () => {
       expect(await shownCard()).toEqual(before)
     },
   )
+
+  it('004-US3-AS3 a card edited is found by a word of its new text and no longer by a word only in its old one', async () => {
+    await edit({ question: NEW_QUESTION })
+
+    const byNewWord = await search('añade')
+    const byOldWord = await search('diferencia')
+
+    expect(byNewWord.cards).toMatchObject([{ id: '0123' }])
+    expect(byOldWord.cards).toEqual([])
+  })
 })
