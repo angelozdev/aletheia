@@ -50,7 +50,8 @@ even those not due yet.
 
 ### The session
 
-A session holds at most 20 cards. The first list of a round prints `session`, the instant it
+A session holds at most its size, 20 unless Angelo saved another (see "Limits that stay"). The
+first list of a round prints `session`, the instant it
 began. Keep it, and pass it on every later list call of that round, with the same command and
 tags:
 
@@ -64,12 +65,13 @@ without `--session`: that starts a new round.
 
 ### New cards per day
 
-A general review introduces at most 10 new cards per local day; a topic review is not limited.
+A general review introduces at most 10 new cards per local day, unless Angelo saved another
+limit; a topic review is not limited.
 With `heldBack` above 0, say in a line how many new cards wait for tomorrow. When Angelo asks
 for more for this review ("hoy dame 20 nuevas"), pass `--new-per-day 20` on every call of the
 round.
 
-Each session keeps a share of its places for new cards, 10 % by default, so a backlog of
+Each session keeps a share of its places for new cards, 10 % unless Angelo saved another, so a backlog of
 reviews never holds them all back. When Angelo names a share for this review ("hoy la mitad
 nuevas"), pass `--new-share 50` on every call of the round.
 
@@ -189,6 +191,29 @@ if the session had just started. Otherwise stop there.
 
 When you stop, tell him when the next card comes, from `nextDue`. If he asks when a card comes back, run
 `aletheia card show <id>` and read its `due` as printed.
+
+## Limits that stay
+
+Tell a one-session limit from a lasting one by what Angelo says:
+
+- "hoy solo 10", "hoy dame 20 nuevas", or a number for this review: a one-session flag on every
+  call of the round (section 1). Nothing is saved.
+- "a partir de ahora", "siempre", "de ahora en adelante": a lasting change, saved in the deck.
+
+For a lasting change, show him the exact command before running it, and run it only after he
+approves it:
+
+```sh
+aletheia settings set --session-size 15 --new-share 20
+```
+
+The options are `--session-size`, `--new-per-day` and `--new-share`; `default` goes back to the
+built-in value (`aletheia settings set --new-share default`). It prints every setting; read it
+back to him in a line. The next lists use it without a flag. If it exits 1, nothing changed:
+read the `error:` line and tell him.
+
+When he asks what his limits are, run `aletheia settings show`: each setting, its value, and
+whether it is still the built-in default.
 
 ## Keep the profile current
 

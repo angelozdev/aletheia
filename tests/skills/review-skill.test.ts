@@ -47,4 +47,17 @@ describe('the aletheia-review skill', () => {
 
     expect(skill.text).toContain('--new-share')
   })
+
+  it('003-US4-AS4 aletheia-review saves a lasting limit through aletheia settings set only after Angelo approves the exact change', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    for (const text of [
+      'aletheia settings show',
+      'aletheia settings set',
+      'a partir de ahora',
+      'hoy solo 10',
+      'the exact command',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })

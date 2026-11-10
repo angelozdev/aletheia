@@ -353,7 +353,7 @@ lists use them below a one-session limit.
     - `review-due.test.ts`: `003-US4-AS2 a saved session size of 15 holds at most 15, and a session size of 10 for the session holds 10`. Save `settings set --session-size 15`; 25 review cards due. `review due --json` → `count: 15`; `review due --session-size 10 --json` → `count: 10`.
   - **Code**: `settingsFrom(oneSession: Partial<Settings>, stored: StoredSettings): Settings`. `listSession` reads `new StoreSettingsRepository(store).stored()` and passes `settingsFrom(oneSession, stored)` as the limits.
   - **Run**: quickstart §4, then `pnpm aletheia review due`
-- [ ] T020 [US4] `aletheia-review` tells a lasting limit from a one-session one and saves it only after approval, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T020 [US4] `aletheia-review` tells a lasting limit from a one-session one and saves it only after approval, in `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `review-skill.test.ts`: `003-US4-AS4 aletheia-review saves a lasting limit through aletheia settings set only after Angelo approves the exact change`. The text contains `aletheia settings show`, `aletheia settings set`, `a partir de ahora`, `hoy solo 10` and `the exact command`.
   - **Code**: a section "Limits that stay":
     - "a partir de ahora", "siempre" or "de ahora en adelante" is a lasting change; "hoy" or a number for this review is a one-session flag (section 1).
