@@ -123,6 +123,22 @@ describe('aletheia review grade', () => {
     ])
   })
 
+  it('review grade records the card a prerequisite was asked for', async () => {
+    await cli.run(['card', 'add'], JSON.stringify([SAMPLE_DRAFT]))
+
+    const { code } = await grade({
+      card: '4567',
+      grade: 'again',
+      claudeGrade: 'again',
+      prerequisiteOf: '0123',
+    })
+
+    expect(code).toBe(0)
+    expect(selectAll(cli.db, 'select card_id, prerequisite_of from reviews')).toEqual([
+      { card_id: '4567', prerequisite_of: '0123' },
+    ])
+  })
+
   describe('refusals', () => {
     let cardBefore: unknown
 
@@ -187,6 +203,16 @@ describe('aletheia review grade', () => {
       '004-US1-AS2 review grade refuses a missing-prerequisite that is not Again, and a flag outside the two',
       async ([fields, message]) => {
         expectRefused(await grade(fields), line(`invalid review: ${message}`))
+      },
+    )
+
+    it.for([
+      [{ prerequisiteOf: '0123' }, 'invalid review: prerequisiteOf: must be another card'],
+      [{ prerequisiteOf: 'zzzz' }, 'card "zzzz" not found'],
+    ] as const)(
+      '004-US1-AS2 review grade refuses a card as its own prerequisite, or as the prerequisite of a card that does not exist',
+      async ([fields, error]) => {
+        expectRefused(await grade(fields), line(error))
       },
     )
 

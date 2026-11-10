@@ -60,6 +60,7 @@ export function topicList(cards: Card[], now: Date, today: Date, tomorrow: Date)
 
 export function gradeCard(draft: ReviewDraft, { cards, reviews, now }: GradeCardDeps): Card {
   const card = cardById(cards, draft.card)
+  if (draft.prerequisiteOf !== undefined) cardById(cards, draft.prerequisiteOf)
   const graded = scheduleAfter(card, draft.grade, now)
   reviews.record(
     {
@@ -71,6 +72,7 @@ export function gradeCard(draft: ReviewDraft, { cards, reviews, now }: GradeCard
       answer: draft.answer,
       rationale: draft.rationale,
       flag: draft.flag ?? null,
+      prerequisiteOf: draft.prerequisiteOf ?? null,
     },
     graded,
   )

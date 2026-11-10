@@ -30,6 +30,7 @@ const REVIEW: Review = {
   answer: 'ps muestra los que corren, -a todos',
   rationale: 'Cubre los dos key points, sin dudar.',
   flag: null,
+  prerequisiteOf: null,
 }
 
 const VALID_REVIEW: Record<string, string> = {
@@ -120,6 +121,20 @@ describe('StoreReviewRepository', () => {
 
     expect(selectAll(path, 'select flag from reviews')).toEqual([{ flag: 'missing-prerequisite' }])
     expect(since).toEqual([gap])
+  })
+
+  it('record stores the prerequisite link', async () => {
+    const prerequisite: Review = { ...REVIEW, cardId: otherCard.id, prerequisiteOf: card.id }
+    let since: Review[] = []
+
+    await withStore((store) => {
+      new StoreCardRepository(store).saveAll([otherCard])
+      const reviews = new StoreReviewRepository(store)
+      reviews.record(prerequisite, scheduleAfter(otherCard, 'good', now))
+      since = reviews.since(now)
+    })
+
+    expect(since).toEqual([prerequisite])
   })
 
   it('record changes nothing when the store refuses the review', async () => {

@@ -127,7 +127,7 @@ toward neither cap; the skill pulls it, or explains and offers one.
 
 **Independent Test**: quickstart §1.
 
-- [ ] T003 [US1] `review grade` records the card a prerequisite was asked for, in `src/core/reviews/reviews.ts` and `src/shell/cli/commands/review-grade/review-grade.schema.ts`
+- [X] T003 [US1] `review grade` records the card a prerequisite was asked for, in `src/core/reviews/reviews.ts` and `src/shell/cli/commands/review-grade/review-grade.schema.ts`
   - **Test**: `review-grade.test.ts`, with a second card `4567` saved in the test:
     - `review grade records the card a prerequisite was asked for` — `grade({ card: '4567', grade: 'again', claudeGrade: 'again', prerequisiteOf: '0123' })` → `select card_id, prerequisite_of from reviews` gives `4567`, `0123`.
     - `004-US1-AS2 review grade refuses a card as its own prerequisite, or as the prerequisite of a card that does not exist` — `{ prerequisiteOf: '0123' }` (with `card: '0123'`) → `error: invalid review: prerequisiteOf: must be another card\n`; `{ prerequisiteOf: 'zzzz' }` → `error: card "zzzz" not found\n`. Each exits 1 with nothing recorded and the card still `new`.

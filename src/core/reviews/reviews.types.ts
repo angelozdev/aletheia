@@ -15,6 +15,7 @@ export type Review = {
   answer: string
   rationale: string
   flag: ReviewFlag | null
+  prerequisiteOf: string | null
 }
 
 export type ReviewDraft = {
@@ -24,6 +25,7 @@ export type ReviewDraft = {
   answer: string
   rationale: string
   flag?: ReviewFlag
+  prerequisiteOf?: string
 }
 
 export interface ReviewRepository {

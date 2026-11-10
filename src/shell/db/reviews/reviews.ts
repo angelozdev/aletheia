@@ -13,7 +13,7 @@ function reviewRow(review: Review): ReviewRow {
   return { ...review, reviewedAt: storedInstant(review.reviewedAt) }
 }
 
-function reviewFrom({ id: _id, prerequisiteOf: _prerequisiteOf, ...row }: StoredReview): Review {
+function reviewFrom({ id: _id, ...row }: StoredReview): Review {
   return { ...row, reviewedAt: instantFrom(row.reviewedAt) }
 }
 
