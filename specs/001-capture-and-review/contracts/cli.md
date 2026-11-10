@@ -133,14 +133,15 @@ stdin, one object:
 }
 ```
 
-| Field | Rule |
-|---|---|
-| card | the id of an existing card; it need not be due (an early review is recorded) |
-| grade | `again`, `hard`, `good` or `easy`: Angelo's final grade |
-| claudeGrade | the same four: the grade Claude gave before any dispute |
-| answer, rationale | text, not blank |
+| Field | Rule | Message when broken |
+|---|---|---|
+| card | the id of an existing card; it need not be due (an early review is recorded) | `is required`; `card "<id>" not found` |
+| grade | `again`, `hard`, `good` or `easy`: Angelo's final grade | `must be again, hard, good or easy` |
+| claudeGrade | the same four: the grade Claude gave before any dispute | `must be again, hard, good or easy` |
+| answer, rationale | text, not blank | `is required` |
 
-Any other field is refused.
+A missing field is `is required`. Any other field is refused: `<field>: is not a review field`.
+Messages follow the order of this table, joined by `; `.
 
 stdout:
 
