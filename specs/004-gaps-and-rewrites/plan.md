@@ -91,7 +91,7 @@ New folders and touched files only; slices 0 to 3 stand.
 ```text
 src/
 ├── core/
-│   ├── reviews/         REVIEW_FLAGS, ReviewFlag; Review gains flag, prerequisiteOf; gradeCard voids
+│   ├── reviews/         REVIEW_FLAGS, a FlagPolicy per flag (R11); Review gains flag, prerequisiteOf
 │   ├── sessions/        voided today, counted toward the cap, introduced today
 │   └── cards/           editCard, CardEdit; CardRepository gains update(card)
 └── shell/

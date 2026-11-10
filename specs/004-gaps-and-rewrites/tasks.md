@@ -69,6 +69,10 @@ Shared by the CLI tests of this slice:
 6. **`card edit` prints with `card show`'s function.** `shownCard` is exported from
    `src/shell/cli/commands/card-show/card-show.ts` and imported by `card edit`, not copied
    (jscpd).
+7. **The flag policy grows one field per task (research R11, Angelo's Strategy).** T006 brings
+   `FlagPolicy` with `schedule`, T007 adds `hidesUntilTomorrow`, T008 adds
+   `countsAsIntroduced`, each when its failing test asks for it. No call site compares a flag
+   with `BADLY_WRITTEN`.
 
 ---
 
@@ -166,7 +170,10 @@ tomorrow; it costs a place in the session and introduces no card.
 
 - [ ] T006 [US2] A voided review leaves the card's schedule as it was, in `src/core/reviews/reviews.ts`
   - **Test**: `review-grade.test.ts`: `004-US2-AS1 review grade logs a badly-written review with both grades and leaves the card's schedule unchanged` — `it.for(['again', 'good'])`: read `card show 0123 --json` before; `grade({ grade, claudeGrade: 'hard', flag: 'badly-written' })` → exit 0; the review row has `flag: badly-written`, both grades, the answer and the rationale; `card show 0123 --json` gives the same `due`, `state`, `learningSteps`, `reps`, `lapses`, `stability`, `difficulty`, `scheduledDays` and `lastReview` as before; stdout's `state` and `due` are the old ones.
-  - **Code**: `gradeCard` records the card as it was, without `scheduleAfter`, when `draft.flag` is `BADLY_WRITTEN`.
+  - **Code**:
+    - `src/core/reviews/reviews.types.ts`: `FlagPolicy = { schedule: (card: Card, grade: Grade, now: Date) => Card }`.
+    - `src/core/reviews/reviews.constants.ts`: `NO_FLAG: FlagPolicy = { schedule: scheduleAfter }`; `FLAG_POLICIES: Record<ReviewFlag, FlagPolicy>` with `'missing-prerequisite': NO_FLAG` and `'badly-written': { schedule: (card) => card }` (a named `KEEP_SCHEDULE`).
+    - `src/core/reviews/reviews.ts`: `policyOf(flag: ReviewFlag | null): FlagPolicy` gives `NO_FLAG` for `null`, else `FLAG_POLICIES[flag]`; `gradeCard` computes the saved card with `policyOf(draft.flag ?? null).schedule(card, draft.grade, now)`. Export `policyOf` and `FlagPolicy` from `src/core/reviews/index.ts`.
   - **Run**: quickstart §2, first two commands
 - [ ] T007 [US2] A card voided today leaves every list until the next local day, in `src/core/sessions/sessions.ts`
   - **Test**:
@@ -174,13 +181,13 @@ tomorrow; it costs a place in the session and introduces no card.
       - `a card with a review voided today leaves the scope and nextDue is at most tomorrow` — `dueReviews(2)`, a review of `due-0` flagged `badly-written` at `today + 1h` → only `due-1` listed; with `due-1` graded too and nothing else due, `nextDue` is `tomorrow`.
       - `a card voided before today is listed` — the same review at `today − 1h` → `due-0` listed.
     - `review-due.test.ts`: `004-US2-AS2 a card voided today is absent from the due list and a topic until the next local day` — two new cards tagged `messaging` (`0123`, `4567`); grade `0123` with `flag: badly-written`. `review due --json` and `review topic messaging --json` → `cards` `['4567']`. With `now` at `2026-11-12T05:00:00.000Z` (the next local day), `review due --json` lists `0123` again.
-  - **Code**: `sessionList` removes from the scope, beside the held-back cards, every card with a review flagged `BADLY_WRITTEN` at or after `today`; when it removes any, `nextDue` is `earlier(nextDue, tomorrow)`, as for held-back cards.
+  - **Code**: `FlagPolicy` gains `hidesUntilTomorrow` (`false` in `NO_FLAG`, `true` for `badly-written`). `sessionList` removes from the scope, beside the held-back cards, every card with a review at or after `today` whose `policyOf(review.flag).hidesUntilTomorrow`; when it removes any, `nextDue` is `earlier(nextDue, tomorrow)`, as for held-back cards.
   - **Run**: quickstart §2, third command
 - [ ] T008 [US2] A voided review counts toward the session's cap and not toward the day's new cards, in `src/core/sessions/sessions.ts`
   - **Test**:
     - `sessions.test.ts`: `a voided review of a new card does not count toward the day` — `newPerDay: 1`, a review of `new-0` flagged `badly-written` today with `stateBefore: 'new'`, scope `freshCards(3)` → `new-1` listed, `heldBack: 1`.
     - `review-due.test.ts`: `004-US2-AS3 a voided review counts toward the session's cap and not toward the day's new cards, and its card stays new` — three new cards. `review due --session-size 1 --new-per-day 1 --json` → keep `session`; grade `0123` with `flag: badly-written`. With `--session <session> --session-size 1 --new-per-day 1` → `capReached: true`, `cards: []`. A new session, `review due --session-size 1 --new-per-day 1 --json` → `cards` `['4567']`, `heldBack: 1`. `card show 0123 --json` → `state: new`.
-  - **Code**: `introducedSince` leaves out reviews flagged `BADLY_WRITTEN`. The cap half is green on arrival (a voided review is a review in the session); the day half fails first.
+  - **Code**: `FlagPolicy` gains `countsAsIntroduced` (`true` in `NO_FLAG`, `false` for `badly-written`); `introducedSince` keeps only reviews whose `policyOf(review.flag).countsAsIntroduced`. The cap half is green on arrival (a voided review is a review in the session); the day half fails first.
   - **Run**: `pnpm test -t 004-US2-AS3`
 - [ ] T009 [US2] `aletheia-review` voids a review whose wording decided the answer, right or wrong, in `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `review-skill.test.ts`: `004-US2-AS4 aletheia-review voids a review whose wording decided the answer, right or wrong, says why, and lets Angelo dispute it`. The text contains `"flag":"badly-written"`, `right or wrong`, `read two ways`, `gives its answer away`, `not today` and `dispute`.

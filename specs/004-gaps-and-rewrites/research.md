@@ -139,3 +139,19 @@ with ADR-0017 on 2026-11-10. Nothing here needs a new dependency.
   `null`s. Their assertions do not change.
 - **Rationale**: the constitution changes the design first; a fixture gaining a field it lacked
   is not a weakened test.
+
+## R11. What a flag does lives in one policy per flag
+
+- **Decision** (**Angelo**): `src/core/reviews` holds a `FlagPolicy` per flag, a Strategy:
+  `schedule(card, grade, now)`, `hidesUntilTomorrow` and `countsAsIntroduced`.
+  `FLAG_POLICIES: Record<ReviewFlag, FlagPolicy>` gives one to every flag, and `NO_FLAG` is
+  the policy of an unflagged review and of `missing-prerequisite`; `policyOf(flag)` picks one.
+  `gradeCard` schedules through `policyOf(draft.flag).schedule`, and `sessionList` reads the
+  two booleans. `prerequisiteOf` is not a flag and keeps its own rule (R5).
+- **Rationale**: the `Record` makes a new flag (`badly-rephrased` in slice 5, `not-useful` in
+  slice 7, design §8.2 step 16 and §8.4) fail to compile until its effects are declared, and
+  keeps those effects in one place instead of comparisons spread over two units.
+- **Alternatives**: comparing with `BADLY_WRITTEN` at each call site (a new voiding flag
+  touches three places, and a forgotten one is silent); a list of voiding flags with
+  `isVoided` (a forgotten flag is silent too); a `Record<ReviewFlag, boolean>` of voiding flags
+  (one concept, but Angelo prefers each effect named).

@@ -36,10 +36,15 @@ Migration (R7):
 
 ## Rules in the core
 
-`src/core/reviews` (`gradeCard`):
+`src/core/reviews`, one policy per flag (R11):
 
-- `flag` = `badly-written`: the review is recorded and the card saved as it was (R3).
-- Otherwise: scheduled as before (001 FR-005), whatever the flag.
+| Flag | `schedule` | `hidesUntilTomorrow` | `countsAsIntroduced` |
+|---|---|---|---|
+| none (`NO_FLAG`) | `scheduleAfter` (001 FR-005) | false | true |
+| `missing-prerequisite` | `NO_FLAG`'s | false | true |
+| `badly-written` | keeps the card as it was (R3) | true | false |
+
+- `gradeCard` schedules through `policyOf(draft.flag).schedule` and records the review.
 - `prerequisiteOf` names a card that must exist (`cardById`).
 
 `src/core/sessions` (`sessionList`), over the reviews since the earlier of the session's start
@@ -47,10 +52,10 @@ and the local today (R4, R5):
 
 | Count | Reviews it takes |
 |---|---|
-| Voided today | flagged `badly-written` since the local today: their cards leave the scope, and `nextDue` is at most tomorrow |
+| Hidden until tomorrow | since the local today, whose flag's policy `hidesUntilTomorrow`: their cards leave the scope, and `nextDue` is at most tomorrow |
 | Shown in the session | every review since the session began: their cards are re-shows when due again |
 | Counted toward the cap | the cards shown in the session, minus those whose first review since the start names a `prerequisiteOf` |
-| Introduced today | since the local today, `stateBefore` = `new`, no `badly-written` flag, no `prerequisiteOf` |
+| Introduced today | since the local today, `stateBefore` = `new`, whose flag's policy `countsAsIntroduced`, no `prerequisiteOf` |
 
 `src/core/cards` (`editCard`): finds the card, applies the given fields, sets `updatedAt` to now,
 saves through `CardRepository.update(card)` (R7).
@@ -60,6 +65,7 @@ saves through `CardRepository.update(card)` (R7).
 - `ReviewFlag`: `'missing-prerequisite' | 'badly-written'` (`REVIEW_FLAGS` in
   `src/core/reviews`).
 - `Review` and `ReviewDraft` gain `flag: ReviewFlag | null` and `prerequisiteOf: string | null`.
+- `FlagPolicy`: `{ schedule: (card: Card, grade: Grade, now: Date) => Card; hidesUntilTomorrow: boolean; countsAsIntroduced: boolean }`.
 - `CardEdit`: `card` plus an optional subset of `type`, `question`, `answer`, `keyPoints`,
   `situation`, `tags`.
 - `CardRepository` gains `update(card: Card): void`.
