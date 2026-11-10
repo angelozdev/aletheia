@@ -13,6 +13,11 @@ export function shownInstant(instant: Date, timeZone: string): string {
   return formatISO(new TZDate(instant, timeZone))
 }
 
+export function startOfToday(now: Date, timeZone: string): Date {
+  const today = startOfDay(new TZDate(now, timeZone))
+  return new Date(today.getTime())
+}
+
 export function startOfTomorrow(now: Date, timeZone: string): Date {
   const today = new TZDate(now, timeZone)
   const tomorrow = startOfDay(addDays(today, 1))

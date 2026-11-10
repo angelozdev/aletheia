@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { instantFrom, minutesAfter, shownInstant, startOfTomorrow, storedInstant } from './time.ts'
+import {
+  instantFrom,
+  minutesAfter,
+  shownInstant,
+  startOfToday,
+  startOfTomorrow,
+  storedInstant,
+} from './time.ts'
 
 describe('time', () => {
   it('storedInstant writes an instant as UTC ISO text', () => {
@@ -19,6 +26,12 @@ describe('time', () => {
     const instant = new Date('2026-11-12T02:00:00.000Z')
 
     expect(instantFrom(storedInstant(instant)).getTime()).toBe(instant.getTime())
+  })
+
+  it('startOfToday is the start of the local day', () => {
+    expect(startOfToday(new Date('2026-11-12T02:00:00.000Z'), 'America/Bogota').toISOString()).toBe(
+      '2026-11-11T05:00:00.000Z',
+    )
   })
 
   it('startOfTomorrow gives where the local day ends', () => {

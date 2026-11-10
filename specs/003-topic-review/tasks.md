@@ -143,7 +143,7 @@ spec's order, and refuses what it cannot answer.
     - `src/shell/cli/invocation/session/session.ts`: move `dueItem` here from `review-due.ts` and import it in both commands.
     - `src/shell/cli/commands/review-topic/review-topic.ts`: `reviewTopicCommand` (`group: 'review'`, `name: 'topic'`, `argument: { name: '<tags...>', description: 'one or more tags; their descendants are included' }`, "list the active cards under the tags, due or not, due first"). It returns `{ count, nextDue, cards }` like `review due`, from `dueList(topicCards(active, args), now, tomorrow)`. Register it after `reviewDueCommand`.
   - **Run**: `pnpm aletheia review topic messaging`
-- [ ] T004 [US1] `review topic` orders due, new, then not due soonest first, and leaves out what was graded today, in `src/core/reviews/reviews.ts`
+- [X] T004 [US1] `review topic` orders due, new, then not due soonest first, and leaves out what was graded today, in `src/core/reviews/reviews.ts`
   - **Test**:
     - `src/core/time/time.test.ts`: `startOfToday is the start of the local day` — `2026-11-12T02:00:00.000Z` in `America/Bogota` → `2026-11-11T05:00:00.000Z`.
     - `src/core/reviews/reviews.test.ts`: `topicList puts the due list first, then review cards not due, soonest first` and `topicList leaves out a review card not due whose last review is today`. The existing `dueList` tests stay as they are.

@@ -32,13 +32,34 @@ function dueNow(cards: Card[], now: Date, tomorrow: Date): Card[] {
   return [...learningDueBy(cards, now), ...review, ...fresh]
 }
 
-export function dueList(cards: Card[], now: Date, tomorrow: Date): DueList {
+function listOf(cards: Card[], listed: Card[]): DueList {
+  const inList = new Set(listed)
+  const leftOut = cards.filter((card) => !inList.has(card))
+  return { cards: listed, nextDue: earliestDue(leftOut) }
+}
+
+function dueCards(cards: Card[], now: Date, tomorrow: Date): Card[] {
   const dueToday = dueNow(cards, now, tomorrow)
   const learnAhead = minutesAfter(now, LEARN_AHEAD_MINUTES)
-  const due = dueToday.length > 0 ? dueToday : learningDueBy(cards, learnAhead)
-  const listed = new Set(due)
-  const leftOut = cards.filter((card) => !listed.has(card))
-  return { cards: due, nextDue: earliestDue(leftOut) }
+  return dueToday.length > 0 ? dueToday : learningDueBy(cards, learnAhead)
+}
+
+export function dueList(cards: Card[], now: Date, tomorrow: Date): DueList {
+  return listOf(cards, dueCards(cards, now, tomorrow))
+}
+
+function gradedSince(card: Card, instant: Date): boolean {
+  return card.lastReview !== null && card.lastReview >= instant
+}
+
+export function topicList(cards: Card[], now: Date, today: Date, tomorrow: Date): DueList {
+  const notDue = cards
+    .filter(
+      (card) => card.state === REVIEW_STATE && card.due >= tomorrow && !gradedSince(card, today),
+    )
+    .toSorted(byDue)
+  const due = dueCards(cards, now, tomorrow)
+  return listOf(cards, [...due, ...notDue])
 }
 
 export function gradeCard(draft: ReviewDraft, { cards, reviews, now }: GradeCardDeps): Card {

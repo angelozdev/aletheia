@@ -1,2 +1,2 @@
-export { dueList, gradeCard } from './reviews.ts'
-export type { Review, ReviewRepository } from './reviews.types.ts'
+export { dueList, gradeCard, topicList } from './reviews.ts'
+export type { DueList, Review, ReviewRepository } from './reviews.types.ts'

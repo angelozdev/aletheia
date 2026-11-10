@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { newCard, type Card } from '#core/cards'
 import { SAMPLE_DRAFT } from '../../../tests/support/cards/cards.constants.ts'
-import { dueList } from './reviews.ts'
+import { dueList, topicList } from './reviews.ts'
 
 const now = new Date('2026-11-12T02:00:00.000Z')
+const today = new Date('2026-11-11T05:00:00.000Z')
 const tomorrow = new Date('2026-11-12T05:00:00.000Z')
 
 function newCardAt(id: string, created: string): Card {
@@ -81,6 +82,46 @@ describe('due list', () => {
       const cards = [studied('step', state, '2026-11-12T02:21:00.000Z')]
 
       expect(dueIds(cards)).toEqual([])
+    })
+  })
+})
+
+describe('topic list', () => {
+  function topicIds(cards: Card[]): string[] {
+    return topicList(cards, now, today, tomorrow).cards.map(({ id }) => id)
+  }
+
+  function gradedAt(card: Card, lastReview: string): Card {
+    return { ...card, lastReview: new Date(lastReview) }
+  }
+
+  it('topicList puts the due list first, then review cards not due, soonest first', () => {
+    const cards = [
+      studied('review-in-30-days', 'review', '2026-12-11T15:00:00.000Z'),
+      newCardAt('fresh', '2026-11-10T10:00:00.000Z'),
+      studied('review-in-3-days', 'review', '2026-11-14T15:00:00.000Z'),
+      studied('review-today', 'review', '2026-11-11T20:00:00.000Z'),
+    ]
+
+    expect(topicIds(cards)).toEqual([
+      'review-today',
+      'fresh',
+      'review-in-3-days',
+      'review-in-30-days',
+    ])
+  })
+
+  it('topicList leaves out a review card not due whose last review is today', () => {
+    const gradedToday = studied('graded-today', 'review', '2026-11-14T15:00:00.000Z')
+    const gradedYesterday = studied('graded-yesterday', 'review', '2026-11-14T16:00:00.000Z')
+    const cards = [
+      gradedAt(gradedToday, '2026-11-11T05:00:00.000Z'),
+      gradedAt(gradedYesterday, '2026-11-11T04:59:59.000Z'),
+    ]
+
+    expect(topicList(cards, now, today, tomorrow)).toMatchObject({
+      cards: [{ id: 'graded-yesterday' }],
+      nextDue: new Date('2026-11-14T15:00:00.000Z'),
     })
   })
 })
