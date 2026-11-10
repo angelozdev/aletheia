@@ -414,6 +414,10 @@ can use.
 - `sqlite-vec` for semantic duplicate detection.
 - TUI or web UI on top of the core.
 - Prerequisite relations: cards that wait until their base card is solid.
+- A stored review session (a row with an id, its start and its limits), in place of
+  the start instant the CLI prints and Claude repeats on every call (spec 003). Only
+  if losing that instant, after a `/compact` for example, causes real trouble more
+  than once. Raised 2026-11-10.
 - Claude rephrasing the question on each review so Angelo remembers the concept,
   not the wording. Raised, not decided.
 - Visual explanations: for a technically dense question or doubt, Claude offers,
