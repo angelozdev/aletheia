@@ -30,12 +30,12 @@ Facts were tried in scratch on Node 26.13.0 (SQLite 3.54.0), never in the repo o
   combining marks) and case, splits on anything but `a`–`z` and digits, drops one-character
   words and common words (R3), makes plurals singular, and drops repeated terms. The adapter
   writes each term as a quoted prefix, `"consumidor"*`, joined by `OR`. Singular rule: a word
-  of five letters or more ending in `es` loses `es` (`consumidores` → `consumidor`), else a
-  word of four or more ending in `s` loses `s` (`mensajes` → `mensaje`, `redis` → `redi`). The
-  prefix match then covers both forms.
+  of five letters or more ending in `es` loses `es` (`consumidores` → `consumidor`, `mensajes`
+  → `mensaj`), else a word of four or more ending in `s` loses `s` (`procesos` → `proceso`,
+  `redis` → `redi`). The prefix match then covers both forms.
 - **Rationale**: a term holds only `a`–`z` and digits, so no character the user sends reaches
-  FTS5's query syntax (FR-003, 002-US1-AS4): in scratch, `¿Qué es "esto" (y \`*\` -a : NOT)?`
-  became the plain terms `esto` and `not`. Which words count is a rule, so it is code with unit
+  FTS5's query syntax (FR-003, 002-US1-AS4): ``¿Qué es "redis" (y `*` -a : NOT)?`` becomes the
+  plain terms `redi` and `not`, and `not` is no longer an operator. Which words count is a rule, so it is code with unit
   tests (constitution II); only the quoting is SQL.
 - **Alternatives**: a Snowball Spanish stemmer (stemming the index needs a custom FTS5
   tokenizer, which `node:sqlite` cannot register, and the spec asks only for singular and
