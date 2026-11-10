@@ -12,4 +12,14 @@ describe('the az-aletheia-add skill', () => {
     expect(skill.text).toContain('aletheia card add')
     for (const forbidden of DEVELOPMENT_ONLY) expect(skill.text).not.toContain(forbidden)
   })
+
+  it('002-US1-AS7 az-aletheia-add searches every draft before showing any and flags a repeat', () => {
+    const skill = readSkill('skills/az-aletheia-add/SKILL.md')
+
+    for (const text of ['aletheia card search', 'synonyms', 'duplica a #', 'se solapa con #'])
+      expect(skill.text).toContain(text)
+    expect(skill.text.indexOf('aletheia card search')).toBeLessThan(
+      skill.text.indexOf('## 3. Show every draft'),
+    )
+  })
 })

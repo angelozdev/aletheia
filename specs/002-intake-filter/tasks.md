@@ -155,7 +155,7 @@ the slice.
 
 **Independent Test**: `pnpm test -t 002-US1-AS7`; for real after the release (quickstart §2).
 
-- [ ] T007 [US1] `az-aletheia-add` searches every draft and flags duplicates and overlaps, in `skills/az-aletheia-add/SKILL.md`
+- [X] T007 [US1] `az-aletheia-add` searches every draft and flags duplicates and overlaps, in `skills/az-aletheia-add/SKILL.md`
   - **Test**: `tests/skills/add-skill.test.ts`: `002-US1-AS7 az-aletheia-add searches every draft before showing any and flags a repeat` — the text contains `aletheia card search`, `synonyms`, `duplica a #`, `se solapa con #`; it still passes 001-US1-AS6 (no `DEVELOPMENT_ONLY` string).
   - **Code**: a new section between "1. Draft" and "2. Show every draft", "Search for similar cards": for each draft, one `aletheia card search <<'JSON' … JSON` whose `words` are the draft's question and answer plus synonyms and the technical terms in Spanish and English (`detenidos stopped exited --all` for `docker ps -a`) and whose `tags` are the draft's; read every listed card; a draft that says what a card says is flagged `⚠ duplica a #<id>`; one that repeats part of a card and adds something, `⚠ se solapa con #<id>: <qué repite>; agrega <qué es nuevo>`; drafts of the same batch that repeat each other are merged or one is dropped before showing. In "2. Show every draft": a flagged draft carries its flag on the line after its header and is shown with the rest, never dropped silently; Angelo decides as with any draft; the flag is not stored. Replacing or merging an old card is not offered (slice 6). Every question about existing cards runs `aletheia card search` or `aletheia card show`.
   - **Run**: `pnpm test -t 002-US1-AS7`

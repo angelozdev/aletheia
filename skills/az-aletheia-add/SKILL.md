@@ -14,7 +14,9 @@ in English; tags are English.
 - Nothing is saved without Angelo's approval of that exact card.
 - The `aletheia` CLI is the only writer. Never open, read or edit a store file, never write SQL,
   never choose an environment: plain `aletheia` writes to Angelo's real deck.
-- Every question about a card is answered by running `aletheia`, never from memory.
+- Every question about existing cards, while drafting or after, is answered by running
+  `aletheia card search` or `aletheia card show`, never from memory or from earlier in the
+  session.
 
 ## 1. Draft
 
@@ -63,22 +65,58 @@ A `code` question carries its snippet in a fenced block inside the question.
 - `source`: the name of the repo you are in, or the study context when there is no repo
   ("libro Designing Data-Intensive Applications").
 
-## 2. Show every draft
+## 2. Search for similar cards
 
-Before saving anything, show each draft numbered, with every field:
+Before showing any draft, search the deck once for each draft. Drafts are independent: run
+their searches in parallel.
+
+```sh
+aletheia card search <<'JSON'
+{
+  "words": "En Docker, ¿qué diferencia hay entre `docker ps` y `docker ps -a`? `ps` muestra solo los contenedores en ejecución; `-a` incluye los detenidos. detenidos stopped exited --all",
+  "tags": ["docker::commands"]
+}
+JSON
+```
+
+- `words`: the draft's question and answer, plus synonyms and the draft's technical terms in
+  Spanish and English (`detenidos stopped exited --all` for `docker ps -a`), so a card worded
+  differently still comes back. The JSON rules of `card add` apply.
+- `tags`: the draft's tags.
+
+stdout lists up to 10 cards, `cards[n]` with `id`, `type`, `tags`, `question` and `answer`, or
+`cards: []` when nothing is similar. They are candidates, never verdicts: read every listed
+card and judge it against the draft.
+
+- The draft says what a card already says: flag it `⚠ duplica a #<id>`.
+- The draft repeats part of a card and adds something:
+  `⚠ se solapa con #<id>: <qué repite>; agrega <qué es nuevo>`.
+- Sharing a word or a tag alone is not a repeat: no flag.
+
+Two drafts of the same batch that repeat each other are merged, or one is dropped, before
+showing them. Replacing or merging an old card is not offered. If a search exits 1, read its
+`error:` line, fix the JSON and search again; never show a draft whose search did not answer.
+
+## 3. Show every draft
+
+Before saving anything, show each draft numbered, with every field. A flagged draft carries its
+flag on the line after its header:
 
 ```
 1. command · docker::commands
+   ⚠ duplica a #k7m2
    Pregunta: En Docker, ¿qué diferencia hay entre `docker ps` y `docker ps -a`?
    Respuesta: `ps` muestra solo los contenedores en ejecución; `-a` incluye los detenidos.
    Key points: `ps`: solo en ejecución · `-a`: incluye detenidos
    Situación: Un contenedor se cayó y no aparece en `docker ps`.
 ```
 
-Ask Angelo to approve, edit or reject each one. Apply his edits exactly. A rejected draft is
-dropped and never stored. If he approves none, save nothing.
+Show flagged drafts with the rest, never drop one silently. Ask Angelo to approve, edit or
+reject each one; a flagged draft is decided like any other, and its flag is not stored. Apply
+his edits exactly. A rejected draft is dropped and never stored. If he approves none, save
+nothing.
 
-## 3. Save the approved cards
+## 4. Save the approved cards
 
 Send every approved card in one call, a JSON list on stdin through a quoted heredoc, so
 backticks, accents and multi-line code arrive untouched:
@@ -111,7 +149,7 @@ The list is saved whole or not at all. If the command exits 1, nothing was store
 (cards are numbered from 1 in the list you sent), fix those drafts, show the fixed ones to
 Angelo again, and send the approved list again.
 
-## 4. Questions about a card
+## 5. Questions about a card
 
 When Angelo asks about a saved card ("muéstrame esa tarjeta", "¿cuándo toca?"), run
 `aletheia card show k7m2`, the id without `#` (a shell reads `#` as a comment), and answer from
