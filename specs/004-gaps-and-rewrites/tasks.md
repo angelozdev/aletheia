@@ -175,7 +175,7 @@ tomorrow; it costs a place in the session and introduces no card.
     - `src/core/reviews/reviews.constants.ts`: `NO_FLAG: FlagPolicy = { schedule: scheduleAfter }`; `FLAG_POLICIES: Record<ReviewFlag, FlagPolicy>` with `'missing-prerequisite': NO_FLAG` and `'badly-written': { schedule: (card) => card }` (a named `KEEP_SCHEDULE`).
     - `src/core/reviews/reviews.ts`: `policyOf(flag: ReviewFlag | null): FlagPolicy` gives `NO_FLAG` for `null`, else `FLAG_POLICIES[flag]`; `gradeCard` computes the saved card with `policyOf(draft.flag ?? null).schedule(card, draft.grade, now)`. Export `policyOf` and `FlagPolicy` from `src/core/reviews/index.ts`.
   - **Run**: quickstart §2, first two commands
-- [ ] T007 [US2] A card voided today leaves every list until the next local day, in `src/core/sessions/sessions.ts`
+- [X] T007 [US2] A card voided today leaves every list until the next local day, in `src/core/sessions/sessions.ts`
   - **Test**:
     - `sessions.test.ts`:
       - `a card with a review voided today leaves the scope and nextDue is at most tomorrow` — `dueReviews(2)`, a review of `due-0` flagged `badly-written` at `today + 1h` → only `due-1` listed; with `due-1` graded too and nothing else due, `nextDue` is `tomorrow`.

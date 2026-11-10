@@ -53,6 +53,10 @@ function pulled(
   return { ...graded(cardId, reviewedAt, stateBefore), prerequisiteOf: forCard }
 }
 
+function voided(cardId: string, reviewedAt: string, stateBefore?: Card['state']): Review {
+  return { ...graded(cardId, reviewedAt, stateBefore), flag: 'badly-written' }
+}
+
 function listOf(input: Partial<SessionInput>): SessionList {
   return sessionList({
     scope: [],
@@ -203,6 +207,28 @@ describe('session list', () => {
 
       expect(ids(list.cards)).toEqual(['new-0'])
       expect(list.heldBack).toBe(1)
+    })
+  })
+
+  describe('a voided review', () => {
+    it('a card with a review voided today leaves the scope and nextDue is at most tomorrow', () => {
+      const reviews = [voided('due-0', '2026-11-11T06:00:00.000Z')]
+      const [voidedCard, other] = dueReviews(2)
+      const later = studied('later', 'review', '2026-11-14T15:00:00.000Z')
+
+      const withOther = listOf({ scope: [voidedCard, other], reviews })
+      const withLater = listOf({ scope: [voidedCard, later], reviews })
+
+      expect(ids(withOther.cards)).toEqual(['due-1'])
+      expect(withLater).toMatchObject({ cards: [], nextDue: tomorrow })
+    })
+
+    it('a card voided before today is listed', () => {
+      const reviews = [voided('due-0', '2026-11-11T04:59:59.999Z')]
+
+      const list = listOf({ scope: dueReviews(2), reviews })
+
+      expect(ids(list.cards)).toEqual(['due-0', 'due-1'])
     })
   })
 

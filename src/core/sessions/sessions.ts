@@ -1,5 +1,5 @@
 import { bySaved, NEW_STATE, type Card } from '#core/cards'
-import { dueList, topicList, type DueList, type Review } from '#core/reviews'
+import { dueList, policyOf, topicList, type DueList, type Review } from '#core/reviews'
 import type { Settings } from '#core/settings'
 import { PERCENT } from './sessions.constants.ts'
 import type { SessionInput, SessionList } from './sessions.types.ts'
@@ -26,6 +26,14 @@ function introducedSince(reviews: Review[], today: Date): number {
   return reviewsSince(reviews, today).filter(
     ({ stateBefore, prerequisiteOf }) => stateBefore === NEW_STATE && prerequisiteOf === null,
   ).length
+}
+
+function hiddenOf({ scope, reviews, today }: SessionInput): Set<Card> {
+  const hiding = reviewsSince(reviews, today).filter(
+    ({ flag }) => policyOf(flag).hidesUntilTomorrow,
+  )
+  const hidingIds = new Set(hiding.map(({ cardId }) => cardId))
+  return new Set(scope.filter((card) => hidingIds.has(card.id)))
 }
 
 function heldBackOf(input: SessionInput): Set<Card> {
@@ -63,8 +71,10 @@ function fill(eligible: Card[], firstPlace: number, { sessionSize, newShare }: S
 }
 
 export function sessionList(input: SessionInput): SessionList {
-  const heldBack = heldBackOf(input)
-  const scope = input.scope.filter((card) => !heldBack.has(card))
+  const hidden = hiddenOf(input)
+  const visible = input.scope.filter((card) => !hidden.has(card))
+  const heldBack = heldBackOf({ ...input, scope: visible })
+  const scope = visible.filter((card) => !heldBack.has(card))
   const { cards, nextDue } = eligible(scope, input)
   const graded = gradedSince(input.reviews, input.start)
   const counted = countedSince(input.reviews, input.start)
@@ -77,6 +87,6 @@ export function sessionList(input: SessionInput): SessionList {
     remaining: ungraded.length - filled.length,
     heldBack: heldBack.size,
     capReached: counted >= input.limits.sessionSize,
-    nextDue: heldBack.size > 0 ? earlier(nextDue, input.tomorrow) : nextDue,
+    nextDue: heldBack.size + hidden.size > 0 ? earlier(nextDue, input.tomorrow) : nextDue,
   }
 }

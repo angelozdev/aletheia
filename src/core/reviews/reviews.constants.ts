@@ -14,11 +14,11 @@ export const MISSING_PREREQUISITE = 'missing-prerequisite'
 
 const BADLY_WRITTEN = 'badly-written'
 
-export const NO_FLAG: FlagPolicy = { schedule: scheduleAfter }
+export const NO_FLAG: FlagPolicy = { schedule: scheduleAfter, hidesUntilTomorrow: false }
 
 const KEEP_SCHEDULE = (card: Card) => card
 
 export const FLAG_POLICIES: Record<ReviewFlag, FlagPolicy> = {
   [MISSING_PREREQUISITE]: NO_FLAG,
-  [BADLY_WRITTEN]: { schedule: KEEP_SCHEDULE },
+  [BADLY_WRITTEN]: { schedule: KEEP_SCHEDULE, hidesUntilTomorrow: true },
 }

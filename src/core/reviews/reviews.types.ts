@@ -4,7 +4,10 @@ import type { REVIEW_FLAGS } from './reviews.constants.ts'
 
 export type ReviewFlag = (typeof REVIEW_FLAGS)[number]
 
-export type FlagPolicy = { schedule: (card: Card, grade: Grade, now: Date) => Card }
+export type FlagPolicy = {
+  schedule: (card: Card, grade: Grade, now: Date) => Card
+  hidesUntilTomorrow: boolean
+}
 
 export type DueList = { cards: Card[]; nextDue: Date | null }
 

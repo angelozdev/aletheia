@@ -385,4 +385,18 @@ describe('aletheia review due', () => {
     expect(afterSteps).toMatchObject({ capReached: false })
     expect(idsOf(afterSteps)).toEqual(['0123', '4567', '89ab'])
   })
+
+  it('004-US2-AS2 a card voided today is absent from the due list and a topic until the next local day', async () => {
+    await run(['card', 'add'], taggedDrafts([['messaging'], ['messaging']]))
+    await grade({ card: '0123', flag: 'badly-written' })
+
+    const due = await list(['review', 'due'])
+    const topic = await list(['review', 'topic', 'messaging'])
+    now = new Date('2026-11-12T05:00:00.000Z')
+    const nextDay = await list(['review', 'due'])
+
+    expect(idsOf(due)).toEqual(['4567'])
+    expect(idsOf(topic)).toEqual(['4567'])
+    expect(idsOf(nextDay)).toEqual(['0123', '4567'])
+  })
 })

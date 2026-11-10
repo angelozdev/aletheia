@@ -69,7 +69,7 @@ export function topicList(cards: Card[], now: Date, today: Date, tomorrow: Date)
   return listOf(cards, [...due, ...notDue])
 }
 
-function policyOf(flag: ReviewFlag | null): FlagPolicy {
+export function policyOf(flag: ReviewFlag | null): FlagPolicy {
   return flag === null ? NO_FLAG : FLAG_POLICIES[flag]
 }
 
