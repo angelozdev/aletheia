@@ -60,4 +60,27 @@ describe('due list', () => {
   it('dueList names none on an empty deck', () => {
     expect(dueList([], now, tomorrow)).toEqual({ cards: [], nextDue: null })
   })
+
+  describe.for(['learning', 'relearning'] as const)('a %s card', (state) => {
+    it('due within 20 minutes joins the list when nothing else is due', () => {
+      const cards = [studied('step', state, '2026-11-12T02:20:00.000Z')]
+
+      expect(dueIds(cards)).toEqual(['step'])
+    })
+
+    it('due within 20 minutes stays out while another card is due', () => {
+      const cards = [
+        studied('step', state, '2026-11-12T02:10:00.000Z'),
+        newCardAt('fresh', '2026-11-10T10:00:00.000Z'),
+      ]
+
+      expect(dueIds(cards)).toEqual(['fresh'])
+    })
+
+    it('stays out when its step ends in 21 minutes', () => {
+      const cards = [studied('step', state, '2026-11-12T02:21:00.000Z')]
+
+      expect(dueIds(cards)).toEqual([])
+    })
+  })
 })

@@ -93,4 +93,16 @@ describe('aletheia review due', () => {
     expect(code).toBe(0)
     expect(stdout).toBe('count: 0\nnextDue: null\ncards: []\n')
   })
+
+  it('001-US2-AS4 a card whose step ends within 20 minutes is due when nothing else is', async () => {
+    await addCards(1)
+    arrange('0123', 'learning', '2026-11-12T02:10:00.000Z')
+
+    const alone = await run(['review', 'due', '--json'])
+    await addCards(1)
+    const besideNew = await run(['review', 'due', '--json'])
+
+    expect(JSON.parse(alone.stdout)).toMatchObject({ count: 1, cards: [{ id: '0123' }] })
+    expect(JSON.parse(besideNew.stdout)).toMatchObject({ count: 1, cards: [{ id: '4567' }] })
+  })
 })

@@ -1,5 +1,6 @@
 import { NEW_STATE, type Card } from '#core/cards'
-import { LEARNING_STATES, REVIEW_STATE } from './reviews.constants.ts'
+import { minutesAfter } from '#core/time'
+import { LEARN_AHEAD_MINUTES, LEARNING_STATES, REVIEW_STATE } from './reviews.constants.ts'
 import type { DueList } from './reviews.types.ts'
 
 function byDue(a: Card, b: Card): number {
@@ -18,13 +19,22 @@ function isLearning(card: Card): boolean {
   return LEARNING_STATES.includes(card.state)
 }
 
-export function dueList(cards: Card[], now: Date, tomorrow: Date): DueList {
-  const learning = cards.filter((card) => isLearning(card) && card.due <= now).toSorted(byDue)
+function learningDueBy(cards: Card[], instant: Date): Card[] {
+  return cards.filter((card) => isLearning(card) && card.due <= instant).toSorted(byDue)
+}
+
+function dueNow(cards: Card[], now: Date, tomorrow: Date): Card[] {
   const review = cards
     .filter((card) => card.state === REVIEW_STATE && card.due < tomorrow)
     .toSorted(byDue)
   const fresh = cards.filter((card) => card.state === NEW_STATE).toSorted(bySaved)
-  const due = [...learning, ...review, ...fresh]
+  return [...learningDueBy(cards, now), ...review, ...fresh]
+}
+
+export function dueList(cards: Card[], now: Date, tomorrow: Date): DueList {
+  const dueToday = dueNow(cards, now, tomorrow)
+  const learnAhead = minutesAfter(now, LEARN_AHEAD_MINUTES)
+  const due = dueToday.length > 0 ? dueToday : learningDueBy(cards, learnAhead)
   const listed = new Set(due)
   const leftOut = cards.filter((card) => !listed.has(card))
   return { cards: due, nextDue: earliestDue(leftOut) }

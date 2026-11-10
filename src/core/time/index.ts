@@ -1,1 +1,1 @@
-export { instantFrom, shownInstant, startOfTomorrow, storedInstant } from './time.ts'
+export { instantFrom, minutesAfter, shownInstant, startOfTomorrow, storedInstant } from './time.ts'

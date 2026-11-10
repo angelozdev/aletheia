@@ -177,7 +177,7 @@ count; on an empty store it prints `count: 0` and `nextDue: null`.
   - **Test**: `reviews.test.ts`: `dueList names the earliest instant among the cards left out` and `dueList names none on an empty deck`. `review-due.test.ts`: `001-US2-AS5 with nothing due, review due is empty and names when the next card is due` — one `review` card due `2026-11-13T15:00:00.000Z` → stdout exactly `count: 0\nnextDue: "2026-11-13T10:00:00-05:00"\ncards: []\n`; an empty store → `nextDue: null`.
   - **Code**: `nextDue` in `dueList`, shown through `shownInstant`.
   - **Run**: `pnpm aletheia review due` on a store with nothing due
-- [ ] T011 [US2] A step that ends within 20 minutes is due when nothing else is, in `src/core/reviews/reviews.ts`
+- [X] T011 [US2] A step that ends within 20 minutes is due when nothing else is, in `src/core/reviews/reviews.ts`
   - **Test**: `time.test.ts`: `minutesAfter adds minutes to an instant`. `reviews.test.ts`: `a learning card due within 20 minutes joins the list when nothing else is due`; `it stays out while another card is due`; `it stays out when its step ends in 21 minutes`; the same three for `relearning`. `review-due.test.ts`: `001-US2-AS4 a card whose step ends within 20 minutes is due when nothing else is` — one card arranged as `learning`, due 10 minutes after the clock → `count: 1`; with a new card beside it → only the new card.
   - **Code**: `LEARN_AHEAD_MINUTES = 20` in `src/core/reviews/reviews.constants.ts`; `minutesAfter(instant, minutes)` in `src/core/time/time.ts`; the fourth rule of data-model.md in `dueList`.
   - **Run**: quickstart §2 from T012 on
