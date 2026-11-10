@@ -247,8 +247,10 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
    as §8.1. This Again is a real failure: it updates FSRS and counts toward
    retention, and the flag makes it count as a gap rather than toward leech
    detection. — _my call; asking before explaining is Angelo's call, spec 004._
-10. **Badly written card** (failed because of the wording, not the knowledge):
-   the review is voided (§5) and Claude proposes a rewrite on the spot.
+10. **Badly written card** (the wording, not the knowledge, decided the answer,
+   right or wrong): the review is voided (§5) and Claude proposes a rewrite on the
+   spot. A right answer can be voided too, as when the question gives its answer
+   away. — _Angelo's call, spec 004._
 11. **Same-session relearning:** FSRS short-term scheduling stays on (the
     `ts-fsrs` default). A card that becomes due again during the session, such
     as one graded Again, is shown again before the session ends. Re-shows do not

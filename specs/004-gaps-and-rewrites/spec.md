@@ -8,6 +8,7 @@
 ### Session 2026-11-10
 
 - Q: When a card on the missing concept exists, does Claude explain the concept first (design §8.2 step 9 as written) or ask the card first? → A: Ask it first, explaining nothing: its answer is the explanation, and its grade shows what Angelo remembers. Explaining first was rejected: he would answer what he had just heard, and FSRS would grow an interval he did not earn. Design §8.2 step 9 updated.
+- Q: Which grades can a review flagged `badly-written` carry? → A: Any grade, a right answer included: Claude may void a review whenever the wording, not Angelo's memory, decided the answer. Only Again or Hard was rejected; the cost accepted is that a voided Good leaves the card's schedule as it was.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -25,13 +26,13 @@ Reviewing #k7m2, on how a consumer group splits messages in Redis Streams, Angel
 
 ### User Story 2 - A badly written card does not count (Priority: P2)
 
-Angelo answers #9p3x wrong because its question can be read two ways. Claude says so in a line and voids the review: the miss says nothing about his memory, so the card's schedule stays as it was. The card leaves the lists until tomorrow, since he has now seen its answer.
+Angelo answers #9p3x wrong because its question can be read two ways. Claude says so in a line and voids the review: the miss says nothing about his memory, so the card's schedule stays as it was. The card leaves the lists until tomorrow, since he has now seen its answer. A right answer can be voided too, when the wording decided it (the question gives its answer away).
 **Independent Test**: grade a due card with the flag `badly-written`; `card show` gives the same due and state as before, and the due list leaves it out until the next local day.
 
-1. **004-US2-AS1** Given a card due, When it is graded with the flag `badly-written`, Then the review is logged with the flag, both grades, the answer and the rationale, and the card's schedule (due, state, steps, reps, lapses, stability, difficulty, last review) is unchanged.
+1. **004-US2-AS1** Given a card due, When it is graded with the flag `badly-written`, whatever the grade, Then the review is logged with the flag, both grades, the answer and the rationale, and the card's schedule (due, state, steps, reps, lapses, stability, difficulty, last review) is unchanged.
 2. **004-US2-AS2** Given a card whose review was voided today, When the due list or a topic covering it is asked, Then it is absent; on the next local day it is listed as before.
 3. **004-US2-AS3** Given a voided review in a session, When the list is asked, Then it counts toward the session's cap; on a new card it does not count toward the day's new cards, and the card stays new.
-4. **004-US2-AS4** Given the review skill file, When it is read, Then when an answer misses because of the wording (it can be read two ways, lacks context it should carry, or asks something other than its key points) it says why in a line, records the review voided, and proposes a rewrite (US3); Angelo can dispute a voiding, or ask for one, as he disputes a grade.
+4. **004-US2-AS4** Given the review skill file, When it is read, Then when the wording, not Angelo's memory, decided the answer, right or wrong (the question can be read two ways, lacks context it should carry, asks something other than its key points, or gives its answer away), it says why in a line, records the review voided, and proposes a rewrite (US3); Angelo can dispute a voiding, or ask for one, as he disputes a grade.
 
 ### User Story 3 - Rewrite a card in place (Priority: P3)
 
@@ -56,12 +57,12 @@ Claude proposes clearer wording for #9p3x: the same knowledge, now naming the va
 
 ### Functional Requirements
 
-- **FR-001**: A review MAY carry one flag, `missing-prerequisite` or `badly-written`, never both. `missing-prerequisite` requires the final grade Again; such a review is logged and scheduled like any other (001 FR-005).
+- **FR-001**: A review MAY carry one flag, `missing-prerequisite` or `badly-written`, never both. `missing-prerequisite` requires the final grade Again; such a review is logged and scheduled like any other (001 FR-005). `badly-written` goes with any grade.
 - **FR-002**: A review flagged `badly-written` is voided: it is logged with its grades, answer and rationale, and leaves the card's schedule unchanged. A card with a review voided today is left out of every list until the next local day. A voided review counts toward its session's cap and never toward the day's new cards.
 - **FR-003**: A review MAY name the card it was asked as the prerequisite of, which must exist and be another card. A card whose first review in a session is a prerequisite one does not count toward that session's cap; a new card first graded as a prerequisite does not count toward the day's new cards.
 - **FR-004**: The CLI MUST edit an active card in place: any of type, question, answer, key points, situation and tags, under the rules of 001 FR-001, keeping its id, source, schedule and reviews; the search sees the new text at once (002 FR-002). An invalid edit changes nothing.
 - **FR-005**: On a failure from a missing base concept, the review skill MUST grade Again with the flag, search the deck through the CLI for a card covering the concept, and either ask that card next and record it as the failed card's prerequisite, or explain the concept in two or three lines and offer the card through `az-aletheia-add`, saved only with Angelo's approval. A card found is asked before anything is explained: its answer is the explanation. At most one prerequisite per failed card, and none already shown in the session.
-- **FR-006**: On a failure from the wording, the review skill MUST say why in a line, record the review voided and propose a rewrite of the same knowledge, showing the exact before and after, saved only after Angelo approves it. A fix that changes what the key points mean waits for slice 7. Angelo MAY dispute a voiding or ask for one.
+- **FR-006**: When the wording, not Angelo's memory, decided the answer, right or wrong, the review skill MUST say why in a line, record the review voided and propose a rewrite of the same knowledge, showing the exact before and after, saved only after Angelo approves it. A fix that changes what the key points mean waits for slice 7. Angelo MAY dispute a voiding or ask for one.
 - **FR-007**: The effect of each flag on scheduling, on the lists and on both caps MUST be computed by the CLI and covered by its tests; the skill only says which flag applies (constitution II). Every question about a card MUST be answered by running `aletheia` (constitution VIII).
 
 ### Key Entities
