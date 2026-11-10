@@ -84,7 +84,7 @@ the slice.
 **Independent Test**: quickstart §1 without tags: `pnpm aletheia card search <<'JSON'
 { "words": "contenedor" } JSON` lists the Docker card.
 
-- [ ] T002 [US1] Search terms from words, in `src/core/similar/similar.ts`
+- [X] T002 [US1] Search terms from words, in `src/core/similar/similar.ts`
   - **Test**: `src/core/similar/similar.test.ts`, over `searchTerms(words: string): string[]`:
     - `searchTerms folds accents and case` — `'Configuración'` → `['configuracion']`; `'ÑANDÚ'` → `['nandu']`.
     - `searchTerms splits on anything but letters and digits` — ``'¿Qué es "redis" (y `*` -a : NOT)?'`` → `['redi', 'not']`; `'docker-compose up'` → `['docker', 'compose', 'up']`; `'[1, 10, 2].sort()'` → `['10', 'sort']`.
