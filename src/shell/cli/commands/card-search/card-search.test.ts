@@ -3,7 +3,7 @@ import type { CardDraft } from '#core/cards'
 import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
 import { distinctIdDraw } from '../../../../../tests/support/draws/draws.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
-import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
+import type { CliRun, StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 
 let cli: StoreCli
 
@@ -30,6 +30,13 @@ async function foundIds(query: unknown): Promise<string[]> {
   return JSON.parse(stdout).cards.map(({ id }: { id: string }) => id)
 }
 
+function expectRefused({ code, stdout, stderr }: CliRun, message: string): void {
+  const expected = `error: invalid search: ${message}\n`
+  expect(code).toBe(1)
+  expect(stdout).toBe('')
+  expect(stderr.slice(-expected.length)).toBe(expected)
+}
+
 describe('aletheia card search', () => {
   it('002-US1-AS2 card search finds a card that differs only in case, accents or singular and plural', async () => {
     await addCards([
@@ -49,6 +56,67 @@ describe('aletheia card search', () => {
 
     expect(await foundIds({ words: 'docker' })).toHaveLength(10)
   })
+
+  it.for([
+    '`docker` "ps" (NOT -a) *',
+    'ps AND OR NEAR(x y)',
+    'a:b ^c "unterminated',
+    '```js\nconst doubled = [1, 2].map((n) => n * 2) // "x" -y\n```',
+  ])(
+    '002-US1-AS4 card search takes quotes, backticks, operators and code as plain text: %j',
+    async (words) => {
+      await addCards([SAMPLE_DRAFT])
+
+      const { code, stdout } = await cli.run(
+        ['card', 'search', '--json'],
+        JSON.stringify({ words }),
+      )
+
+      expect(code).toBe(0)
+      expect(() => JSON.parse(stdout)).not.toThrow()
+    },
+  )
+
+  it('002-US1-AS4 card search finds a card from words full of operators', async () => {
+    await addCards([SAMPLE_DRAFT])
+
+    expect(await foundIds({ words: '`docker` "ps" (NOT -a) *' })).toEqual(['0123'])
+  })
+
+  it.for(['kubernetes', '¿qué es esto?'])(
+    '002-US1-AS5 card search with nothing similar prints an empty list and succeeds: %j',
+    async (words) => {
+      await addCards([SAMPLE_DRAFT])
+
+      const { code, stdout } = await cli.run(['card', 'search'], JSON.stringify({ words }))
+
+      expect(code).toBe(0)
+      expect(stdout).toBe('cards: []\n')
+    },
+  )
+
+  it.for<[string, string]>([
+    ['{}', 'give words, tags or both'],
+    ['{ "words": "   " }', 'give words, tags or both'],
+    ['{ "tags": [] }', 'give words, tags or both'],
+  ])(
+    '002-US1-AS5 card search refuses a search with neither words nor tags: %s',
+    async ([stdin, message]) => {
+      expectRefused(await cli.run(['card', 'search'], stdin), message)
+    },
+  )
+
+  it.for<[string, string]>([
+    ['{ "tags": ["Docker"] }', 'tags[0]: use a-z, digits and dashes, in segments joined by ::'],
+    ['{ "words": "x", "limit": 5 }', 'limit: is not a search field'],
+    ['{ "words": 3 }', 'words: must be text'],
+    ['{ "tags": "docker" }', 'tags: must be a list'],
+  ])(
+    '002-US1-AS5 card search refuses a malformed tag or an unknown field: %s',
+    async ([stdin, message]) => {
+      expectRefused(await cli.run(['card', 'search'], stdin), message)
+    },
+  )
 
   it('card search prints a card as the contract shows it', async () => {
     await addCards([SAMPLE_DRAFT])
