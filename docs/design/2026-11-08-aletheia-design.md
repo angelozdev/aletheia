@@ -409,6 +409,15 @@ can use.
 - Prerequisite relations: cards that wait until their base card is solid.
 - Claude rephrasing the question on each review so Angelo remembers the concept,
   not the wording. Raised, not decided.
+- Visual explanations: for a technically dense question or doubt, Claude offers,
+  with Angelo's permission, a quick visual made to his level: an analogy, a
+  mental image or an animated diagram (system calls as a request crossing the
+  user/kernel boundary). Story: a chat about system calls left the idea unclear.
+  Open: whether it is an Aletheia skill or a global one (the constitution allows
+  one global skill), what it produces (a local HTML page opened in the browser,
+  a claude.ai artifact, which leaves the Mac, or a HyperFrames video), and how it
+  reads Angelo's level (`PROFILE.md`, slice 2). Raised 2026-11-09, to be
+  specified as its own slice or within slice 4.
 - Jev (TypeSafe AI), a model that returns a typed decision instead of text, as a
   judge: asked per key point whether the answer covers it, with the code deriving
   the grade; or as the judge in the review skill's evals. Not used for now:
