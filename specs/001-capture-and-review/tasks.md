@@ -240,7 +240,7 @@ both skills call the installed `aletheia`, so Angelo exercises them for real in 
 
 **Independent Test**: `pnpm test -t 001-US1-AS7`; the real copy happens in T020.
 
-- [ ] T017 [P] [US1] The skill folder is copied whole or not at all, in `src/shell/release/skill-copy/skill-copy.ts`
+- [X] T017 [P] [US1] The skill folder is copied whole or not at all, in `src/shell/release/skill-copy/skill-copy.ts`
   - **Test**: `src/shell/release/skill-copy/skill-copy.test.ts`, over `tempDir` folders: `001-US1-AS7 copySkill replaces the previous copy with the source folder` — a previous copy holding a stale file; afterwards the destination holds exactly the source's files, no `.partial` folder is left, and the destination path is returned; `it creates the skills folder on a first release`; `it replaces a partial folder left by an earlier failure`; `001-US1-AS7 a copy that fails leaves the previous copy whole` — a source that does not exist throws `SkillCopyFailedError`, `release: failed: cannot copy the skill to <folder>: <reason>`, with the previous copy untouched and no `.partial` left.
   - **Code**: `copySkill({ source, skillsDir }): string` with `cpSync`, `rmSync` and `renameSync`: copy to `<skillsDir>/az-aletheia-add.partial`, remove the previous `<skillsDir>/az-aletheia-add`, rename the partial into place. `skill-copy.constants.ts` (`SKILL_NAME`, `PARTIAL_SUFFIX`), `skill-copy.errors.ts` (`SkillCopyFailedError`, a `ReleaseError`).
   - **Run**: `pnpm test -t 001-US1-AS7`
