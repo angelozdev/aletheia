@@ -23,6 +23,7 @@ export type ReviewDraft = {
 
 export interface ReviewRepository {
   record(review: Review, card: Card): void
+  since(instant: Date): Review[]
 }
 
 export type GradeCardDeps = { cards: CardRepository; reviews: ReviewRepository; now: Date }

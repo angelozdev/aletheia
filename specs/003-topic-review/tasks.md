@@ -198,7 +198,7 @@ and Angelo can set its size for one session.
 
 **Independent Test**: quickstart §2.
 
-- [ ] T007 [US2] `review due` and `review topic` start a session and hold at most 20 cards, saying how many remain, in `src/core/sessions/sessions.ts`
+- [X] T007 [US2] `review due` and `review topic` start a session and hold at most 20 cards, saying how many remain, in `src/core/sessions/sessions.ts`
   - **Test**:
     - `src/shell/db/reviews/reviews.test.ts`: `since returns the reviews at or after the instant` — three reviews recorded with `record` at `T-1ms`, `T` and `T+1ms`; `since(T)` → the last two, with `reviewedAt` as `Date`.
     - `src/core/sessions/sessions.test.ts`, over `sessionList(input: SessionInput): SessionList`: `sessionList holds at most the session size and counts the rest as remaining`; `sessionList counts the distinct cards graded since the session start`; `sessionList puts a card graded in the session and due again first, taking no place`; `sessionList names as nextDue the earliest due among cards neither listed nor remaining`.

@@ -97,7 +97,11 @@ describe('aletheia review grade', () => {
 
     expect(JSON.parse(stepping.stdout)).toMatchObject({ count: 1, cards: [{ id: '0123' }] })
     expect(JSON.parse(learned.stdout)).toEqual({
+      session: '2026-11-09T10:10:00-05:00',
       count: 0,
+      remaining: 0,
+      heldBack: 0,
+      capReached: false,
       nextDue: '2026-11-10T10:10:00-05:00',
       cards: [],
     })

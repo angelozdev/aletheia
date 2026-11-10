@@ -1,8 +1,9 @@
 import type { Card } from '#core/cards'
-import { dueList, topicList, type DueList } from '#core/reviews'
+import { sessionList } from '#core/sessions'
+import { BUILT_IN_SETTINGS } from '#core/settings'
 import { topicCards } from '#core/tags'
 import { shownInstant, startOfToday, startOfTomorrow } from '#core/time'
-import { StoreCardRepository, type Store } from '#shell/db'
+import { StoreCardRepository, StoreReviewRepository, type Store } from '#shell/db'
 import type { CliContext } from '../../main/main.types.ts'
 import type { Scope } from './session.types.ts'
 
@@ -17,20 +18,38 @@ function dueItem(card: Card) {
   }
 }
 
-function eligible(active: Card[], scope: Scope, context: CliContext): DueList {
-  const now = context.clock()
-  const tomorrow = startOfTomorrow(now, context.timeZone)
-  if (scope === 'all') return dueList(active, now, tomorrow)
-  const today = startOfToday(now, context.timeZone)
-  return topicList(topicCards(active, scope), now, today, tomorrow)
+function inScope(active: Card[], scope: Scope): Card[] {
+  return scope === 'all' ? active : topicCards(active, scope)
+}
+
+function earlier(a: Date, b: Date): Date {
+  return a < b ? a : b
 }
 
 export function listSession(store: Store, context: CliContext, scope: Scope) {
+  const now = context.clock()
+  const today = startOfToday(now, context.timeZone)
+  const start = now
   const active = new StoreCardRepository(store).active()
-  const { cards, nextDue } = eligible(active, scope, context)
+  const reviews = new StoreReviewRepository(store).since(earlier(start, today))
+  const list = sessionList({
+    scope: inScope(active, scope),
+    topic: scope !== 'all',
+    reviews,
+    now,
+    today,
+    tomorrow: startOfTomorrow(now, context.timeZone),
+    start,
+    limits: BUILT_IN_SETTINGS,
+  })
+  const shown = (instant: Date) => shownInstant(instant, context.timeZone)
   return {
-    count: cards.length,
-    nextDue: nextDue === null ? null : shownInstant(nextDue, context.timeZone),
-    cards: cards.map(dueItem),
+    session: shown(start),
+    count: list.cards.length,
+    remaining: list.remaining,
+    heldBack: list.heldBack,
+    capReached: list.capReached,
+    nextDue: list.nextDue === null ? null : shown(list.nextDue),
+    cards: list.cards.map(dueItem),
   }
 }

@@ -89,6 +89,23 @@ describe('StoreReviewRepository', () => {
     ])
   })
 
+  it('since returns the reviews at or after the instant', async () => {
+    const at = (offset: number) => new Date(now.getTime() + offset)
+    let since: Review[] = []
+
+    await withStore((store) => {
+      const reviews = new StoreReviewRepository(store)
+      for (const offset of [-1, 0, 1])
+        reviews.record({ ...REVIEW, reviewedAt: at(offset) }, scheduleAfter(card, 'good', now))
+      since = reviews.since(now)
+    })
+
+    expect(since).toEqual([
+      { ...REVIEW, reviewedAt: at(0) },
+      { ...REVIEW, reviewedAt: at(1) },
+    ])
+  })
+
   it('record changes nothing when the store refuses the review', async () => {
     const before = selectAll(path, SCHEDULE)
     const refused = { ...REVIEW, grade: 'perfect' as Grade }
