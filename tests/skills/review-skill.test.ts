@@ -90,4 +90,17 @@ describe('the aletheia-review skill', () => {
     ])
       expect(skill.text).toContain(text)
   })
+
+  it('004-US3-AS4 aletheia-review proposes a rewrite of the same knowledge, shows the exact before and after, and runs aletheia card edit only after Angelo approves', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    for (const text of [
+      'aletheia card edit',
+      'the exact before and after',
+      'same knowledge',
+      'only after Angelo approves',
+      'slice 7',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })

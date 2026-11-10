@@ -221,6 +221,41 @@ Angelo may dispute a voiding ("no, la pregunta está bien"), or ask for one ("es
 mal escrita"), as he disputes a grade; his word is final, and the review is recorded with the
 flag or without it as he says.
 
+After a voided review, propose a rewrite of the card (see "A rewrite").
+
+### A rewrite
+
+After a voided review, or when Angelo asks for one ("la pregunta de #9p3x se entiende mal"),
+propose a rewrite only when the card still asks for the same knowledge: a clearer question, a
+tidier answer or key points of the same meaning, adjusted tags, situation or type. It follows
+the card rules of the `az-aletheia-add` skill.
+
+Show the exact before and after of every field that changes, and nothing else:
+
+```
+#9p3x · question
+  antes:   ¿Qué pasa con un mensaje después del ack?
+  después: En una cola clásica de RabbitMQ, ¿qué pasa con un mensaje después de que el consumidor lo confirma con `ack`?
+```
+
+Run `aletheia card edit` only after Angelo approves, with his edits, sending `card` and the
+changed fields only:
+
+```sh
+aletheia card edit <<'JSON'
+{"card":"9p3x","question":"En una cola clásica de RabbitMQ, ¿qué pasa con un mensaje después de que el consumidor lo confirma con `ack`?","tags":["messaging::rabbitmq"]}
+JSON
+```
+
+It prints the card with every field; read it back in a line. The card keeps its id, its
+schedule and its reviews. If it exits 1, nothing changed: read the `error:` line, fix the JSON
+and send it again.
+
+When the fix would change what the key points mean, the card needs replacing, which arrives
+with slice 7 (prune): say so in a line and leave the card as it is.
+
+A rewrite does not change the grade being settled, and a voided review stays voided.
+
 ## 5. Doubts about the card
 
 After recording, answer each of Angelo's doubts about that card in two or three lines. No
