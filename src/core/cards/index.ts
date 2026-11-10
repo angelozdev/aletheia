@@ -1,9 +1,11 @@
 export {
+  ACTIVE_STATUS,
   CARD_STATES,
   CARD_STATUSES,
   CARD_TYPES,
   MAX_KEY_POINTS,
   MIN_KEY_POINTS,
+  NEW_STATE,
   TAG_PATTERN,
 } from './cards.constants.ts'
 export { CardIdTakenError } from './cards.errors.ts'

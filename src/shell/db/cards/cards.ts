@@ -1,4 +1,4 @@
-import { CardIdTakenError, type Card, type CardRepository } from '#core/cards'
+import { ACTIVE_STATUS, CardIdTakenError, type Card, type CardRepository } from '#core/cards'
 import { DrizzleQueryError, eq, sql } from 'drizzle-orm'
 import { instantFrom, storedInstant } from '#core/time'
 import { database } from '../database/database.ts'
@@ -78,6 +78,23 @@ export class StoreCardRepository implements CardRepository {
     const row = this.#db.select().from(cards).where(eq(cards.id, id)).get()
     if (row === undefined) return null
     return cardFrom(row, this.#tagsOf(id))
+  }
+
+  active(): Card[] {
+    const rows = this.#db.select().from(cards).where(eq(cards.status, ACTIVE_STATUS)).all()
+    const tags = this.#tagsByCard()
+    return rows.map((row) => cardFrom(row, tags.get(row.id) ?? []))
+  }
+
+  #tagsByCard(): Map<string, string[]> {
+    const rows = this.#db
+      .select()
+      .from(cardTags)
+      .orderBy(sql`rowid`)
+      .all()
+    const byCard = new Map<string, string[]>()
+    for (const { cardId, tag } of rows) byCard.set(cardId, [...(byCard.get(cardId) ?? []), tag])
+    return byCard
   }
 
   #tagsOf(id: string): string[] {

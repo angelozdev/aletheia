@@ -37,6 +37,7 @@ export type RandomIndex = (bound: number) => number
 export interface CardRepository {
   saveAll(cards: Card[]): void
   find(id: string): Card | null
+  active(): Card[]
 }
 
 export type AddCardsDeps = {

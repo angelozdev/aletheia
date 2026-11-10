@@ -1,9 +1,8 @@
-import { join } from 'node:path'
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { CardDraft } from '#core/cards'
 import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
-import { runOnStore } from '../../../../../tests/support/run-cli/run-cli.ts'
-import { tempDir } from '../../../../../tests/support/temp-dir/temp-dir.ts'
+import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
+import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 
 const clock = () => new Date('2026-11-09T15:00:00.000Z')
 
@@ -18,14 +17,14 @@ const CODE_DRAFT: CardDraft = {
   source: 'diarium',
 }
 
-let db: string
+let cli: StoreCli
 
 beforeEach(() => {
-  db = join(tempDir('aletheia-cli-'), 'store.sqlite')
+  cli = cliOnTempStore({ clock })
 })
 
 function run(argv: string[], stdin = '') {
-  return runOnStore(db, argv, stdin, { clock })
+  return cli.run(argv, stdin)
 }
 
 describe('aletheia card show', () => {

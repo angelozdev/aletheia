@@ -17,6 +17,7 @@ function refusingRepository(refusals: number): CardRepository & { saved: Card[][
       saved.push(cards)
     },
     find: () => null,
+    active: () => [],
   }
 }
 

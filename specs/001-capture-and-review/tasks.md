@@ -166,7 +166,7 @@ show <id>` prints every field as written, with its dates in local time.
 **Independent Test**: `pnpm aletheia review due` lists the cards saved in step 1 with their
 count; on an empty store it prints `count: 0` and `nextDue: null`.
 
-- [ ] T009 [US2] `review due` lists new and due cards, studied first, with their count, in `src/shell/cli/commands/review-due/review-due.ts`
+- [X] T009 [US2] `review due` lists new and due cards, studied first, with their count, in `src/shell/cli/commands/review-due/review-due.ts`
   - **Test**:
     - `src/core/time/time.test.ts`: `startOfTomorrow gives where the local day ends` — `2026-11-12T02:00:00.000Z` in `America/Bogota` → `2026-11-12T05:00:00.000Z`; `2026-03-29T00:30:00.000Z` in `Europe/Madrid`, the night its clock changes → `2026-03-29T22:00:00.000Z`, local midnight in the new offset.
     - `src/core/reviews/reviews.test.ts`: `dueList puts learning cards whose instant passed first, then review cards due before tomorrow, then new cards` — each group ordered as data-model.md says (earliest `due` first; new cards by `createdAt`, then `id`); a review card due exactly at `tomorrow` and a learning card due in a minute are left out.
