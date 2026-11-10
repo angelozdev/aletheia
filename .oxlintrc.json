@@ -23,6 +23,10 @@
           {
             "group": ["date-fns", "date-fns/*", "@date-fns/*"],
             "message": "only src/core/time knows the date library"
+          },
+          {
+            "group": ["ts-fsrs", "ts-fsrs/*"],
+            "message": "only src/core/scheduling knows the scheduler"
           }
         ]
       }
@@ -39,6 +43,10 @@
               {
                 "group": ["date-fns", "date-fns/*", "@date-fns/*"],
                 "message": "only src/core/time knows the date library"
+              },
+              {
+                "group": ["ts-fsrs", "ts-fsrs/*"],
+                "message": "only src/core/scheduling knows the scheduler"
               }
             ]
           }
@@ -71,6 +79,10 @@
               {
                 "group": ["date-fns", "date-fns/*", "@date-fns/*"],
                 "message": "only src/core/time knows the date library"
+              },
+              {
+                "group": ["ts-fsrs", "ts-fsrs/*"],
+                "message": "only src/core/scheduling knows the scheduler"
               }
             ]
           }
@@ -99,6 +111,10 @@
               {
                 "group": ["date-fns", "date-fns/*", "@date-fns/*"],
                 "message": "only src/core/time knows the date library"
+              },
+              {
+                "group": ["ts-fsrs", "ts-fsrs/*"],
+                "message": "only src/core/scheduling knows the scheduler"
               }
             ]
           }
@@ -131,6 +147,10 @@
               {
                 "group": ["date-fns", "date-fns/*", "@date-fns/*"],
                 "message": "only src/core/time knows the date library"
+              },
+              {
+                "group": ["ts-fsrs", "ts-fsrs/*"],
+                "message": "only src/core/scheduling knows the scheduler"
               }
             ]
           }
@@ -151,6 +171,10 @@
               {
                 "group": ["date-fns", "date-fns/*", "@date-fns/*"],
                 "message": "only src/core/time knows the date library"
+              },
+              {
+                "group": ["ts-fsrs", "ts-fsrs/*"],
+                "message": "only src/core/scheduling knows the scheduler"
               }
             ]
           }
@@ -180,6 +204,10 @@
               {
                 "group": ["date-fns", "date-fns/*", "@date-fns/*"],
                 "message": "only src/core/time knows the date library"
+              },
+              {
+                "group": ["ts-fsrs", "ts-fsrs/*"],
+                "message": "only src/core/scheduling knows the scheduler"
               }
             ]
           }
@@ -205,6 +233,39 @@
               {
                 "group": ["#shell/*"],
                 "message": "src/core never imports the shell"
+              },
+              {
+                "group": ["ts-fsrs", "ts-fsrs/*"],
+                "message": "only src/core/scheduling knows the scheduler"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/core/scheduling/**"],
+      "rules": {
+        "import/no-nodejs-modules": "error",
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["node:*"],
+                "message": "src/core performs no I/O"
+              },
+              {
+                "group": ["drizzle-orm", "drizzle-orm/*"],
+                "message": "only src/shell/db knows the ORM"
+              },
+              {
+                "group": ["#shell/*"],
+                "message": "src/core never imports the shell"
+              },
+              {
+                "group": ["date-fns", "date-fns/*", "@date-fns/*"],
+                "message": "only src/core/time knows the date library"
               }
             ]
           }

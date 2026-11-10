@@ -161,6 +161,11 @@ describe.concurrent('lint', () => {
       home: 'src/core/time',
       source: "import { TZDate } from '@date-fns/tz'\nexport const Zoned = TZDate\n",
     },
+    {
+      library: 'ts-fsrs',
+      home: 'src/core/scheduling',
+      source: "import { fsrs } from 'ts-fsrs'\nexport const scheduler = fsrs\n",
+    },
   ]
 
   it.for(confinedLibraries)(
