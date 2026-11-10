@@ -44,6 +44,15 @@ function graded(cardId: string, reviewedAt: string, stateBefore: Card['state'] =
   }
 }
 
+function pulled(
+  cardId: string,
+  reviewedAt: string,
+  forCard: string,
+  stateBefore?: Card['state'],
+): Review {
+  return { ...graded(cardId, reviewedAt, stateBefore), prerequisiteOf: forCard }
+}
+
 function listOf(input: Partial<SessionInput>): SessionList {
   return sessionList({
     scope: [],
@@ -158,6 +167,43 @@ describe('session list', () => {
     const list = listOf({ scope: [...freshCards(3), later], limits })
 
     expect(list).toMatchObject({ cards: [], heldBack: 3, nextDue: tomorrow })
+  })
+
+  describe('a pulled prerequisite', () => {
+    const prerequisite = studied('p', 'relearning', '2026-11-12T01:50:00.000Z')
+    const inSession = [
+      graded('failed', '2026-11-12T01:30:00.000Z'),
+      pulled('p', '2026-11-12T01:40:00.000Z', 'failed'),
+    ]
+
+    function listAfter(reviews: Review[]): SessionList {
+      const limits = { ...BUILT_IN_SETTINGS, sessionSize: 2 }
+      return listOf({ scope: [...dueReviews(3), prerequisite], reviews, limits })
+    }
+
+    it('a card whose first review in the session names a prerequisite takes no place', () => {
+      const list = listAfter(inSession)
+
+      expect(ids(list.cards)).toEqual(['p', 'due-0'])
+      expect(list.capReached).toBe(false)
+    })
+
+    it('a later review of a pulled prerequisite in the session still takes no place', () => {
+      const list = listAfter([...inSession, graded('p', '2026-11-12T01:45:00.000Z')])
+
+      expect(ids(list.cards)).toEqual(['p', 'due-0'])
+      expect(list.capReached).toBe(false)
+    })
+
+    it('a new card first graded as a prerequisite does not count toward the day', () => {
+      const reviews = [pulled('p', '2026-11-11T06:00:00.000Z', 'x', 'new')]
+      const limits = { ...BUILT_IN_SETTINGS, newPerDay: 1 }
+
+      const list = listOf({ scope: freshCards(2), reviews, limits })
+
+      expect(ids(list.cards)).toEqual(['new-0'])
+      expect(list.heldBack).toBe(1)
+    })
   })
 
   describe('share of new cards', () => {

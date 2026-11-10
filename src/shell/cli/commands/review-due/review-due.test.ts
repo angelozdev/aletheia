@@ -80,6 +80,17 @@ async function addIntroducedToday(introduced: number, fresh: number): Promise<st
   return ids.slice(introduced)
 }
 
+function grade(fields: Record<string, string>) {
+  const review = {
+    grade: 'again',
+    claudeGrade: 'again',
+    answer: 'No lo recuerda.',
+    rationale: 'Le falta el concepto.',
+    ...fields,
+  }
+  return run(['review', 'grade'], JSON.stringify(review))
+}
+
 function arrange(id: string, state: string, due: string): void {
   runSql(cli.db, `update cards set state = '${state}', due = '${due}' where id = '${id}'`)
 }
@@ -355,5 +366,23 @@ describe('aletheia review due', () => {
 
     expect(saved).toMatchObject({ count: 15, remaining: 10 })
     expect(forTheSession).toMatchObject({ count: 10, remaining: 15 })
+  })
+
+  it("004-US1-AS3 a prerequisite graded in a session counts toward neither the session's cap nor the day's new cards, even when it comes back", async () => {
+    await addCards(3)
+    const limits = ['--session-size', '2', '--new-per-day', '2']
+    const { session } = await list(['review', 'due', ...limits])
+    await grade({ card: '0123', flag: 'missing-prerequisite' })
+    await grade({ card: '4567', prerequisiteOf: '0123' })
+    const inSession = ['review', 'due', '--session', session, ...limits]
+
+    const afterPrerequisite = await list(inSession)
+    now = new Date('2026-11-12T02:10:00.000Z')
+    const afterSteps = await list(inSession)
+
+    expect(afterPrerequisite).toMatchObject({ heldBack: 0, capReached: false })
+    expect(idsOf(afterPrerequisite)).toEqual(['89ab'])
+    expect(afterSteps).toMatchObject({ capReached: false })
+    expect(idsOf(afterSteps)).toEqual(['0123', '4567', '89ab'])
   })
 })

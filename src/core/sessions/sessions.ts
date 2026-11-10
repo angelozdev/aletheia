@@ -8,14 +8,23 @@ function eligible(scope: Card[], { topic, now, today, tomorrow }: SessionInput):
   return topic ? topicList(scope, now, today, tomorrow) : dueList(scope, now, tomorrow)
 }
 
+function reviewsSince(reviews: Review[], start: Date): Review[] {
+  return reviews.filter(({ reviewedAt }) => reviewedAt >= start)
+}
+
 function gradedSince(reviews: Review[], start: Date): Set<string> {
-  const inSession = reviews.filter(({ reviewedAt }) => reviewedAt >= start)
+  const inSession = reviewsSince(reviews, start)
   return new Set(inSession.map(({ cardId }) => cardId))
 }
 
+function countedSince(reviews: Review[], start: Date): number {
+  const byCard = Map.groupBy(reviewsSince(reviews, start), ({ cardId }) => cardId)
+  return [...byCard.values()].filter(([first]) => first.prerequisiteOf === null).length
+}
+
 function introducedSince(reviews: Review[], today: Date): number {
-  return reviews.filter(
-    ({ reviewedAt, stateBefore }) => reviewedAt >= today && stateBefore === NEW_STATE,
+  return reviewsSince(reviews, today).filter(
+    ({ stateBefore, prerequisiteOf }) => stateBefore === NEW_STATE && prerequisiteOf === null,
   ).length
 }
 
@@ -58,15 +67,16 @@ export function sessionList(input: SessionInput): SessionList {
   const scope = input.scope.filter((card) => !heldBack.has(card))
   const { cards, nextDue } = eligible(scope, input)
   const graded = gradedSince(input.reviews, input.start)
+  const counted = countedSince(input.reviews, input.start)
   const wasGraded = (card: Card) => graded.has(card.id)
   const reShows = cards.filter(wasGraded)
   const ungraded = cards.filter((card) => !wasGraded(card))
-  const filled = fill(ungraded, graded.size + 1, input.limits)
+  const filled = fill(ungraded, counted + 1, input.limits)
   return {
     cards: [...reShows, ...filled],
     remaining: ungraded.length - filled.length,
     heldBack: heldBack.size,
-    capReached: graded.size >= input.limits.sessionSize,
+    capReached: counted >= input.limits.sessionSize,
     nextDue: heldBack.size > 0 ? earlier(nextDue, input.tomorrow) : nextDue,
   }
 }

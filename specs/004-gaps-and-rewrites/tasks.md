@@ -138,7 +138,7 @@ toward neither cap; the skill pulls it, or explains and offers one.
     - `review-grade.schema.ts`: `prerequisiteOf: requiredText.optional()`, and a refinement adding `must be another card` at path `prerequisiteOf` when it equals `card`.
     - Fixtures of decision 4 gain `prerequisiteOf: null`.
   - **Run**: `pnpm aletheia review grade` with `"prerequisiteOf"`
-- [ ] T004 [US1] A pulled prerequisite counts toward neither the session's cap nor the day's new cards, in `src/core/sessions/sessions.ts`
+- [X] T004 [US1] A pulled prerequisite counts toward neither the session's cap nor the day's new cards, in `src/core/sessions/sessions.ts`
   - **Test**:
     - `src/core/sessions/sessions.test.ts`, with a helper `pulled(cardId, reviewedAt, forCard, stateBefore)` built on `graded()`:
       - `a card whose first review in the session names a prerequisite takes no place` — scope `dueReviews(3)` plus a relearning card `p` due before `now`; reviews in the session: `graded('due-0', …)` and `pulled('p', …, 'due-0')`; size 2 → `p` is listed as a re-show, `due-1` fills the one place left, `capReached: false`.
