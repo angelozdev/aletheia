@@ -60,4 +60,20 @@ describe('the aletheia-review skill', () => {
     ])
       expect(skill.text).toContain(text)
   })
+
+  it('004-US1-AS4 aletheia-review grades a missing base concept Again with the flag, asks a card that covers it before explaining, or explains and offers one', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    for (const text of [
+      '"flag":"missing-prerequisite"',
+      'aletheia card search',
+      '"prerequisiteOf"',
+      'before explaining',
+      'two or three lines',
+      'az-aletheia-add',
+      'repaso #<id>',
+      'one prerequisite per failed card',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })

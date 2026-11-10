@@ -146,6 +146,59 @@ The JSON must be valid: escape `"` and `\` inside strings and write line breaks 
 stdout gives `card`, `grade`, `state` and `due`, the instant the card comes back. If it exits
 1, nothing was recorded: read the `error:` line, fix the JSON and send it again.
 
+### A missing base concept
+
+When Angelo's answer shows that a concept the card rests on is missing ("no recuerdo qué es un
+consumer group"), the grade is Again. Once his reply settles it, record it with the flag:
+
+```sh
+aletheia review grade <<'JSON'
+{"card":"k7m2","grade":"again","claudeGrade":"again","answer":"No recuerda qué es un consumer group.","rationale":"Le falta el concepto base: qué es un consumer group.","flag":"missing-prerequisite"}
+JSON
+```
+
+The flag goes only with a final grade of Again: if Angelo disputes it into another grade,
+record his grade without the flag.
+
+Then look in the deck for a card that covers the concept:
+
+```sh
+aletheia card search <<'JSON'
+{"words":"consumer group grupo de consumidores XREADGROUP","tags":["messaging::redis-streams"]}
+JSON
+```
+
+- `words`: the concept, with its synonyms in Spanish and English.
+- `tags`: the failed card's tags.
+
+Read every card listed and judge whether one covers the concept; sharing a word or a tag is
+not enough.
+
+- **One covers it and was not shown in this session**: ask it next, before explaining
+  anything. Its answer is the explanation, and its grade shows what Angelo remembers, even if
+  it was graded earlier today. Review it through sections 2 to 4, and record its grade with
+  the id of the failed card:
+
+  ```sh
+  aletheia review grade <<'JSON'
+  {"card":"c4gr","grade":"good","claudeGrade":"good","answer":"Un consumer group reparte los mensajes de un stream entre sus consumidores.","rationale":"Cubre los dos key points.","prerequisiteOf":"k7m2"}
+  JSON
+  ```
+
+  It takes no place in the session and does not count toward the day's new cards; the CLI
+  counts that, not you.
+- **Otherwise** (no card covers it, or the one that does was already shown in this session):
+  explain the concept in two or three lines, no lesson, and offer the card in a line: "No hay
+  una tarjeta sobre qué es un consumer group. ¿La agregamos?". If he says yes, use the
+  `az-aletheia-add` skill for that idea, with the source `repaso #<id>` of the failed card. A
+  card created this way is not asked in this session: Angelo read its answer when approving
+  it.
+
+Ask at most one prerequisite per failed card. A prerequisite that fails for a missing base concept too is
+graded Again with the flag and explained in two or three lines, and pulls nothing more: a
+review is not a lesson. Then go on with the list; the failed card comes back before the
+session ends, like any Again.
+
 ## 5. Doubts about the card
 
 After recording, answer each of Angelo's doubts about that card in two or three lines. No
