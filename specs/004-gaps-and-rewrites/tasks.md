@@ -241,7 +241,7 @@ search sees the new text; the skill rewrites only after approval.
 
 ## Phase 7: Close
 
-- [ ] T013 Update `CLAUDE.md` and the contract: Commands names `card edit` beside `card add` (JSON on stdin), the `flag` and `prerequisiteOf` fields of `review grade`, and `specs/004-gaps-and-rewrites/contracts/cli.md`; `specs/004-gaps-and-rewrites/contracts/cli.md` gets any message a task changed; quickstart §1 to §3 in `test` through `pnpm aletheia`; `pnpm check` green, traceability included; commit `docs: close slice 4 tasks`
+- [X] T013 Update `CLAUDE.md` and the contract: Commands names `card edit` beside `card add` (JSON on stdin), the `flag` and `prerequisiteOf` fields of `review grade`, and `specs/004-gaps-and-rewrites/contracts/cli.md`; `specs/004-gaps-and-rewrites/contracts/cli.md` gets any message a task changed; quickstart §1 to §3 in `test` through `pnpm aletheia`; `pnpm check` green, traceability included; commit `docs: close slice 4 tasks`
 - [ ] T014 Hand off: Angelo merges `004-gaps-and-rewrites` into `main` and runs `pnpm release` from a clean `main` (give him the commands, run neither); the release backs up `prod` before the `reviews` rebuild; then quickstart §4 in `prod`, and the Measures of `specs/004-gaps-and-rewrites/quickstart.md` after two weeks (SC-002, SC-003)
 
 ---

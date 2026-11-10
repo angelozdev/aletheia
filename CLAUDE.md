@@ -15,13 +15,15 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
   and it defaults to `prod` in `~/.aletheia/`. Aletheia's own skills (review, stats,
   prune) are the exception: they call the installed `aletheia`, because that is use, not
   development.
-- The CLI's commands: `backup`; `card add`, `card search` and `review grade`, which read JSON
-  on stdin (a quoted heredoc, `<<'JSON'`); `card show <id>`, `tag list`, `review due` and
-  `review topic <tag>...`; `settings show` and `settings set`. Numbers go as flags: the lists
-  take `--session`, `--session-size`, `--new-per-day` and `--new-share`, and `settings set`
-  the last three, or `default`. `--help` on any of them gives its usage;
-  `specs/001-capture-and-review/contracts/cli.md`, `specs/002-intake-filter/contracts/cli.md`
-  and `specs/003-topic-review/contracts/cli.md` give their output and errors.
+- The CLI's commands: `backup`; `card add`, `card edit`, `card search` and `review grade`
+  (with its optional `flag` and `prerequisiteOf`), which read JSON on stdin (a quoted heredoc,
+  `<<'JSON'`); `card show <id>`, `tag list`, `review due` and `review topic <tag>...`;
+  `settings show` and `settings set`. Numbers go as flags: the lists take `--session`,
+  `--session-size`, `--new-per-day` and `--new-share`, and `settings set` the last three, or
+  `default`. `--help` on any of them gives its usage;
+  `specs/001-capture-and-review/contracts/cli.md`, `specs/002-intake-filter/contracts/cli.md`,
+  `specs/003-topic-review/contracts/cli.md` and `specs/004-gaps-and-rewrites/contracts/cli.md`
+  give their output and errors.
 - `pnpm db:generate --name <name>` derives a migration from the `*.schema.ts` files;
   `pnpm exec drizzle-kit generate --custom --name <name>` makes an empty one for triggers.
   Read the SQL before committing it.
