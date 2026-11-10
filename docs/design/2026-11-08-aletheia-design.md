@@ -256,6 +256,14 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
     includes the tag's new cards without the cap, and cards pulled in as
     prerequisites or created by a rewrite, split or merge are exempt. All caps
     are enforced in the core. — _my call_
+14. **New share:** each session keeps a share of its cards for new ones, 10% by
+    default, rounded up and spread through the session, so a backlog of reviews
+    never holds every new card back. It is a floor under the new-card cap, never
+    above it. — _Angelo's call, spec 003._
+15. **Settings:** session size, new cards per day and new share are kept in the
+    store and changed through the CLI, only after Angelo approves the exact change.
+    A limit he names for one session ("hoy solo 10") wins over a setting. —
+    _Angelo's call, spec 003._
 
 ### 8.3 Stats — local skill
 
