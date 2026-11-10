@@ -12,7 +12,8 @@ the search terms, the tag family and the order built in a new core module; an un
 draft and flags duplicates and junk, and both skills offer profile changes the moment Angelo
 states his level. No new dependency. Decisions in [research.md](./research.md), ADRs
 [0014](../../docs/adr/0014-card-search-with-fts5-and-terms-built-in-the-core.md) and
-[0015](../../docs/adr/0015-the-profile-is-an-untracked-file-read-in-place.md), both `proposed`.
+[0015](../../docs/adr/0015-the-profile-is-an-untracked-file-read-in-place.md), both accepted by
+Angelo on 2026-11-10.
 
 ## Technical Context
 
@@ -45,8 +46,8 @@ skill files, one ignored file
 
 ## Constitution Check
 
-_Gate before Phase 0, re-checked after Phase 1. Constitution 1.5.1, to be amended to 1.6.0
-before `/speckit-implement` (R7)._
+_Gate before Phase 0, re-checked after Phase 1. Constitution 1.5.1, amended to 1.6.0 by this
+plan (R7)._
 
 | Principle | Status |
 |---|---|
@@ -60,7 +61,7 @@ before `/speckit-implement` (R7)._
 | VIII. Conversation, not commands | Pass. No new trigger to remember; every question about existing cards runs `aletheia card search` or `card show`. |
 | IX. Quality over volume | Pass. This slice is the entry filter: every worth rule is flagged, and Angelo still decides. |
 | Technology Constraints | Pass with amendment (1.6.0): `PROFILE.md` is untracked, and the global skill reads it from the repo. |
-| ADRs | 0001–0013 `accepted` and respected; 0011 extended by 0015. 0014 and 0015 `proposed`, for Angelo to accept before `/speckit-implement`. |
+| ADRs | 0001–0013 `accepted` and respected; 0011 extended by 0015. 0014 and 0015 `accepted`. |
 
 Re-check after Phase 1: unchanged. The data model adds only the search table, its trigger and
 the profile file; the contract adds one command.
@@ -110,8 +111,8 @@ folders (ADR-0004), one folder per module (ADR-0007), the store opaque outside `
 
 ## Delivery order (vertical slices for `/speckit-tasks`)
 
-Before step 1: Angelo accepts ADRs 0014 and 0015, and R7 is applied (constitution 1.6.0, design
-§5, §8.1, §9), each in its own commit.
+Done before step 1, on 2026-11-10: ADRs 0014 and 0015 accepted, R7 applied (constitution
+1.6.0, design §5, §8.1, §9), each in its own commit.
 
 1. **Search by words** (002-US1-AS2, AS3, AS4, AS5 without tags, AS6). Carries the migration,
    `src/core/similar` with terms and common words, the port method and its adapter, and the
@@ -129,7 +130,7 @@ Before step 1: Angelo accepts ADRs 0014 and 0015, and R7 is applied (constitutio
 5. **The profile kept current** (002-US3-AS1, FR-006): both skills offer the change the moment
    Angelo states his level. Run: a review in this repo, whose skill loads from the working tree
    (quickstart §4, first half).
-6. **Close**: ADRs 0014–0015 accepted, `CLAUDE.md` names `card search` and the profile, merge,
+6. **Close**: `CLAUDE.md` names `card search` and the profile, merge,
    `pnpm release` (Angelo), quickstart §2 to §4 and its Measures.
 
 No step is a layer on its own. Step 3 is checked by its test until the release, the named

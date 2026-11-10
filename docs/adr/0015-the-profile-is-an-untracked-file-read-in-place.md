@@ -1,6 +1,6 @@
 # 0015. The profile is an untracked file, read and edited in place
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-09
 - **Deciders:** Angelo
 - **Supersedes:** —

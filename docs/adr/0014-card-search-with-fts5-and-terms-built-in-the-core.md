@@ -1,6 +1,6 @@
 # 0014. Card search with FTS5, terms built in the core
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-09
 - **Deciders:** Angelo
 - **Supersedes:** —
