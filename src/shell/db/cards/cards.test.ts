@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { newCard } from '#core/cards'
+import { newCard, type CardType } from '#core/cards'
 import { SAMPLE_DRAFT } from '../../../../tests/support/cards/cards.constants.ts'
 import { openTestStore, runSql, selectAll } from '../../../../tests/support/store/store.ts'
 import { tempDir } from '../../../../tests/support/temp-dir/temp-dir.ts'
@@ -78,6 +78,23 @@ describe('StoreCardRepository', () => {
     expect(selectAll(path, 'select card_id, tag from card_tags')).toEqual([
       { card_id: 'k7m2', tag: 'docker::commands' },
     ])
+  })
+
+  it('001-US1-AS3 saveAll stores every card or none', async () => {
+    const store = await openTestStore(path)
+    const now = new Date(NOW)
+    const refused = { ...newCard(SAMPLE_DRAFT, 'p3x9', now), type: 'cloze' as CardType }
+
+    try {
+      expect(() =>
+        new StoreCardRepository(store).saveAll([newCard(SAMPLE_DRAFT, 'k7m2', now), refused]),
+      ).toThrow()
+    } finally {
+      closeStore(store)
+    }
+
+    expect(selectAll(path, 'select count(*) as n from cards')).toEqual([{ n: 0 }])
+    expect(selectAll(path, 'select count(*) as n from card_tags')).toEqual([{ n: 0 }])
   })
 })
 

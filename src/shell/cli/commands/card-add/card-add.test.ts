@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
 import { FIXED_INSTANT } from '../../../../../tests/support/run-cli/run-cli.constants.ts'
 import { runOnStore } from '../../../../../tests/support/run-cli/run-cli.ts'
+import type { CliRun } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 import { selectAll } from '../../../../../tests/support/store/store.ts'
 import { tempDir } from '../../../../../tests/support/temp-dir/temp-dir.ts'
 
@@ -24,8 +25,12 @@ function storedCards(): unknown {
   return selectAll(db, 'select count(*) as n from cards')
 }
 
-function tail(text: string, expected: string): string {
-  return text.slice(-expected.length)
+function expectRefused({ code, stdout, stderr }: CliRun, error: string): void {
+  const expected = `error: ${error}\n`
+  expect(code).toBe(1)
+  expect(stdout).toBe('')
+  expect(stderr.slice(-expected.length)).toBe(expected)
+  expect(storedCards()).toEqual([{ n: 0 }])
 }
 
 const TAG_MESSAGE = 'tags[0]: use a-z, digits and dashes, in segments joined by ::'
@@ -98,13 +103,22 @@ describe('aletheia card add', () => {
       'situation: is required; keyPoints: must have 1 to 3 items',
     ],
   ])('001-US1-AS2 card add refuses %s', async ([, card, message]) => {
-    const expected = `error: card 1: ${message}\n`
+    expectRefused(await cardAdd([card]), `card 1: ${message}`)
+  })
 
-    const { code, stdout, stderr } = await cardAdd([card])
+  it('001-US1-AS3 one invalid card among several stores none', async () => {
+    const run = await cardAdd([SAMPLE_DRAFT, cardWithout('situation'), SAMPLE_DRAFT])
 
-    expect(code).toBe(1)
-    expect(stdout).toBe('')
-    expect(tail(stderr, expected)).toBe(expected)
-    expect(storedCards()).toEqual([{ n: 0 }])
+    expectRefused(run, 'card 2: situation: is required')
+  })
+
+  it('001-US1-AS3 each invalid card is named by its position, cards joined by |', async () => {
+    const run = await cardAdd([
+      cardWithout('situation'),
+      SAMPLE_DRAFT,
+      { ...SAMPLE_DRAFT, tags: [] },
+    ])
+
+    expectRefused(run, 'card 1: situation: is required | card 3: tags: must have at least one tag')
   })
 })
