@@ -1,10 +1,15 @@
 import type { z } from 'zod'
 import type { Card } from '#core/cards'
 import { sessionList } from '#core/sessions'
-import { BUILT_IN_SETTINGS } from '#core/settings'
+import { settingsFrom } from '#core/settings'
 import { topicCards } from '#core/tags'
 import { shownInstant, startOfToday, startOfTomorrow } from '#core/time'
-import { StoreCardRepository, StoreReviewRepository, type Store } from '#shell/db'
+import {
+  StoreCardRepository,
+  StoreReviewRepository,
+  StoreSettingsRepository,
+  type Store,
+} from '#shell/db'
 import type { CliContext, Flags } from '../../main/main.types.ts'
 import { OPTION_FLAGS } from './session.constants.ts'
 import { InvalidOptionsError } from './session.errors.ts'
@@ -51,6 +56,7 @@ export function listSession(
   const today = startOfToday(now, context.timeZone)
   const active = new StoreCardRepository(store).active()
   const reviews = new StoreReviewRepository(store).since(earlier(start, today))
+  const stored = new StoreSettingsRepository(store).stored()
   const list = sessionList({
     scope: inScope(active, scope),
     topic: scope !== 'all',
@@ -59,7 +65,7 @@ export function listSession(
     today,
     tomorrow: startOfTomorrow(now, context.timeZone),
     start,
-    limits: { ...BUILT_IN_SETTINGS, ...limits },
+    limits: settingsFrom(limits, stored),
   })
   const shown = (instant: Date) => shownInstant(instant, context.timeZone)
   return {

@@ -347,7 +347,7 @@ lists use them below a one-session limit.
     - Errors: `InvalidSettingsError(messages)` and `NoSettingNamedError`.
     - The command calls `save`, then prints what `settings show` prints.
   - **Run**: quickstart §4
-- [ ] T019 [US4] The lists take a setting below a one-session limit, in `src/core/settings/settings.ts`
+- [X] T019 [US4] The lists take a setting below a one-session limit, in `src/core/settings/settings.ts`
   - **Test**:
     - `src/core/settings/settings.test.ts`: `settingsFrom takes the one-session value, else the stored one, else the built-in`.
     - `review-due.test.ts`: `003-US4-AS2 a saved session size of 15 holds at most 15, and a session size of 10 for the session holds 10`. Save `settings set --session-size 15`; 25 review cards due. `review due --json` → `count: 15`; `review due --session-size 10 --json` → `count: 10`.

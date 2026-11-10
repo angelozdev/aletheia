@@ -345,4 +345,15 @@ describe('aletheia review due', () => {
       /error: invalid options: --new-share: must be a whole number from 0 to 100\n$/,
     )
   })
+
+  it('003-US4-AS2 a saved session size of 15 holds at most 15, and a session size of 10 for the session holds 10', async () => {
+    await addDueToday(25)
+    await run(['settings', 'set', '--session-size', '15'])
+
+    const saved = await list(['review', 'due'])
+    const forTheSession = await list(['review', 'due', '--session-size', '10'])
+
+    expect(saved).toMatchObject({ count: 15, remaining: 10 })
+    expect(forTheSession).toMatchObject({ count: 10, remaining: 15 })
+  })
 })
