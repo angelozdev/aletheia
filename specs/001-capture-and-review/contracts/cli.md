@@ -108,8 +108,8 @@ cards[1]:
     answer: `ps` muestra solo los contenedores en ejecución; `-a` incluye los detenidos.
 ```
 
-With nothing due, `nextDue` is the earliest instant among the other active cards, or `null`
-on an empty deck:
+`nextDue` is the earliest instant among the active cards left out of the list, or `null` when
+none is left out; with nothing due, it says when the next card comes:
 
 ```
 count: 0

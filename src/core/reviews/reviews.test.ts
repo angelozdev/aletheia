@@ -44,4 +44,20 @@ describe('due list', () => {
       'new-late',
     ])
   })
+
+  it('dueList names the earliest instant among the cards left out', () => {
+    const cards = [
+      studied('review-later', 'review', '2026-11-13T15:00:00.000Z'),
+      studied('review-tomorrow', 'review', '2026-11-12T05:00:00.000Z'),
+    ]
+
+    expect(dueList(cards, now, tomorrow)).toEqual({
+      cards: [],
+      nextDue: new Date('2026-11-12T05:00:00.000Z'),
+    })
+  })
+
+  it('dueList names none on an empty deck', () => {
+    expect(dueList([], now, tomorrow)).toEqual({ cards: [], nextDue: null })
+  })
 })

@@ -76,4 +76,21 @@ describe('aletheia review due', () => {
       ].join('\n'),
     )
   })
+
+  it('001-US2-AS5 with nothing due, review due is empty and names when the next card is due', async () => {
+    await addCards(1)
+    arrange('0123', 'review', '2026-11-13T15:00:00.000Z')
+
+    const { code, stdout } = await run(['review', 'due'])
+
+    expect(code).toBe(0)
+    expect(stdout).toBe('count: 0\nnextDue: "2026-11-13T10:00:00-05:00"\ncards: []\n')
+  })
+
+  it('001-US2-AS5 on an empty deck, review due names no next card', async () => {
+    const { code, stdout } = await run(['review', 'due'])
+
+    expect(code).toBe(0)
+    expect(stdout).toBe('count: 0\nnextDue: null\ncards: []\n')
+  })
 })
