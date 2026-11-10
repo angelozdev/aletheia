@@ -296,7 +296,7 @@ all back.
     - `sessionList gives the daily limit the last word` — size 200 at 10 % with a budget of 10 → 10 new.
   - **Code**: `k = ceil(sessionSize × newShare / 100)` and places `ceil(i × sessionSize / k)` (`PERCENT = 100` in `sessions.constants.ts`). In the filling loop of data-model.md step 4, a share place takes a new card first.
   - **Run**: `pnpm test src/core/sessions`
-- [ ] T016 [US3] `--new-share` sets the share for one session, in general and topic reviews, in `src/shell/cli/invocation/session/session.schema.ts` and `.claude/skills/aletheia-review/SKILL.md`
+- [X] T016 [US3] `--new-share` sets the share for one session, in general and topic reviews, in `src/shell/cli/invocation/session/session.schema.ts` and `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `review-due.test.ts`: `003-US3-AS6 a session of 5 at 10 % holds 1 new card, none at 0 %, new cards fill it when few reviews are due, and the same in a topic`. Cards: 10 review due today and 10 new, all tagged `messaging`.
     - `review due --session-size 5 --json` → 4 reviews, then 1 new at place 5.
     - `--new-share 0` → 5 reviews.

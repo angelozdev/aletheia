@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
+import { taggedDrafts } from '../../../../../tests/support/cards/cards.ts'
 import { uniqueIdDraw } from '../../../../../tests/support/draws/draws.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
@@ -297,6 +298,51 @@ describe('aletheia review due', () => {
     expect(refused).toMatchObject({ code: 1, stdout: '' })
     expect(refused.stderr).toMatch(
       /error: invalid options: --new-per-day: must be a whole number, 0 or more\n$/,
+    )
+  })
+
+  it('003-US3-AS6 a session of 5 at 10 % holds 1 new card, none at 0 %, new cards fill it when few reviews are due, and the same in a topic', async () => {
+    useUniqueIds()
+    const drafts = taggedDrafts(Array.from({ length: 20 }, () => ['messaging']))
+    const { stdout } = await run(['card', 'add', '--json'], drafts)
+    const reviewIds: string[] = JSON.parse(stdout).ids.slice(0, 10)
+    for (const id of reviewIds) arrange(id, 'review', DUE_TODAY)
+    const kinds = async (argv: string[]) => {
+      const listed = await list([...argv, '--session-size', '5'])
+      return idsOf(listed).map((id) => (reviewIds.includes(id) ? 'review' : 'new'))
+    }
+    const general = ['review', 'due']
+    const topic = ['review', 'topic', 'messaging']
+
+    const atTen = [await kinds(general), await kinds(topic)]
+    const atZero = [
+      await kinds([...general, '--new-share', '0']),
+      await kinds([...topic, '--new-share', '0']),
+    ]
+    for (const id of reviewIds.slice(3)) arrange(id, 'review', '2026-11-20T15:00:00.000Z')
+    const fewDue = [await kinds(general), await kinds(topic)]
+
+    const four = Array.from({ length: 4 }, () => 'review')
+    expect(atTen).toEqual([
+      [...four, 'new'],
+      [...four, 'new'],
+    ])
+    expect(atZero).toEqual([
+      [...four, 'review'],
+      [...four, 'review'],
+    ])
+    expect(fewDue).toEqual([
+      ['review', 'review', 'review', 'new', 'new'],
+      ['review', 'review', 'review', 'new', 'new'],
+    ])
+  })
+
+  it('review due refuses a share outside 0 to 100', async () => {
+    const refused = await run(['review', 'due', '--new-share', '101'])
+
+    expect(refused).toMatchObject({ code: 1, stdout: '' })
+    expect(refused.stderr).toMatch(
+      /error: invalid options: --new-share: must be a whole number from 0 to 100\n$/,
     )
   })
 })

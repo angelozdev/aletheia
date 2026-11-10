@@ -41,4 +41,10 @@ describe('the aletheia-review skill', () => {
     for (const text of ['heldBack', '--new-per-day', 'hoy dame 20 nuevas'])
       expect(skill.text).toContain(text)
   })
+
+  it('aletheia-review passes a share of new cards Angelo names for the session', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    expect(skill.text).toContain('--new-share')
+  })
 })

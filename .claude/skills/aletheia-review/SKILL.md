@@ -69,6 +69,10 @@ With `heldBack` above 0, say in a line how many new cards wait for tomorrow. Whe
 for more for this review ("hoy dame 20 nuevas"), pass `--new-per-day 20` on every call of the
 round.
 
+Each session keeps a share of its places for new cards, 10 % by default, so a backlog of
+reviews never holds them all back. When Angelo names a share for this review ("hoy la mitad
+nuevas"), pass `--new-share 50` on every call of the round.
+
 With `count: 0`, tell Angelo there is nothing to review and when the next card comes, from
 `nextDue` (`null` means the deck is empty); with `heldBack` above 0, say also how many new cards
 wait for tomorrow. Stop there.

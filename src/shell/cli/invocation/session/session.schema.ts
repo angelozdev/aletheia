@@ -3,18 +3,20 @@ import { instantFrom } from '#core/time'
 import {
   IN_THE_FUTURE,
   INSTANT_WITH_OFFSET,
+  MAX_PERCENT,
   NOT_AN_INSTANT,
   WHOLE_FROM_ONE,
   WHOLE_FROM_ZERO,
   WHOLE_NUMBER,
+  WHOLE_PERCENT,
 } from './session.constants.ts'
 
-function wholeNumber(min: number, message: string) {
+function wholeNumber(message: string, min: number, max = Infinity) {
   return z
     .string()
     .regex(WHOLE_NUMBER, message)
     .transform(Number)
-    .refine((value) => value >= min, message)
+    .refine((value) => value >= min && value <= max, message)
 }
 
 export function sessionFlagsSchema(now: Date) {
@@ -25,7 +27,8 @@ export function sessionFlagsSchema(now: Date) {
       .transform(instantFrom)
       .refine((start) => start <= now, IN_THE_FUTURE)
       .optional(),
-    sessionSize: wholeNumber(1, WHOLE_FROM_ONE).optional(),
-    newPerDay: wholeNumber(0, WHOLE_FROM_ZERO).optional(),
+    sessionSize: wholeNumber(WHOLE_FROM_ONE, 1).optional(),
+    newPerDay: wholeNumber(WHOLE_FROM_ZERO, 0).optional(),
+    newShare: wholeNumber(WHOLE_PERCENT, 0, MAX_PERCENT).optional(),
   })
 }
