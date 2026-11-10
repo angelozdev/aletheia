@@ -139,6 +139,9 @@ says nothing about Angelo's memory. — _my call_
 reason, date. Used so kept cards are not proposed again without new evidence
 (§8.4). — _my call_
 
+**Settings**: session size, new cards per day and new share, one set per store,
+`null` until Angelo changes one; changed only through the CLI.
+
 **Profile**: a `PROFILE.md` at the repo root, ignored by git, that the add and
 prune skills always read, as context for judging usefulness (not a whitelist of
 topics). It is kept current from the conversation: during a capture or a review,
@@ -345,7 +348,8 @@ skills (Claude)  ──►  CLI (commander)  ──►  core (domain, FSRS, stat
     agreed direction from Angelo's question_
   - **Input:** card creation and edits take JSON (stdin or argument), validated
     with zod. JSON because Claude writes it reliably and card content contains
-    multi-line code.
+    multi-line code. Numbers go as flags (`settings set --session-size 15`);
+    free text goes as JSON on stdin.
   - Filterable, sortable queries over cards and stats, so Claude can answer
     free-form progress questions without new commands.
 - **Search for duplicates:** SQLite FTS5 plus tags (ADR-0014). The core turns
