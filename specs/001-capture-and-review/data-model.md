@@ -5,8 +5,9 @@ Slice 1 adds the first domain tables. The schema is declared in TypeScript in
 (ADR-0002). The draft below was generated and exercised in a scratch project on Node 26.13.0
 (SQLite 3.54.0); decisions and their reasons are in [research.md](./research.md).
 
-Instants are UTC ISO 8601 with milliseconds (`2026-11-09T15:00:00.000Z`), the form
-`Date#toISOString` writes: fixed width, so text order is time order.
+Instants are stored as UTC ISO 8601 with milliseconds (`2026-11-09T15:00:00.000Z`): fixed
+width, so text order is time order. The CLI shows them in the local time of whoever runs it,
+with the offset (`2026-11-09T10:00:00-05:00`); nothing local is ever stored (R7).
 
 ## Card: table `cards`
 
@@ -66,6 +67,20 @@ it found (`state_before`). Measured with one 10-minute learning step (R6):
 | review | Hard, Good, Easy | review | days, growing with the grade |
 | relearning | Good | review | 1 day |
 
+## Due list
+
+A pure rule in `src/core` over the active cards, the current instant and where the local day
+ends (FR-004). In this order:
+
+1. `learning` and `relearning` cards whose `due` has passed, earliest first;
+2. `review` cards whose `due` falls before the local tomorrow starts, earliest first;
+3. `new` cards, in the order they were saved;
+4. only when 1 to 3 are empty: `learning` and `relearning` cards whose `due` is within 20
+   minutes, earliest first (001-US2-AS4).
+
+With nothing in the list, the next due instant is the earliest `due` among the other active
+cards, or none on an empty deck (001-US2-AS5).
+
 ## What the store refuses
 
 By `CHECK`, key or trigger, whatever the CLI does (each seen failing in the scratch store):
@@ -84,6 +99,7 @@ Several cards are saved in one transaction: one refusal stores none (001-US1-AS3
 ## Migrations
 
 `migrations/<YYYYMMDDHHMMSS>_<name>/` holds `migration.sql` and drizzle-kit's `snapshot.json`.
-Two folders: the generated tables, and a custom one (`drizzle-kit generate --custom`) with the
-INV-02 triggers, which Drizzle's schema cannot declare. Both apply at startup in one
-transaction, after a backup in `prod` (ADR-0002).
+`cards` and `card_tags` arrive with the first delivery step and `reviews` with the fourth
+(plan.md); each brings a generated folder and a custom one (`drizzle-kit generate --custom`)
+with its INV-02 triggers, which Drizzle's schema cannot declare. All pending folders apply at
+startup in one transaction, after a backup in `prod` (ADR-0002).
