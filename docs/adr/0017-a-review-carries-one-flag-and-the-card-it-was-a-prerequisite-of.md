@@ -1,6 +1,6 @@
 # 0017. A review carries one flag and the card it was a prerequisite of
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-10
 - **Deciders:** Angelo
 - **Supersedes:** —
