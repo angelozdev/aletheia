@@ -15,7 +15,8 @@ describe('tempDir', () => {
   it('makes an empty folder in the system temp dir', () => {
     const dir = tempDir(prefix)
 
-    expect(dir.startsWith(join(tmpdir(), prefix))).toBe(true)
+    const template = join(tmpdir(), prefix)
+    expect(dir.startsWith(template)).toBe(true)
     expect(readdirSync(dir)).toEqual([])
   })
 

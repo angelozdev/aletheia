@@ -1,9 +1,10 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc", "import"],
-  "jsPlugins": ["./tools/lint/no-comments.ts", "eslint-plugin-sonarjs"],
+  "jsPlugins": ["./tools/lint/local.ts", "eslint-plugin-sonarjs"],
   "rules": {
     "local/no-comments": "error",
+    "local/no-nested-calls": "error",
     "sonarjs/cognitive-complexity": ["error", 15],
     "unicorn/filename-case": [
       "error",

@@ -34,6 +34,8 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
 ## Code
 
 - No comments: names and extracted functions explain the code (lint rule `local/no-comments`).
+- No call takes a call that takes a call: name the inner result in a `const`
+  (`local/no-nested-calls`). `await` counts with the call it waits on; callbacks start over.
 - `src/core` is pure: no `node:*`, no I/O, no clock; time and persistence are injected.
 - Only `src/shell/db` imports `node:sqlite` and `drizzle-orm`; everywhere else the `Store` is
   opaque (ADR-0010). A repository is a port `interface` owned by `src/core` and a class in

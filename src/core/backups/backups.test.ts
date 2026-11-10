@@ -20,9 +20,9 @@ const others = [
 
 describe('backup copies', () => {
   it('backupFileName names the copy <env>-<instant>.sqlite with the UTC instant made file-safe', () => {
-    expect(backupFileName('prod', new Date('2026-11-08T21:04:05.123Z'))).toBe(
-      'prod-2026-11-08T21-04-05-123Z.sqlite',
-    )
+    const instant = new Date('2026-11-08T21:04:05.123Z')
+
+    expect(backupFileName('prod', instant)).toBe('prod-2026-11-08T21-04-05-123Z.sqlite')
   })
 
   it('000-US3-AS2 copiesToRemove keeps the newest 5 copies of the env', () => {

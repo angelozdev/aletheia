@@ -3,7 +3,9 @@ import { instantFrom, shownInstant, startOfTomorrow, storedInstant } from './tim
 
 describe('time', () => {
   it('storedInstant writes an instant as UTC ISO text', () => {
-    expect(storedInstant(new Date('2026-11-08T21:04:05.123Z'))).toBe('2026-11-08T21:04:05.123Z')
+    const instant = new Date('2026-11-08T21:04:05.123Z')
+
+    expect(storedInstant(instant)).toBe('2026-11-08T21:04:05.123Z')
   })
 
   it("shownInstant writes an instant in a zone's local time with its offset", () => {

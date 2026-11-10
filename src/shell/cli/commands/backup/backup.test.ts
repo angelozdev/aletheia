@@ -133,7 +133,8 @@ describe('aletheia backup', () => {
   })
 
   it('000-US3-AS3 an unwritable backup folder exits 1 with no copy left and the store unchanged', async () => {
-    closeStore(await openTestStore(db, noMigrations()))
+    const arranged = await openTestStore(db, noMigrations())
+    closeStore(arranged)
     runSql(
       db,
       "create table notes (id integer primary key, body text); insert into notes (body) values ('first')",
@@ -162,7 +163,8 @@ describe('aletheia backup', () => {
     expect(code).toBe(1)
     expect(stderr).toBe(`env: custom (${db})\nerror: backups are disabled here (under vitest)\n`)
     expect(stdout).toBe('')
-    expect(existsSync(join(dataDir, 'backups'))).toBe(false)
+    const backups = join(dataDir, 'backups')
+    expect(existsSync(backups)).toBe(false)
   })
 
   it('000-US4-AS1 backup on a new store applies the migrations first', async () => {
@@ -191,7 +193,8 @@ describe('aletheia backup', () => {
     expect(stderr).toBe(
       'env: test\nmigrated: 20261108000000_first\nmigrated: 20261108000100_second\n',
     )
-    expect(readdirSync(join(dataDir, 'backups'))).toEqual(['test-2026-11-08T21-04-05-123Z.sqlite'])
+    const backups = join(dataDir, 'backups')
+    expect(readdirSync(backups)).toEqual(['test-2026-11-08T21-04-05-123Z.sqlite'])
   })
 
   it('000-US4-AS2 a prod store with pending migrations is backed up before they apply', async () => {
@@ -237,12 +240,14 @@ describe('aletheia backup', () => {
     )
     expect(stdout).toBe('')
     expect(readdirSync(folder)).toEqual(['prod-2026-11-08T21-04-05-123Z.sqlite'])
-    expect(fixtureTables(join(dataDir, 'prod.sqlite'))).toEqual([])
+    const prodStore = join(dataDir, 'prod.sqlite')
+    expect(fixtureTables(prodStore)).toEqual([])
   })
 
   it('000-US4-AS5 a store with migrations this code does not know is refused unchanged', async () => {
     const store = join(dataDir, 'prod.sqlite')
-    closeStore(await openTestStore(store, fixtureMigrations()))
+    const arranged = await openTestStore(store, fixtureMigrations())
+    closeStore(arranged)
     const before = sha256(store)
 
     const { code, stdout, stderr } = await runCli(['--env', 'prod', 'backup'], {
@@ -260,7 +265,8 @@ describe('aletheia backup', () => {
     )
     expect(stdout).toBe('')
     expect(sha256(store)).toBe(before)
-    expect(existsSync(join(dataDir, 'backups'))).toBe(false)
+    const backups = join(dataDir, 'backups')
+    expect(existsSync(backups)).toBe(false)
   })
 
   it('000-US4-AS3 a current store takes no backup and reports nothing about schema', async () => {

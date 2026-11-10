@@ -1,6 +1,6 @@
-import { definePlugin, defineRule } from '@oxlint/plugins'
+import { defineRule } from '@oxlint/plugins'
 
-const noComments = defineRule({
+export const noComments = defineRule({
   meta: { type: 'problem', docs: { description: 'Code carries no comments; names explain it' } },
   create(context) {
     return {
@@ -15,9 +15,4 @@ const noComments = defineRule({
       },
     }
   },
-})
-
-export default definePlugin({
-  meta: { name: 'local' },
-  rules: { 'no-comments': noComments },
 })
