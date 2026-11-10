@@ -138,7 +138,7 @@ the slice.
 
 **Independent Test**: quickstart §1 with `"tags": ["docker"]`.
 
-- [ ] T006 [US1] `card search` orders word matches sharing a tag family, other word matches, then cards sharing only a tag family, in `src/core/similar/similar.ts`
+- [X] T006 [US1] `card search` orders word matches sharing a tag family, other word matches, then cards sharing only a tag family, in `src/core/similar/similar.ts`
   - **Test**:
     - `similar.test.ts`: `sharesTagFamily matches the same tag, an ancestor or a descendant` — `['messaging::redis-streams']` against `['messaging::redis-streams']`, `['messaging']` and `['messaging::redis-streams::pel']` → true; against `['messaging::rabbitmq']`, `['docker']` and `['messaging-queues']` → false; `['docker']` against `['docker-compose']` → false. `similarCards orders the three groups and keeps 10` — over `Card` objects built in the test: word matches `[B, A]` (A shares a family, B does not), active `[A, B, C, D]` (C shares only a family, D nothing), tags `['docker']` → `[A, B, C]`; two cards sharing only a family come newest first by `createdAt`; a card both matched and in the family appears once; twelve candidates → 10.
     - `card-search.test.ts`: `002-US1-AS1 card search lists cards sharing words and a tag, then words, then only a tag family` — card A: question `¿Cómo confirma un consumidor un mensaje en Redis Streams?`, tag `messaging::redis-streams`; card B: the same question, tag `databases::postgres`; card C: question `¿Qué guarda la PEL?`, tag `messaging`; card D: question `¿Qué hace git rebase?`, tag `git`. `{ "words": "consumidor mensaje Redis Streams", "tags": ["messaging::redis-streams"] }` lists `0123`, `4567`, `89ab` in that order, each with `id`, `type`, `tags`, `question`, `answer`, and not `cdef`.

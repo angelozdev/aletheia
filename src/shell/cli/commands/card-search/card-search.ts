@@ -31,8 +31,10 @@ export const cardSearchCommand: CliCommand = {
   description: 'list the active cards most similar to the words and tags given as JSON on stdin',
   run: (context, options) =>
     withStore(context, options, async (store) => {
-      const { words } = searchFrom(await readJson(context))
-      const matches = new StoreCardRepository(store).matching(searchTerms(words))
-      return { cards: similarCards(matches).map(similarItem) }
+      const { words, tags } = searchFrom(await readJson(context))
+      const repository = new StoreCardRepository(store)
+      const matches = repository.matching(searchTerms(words))
+      const similar = similarCards(matches, repository.active(), tags)
+      return { cards: similar.map(similarItem) }
     }),
 }

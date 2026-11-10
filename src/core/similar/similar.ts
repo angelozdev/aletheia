@@ -7,6 +7,7 @@ import {
   NOT_A_TERM_CHARACTER,
   SHORT_PLURAL,
   SIMILAR_CARDS_LIMIT,
+  TAG_SEPARATOR,
 } from './similar.constants.ts'
 
 function folded(text: string): string {
@@ -28,6 +29,25 @@ export function searchTerms(words: string): string[] {
   return [...new Set(terms)]
 }
 
-export function similarCards(matches: Card[]): Card[] {
-  return matches.slice(0, SIMILAR_CARDS_LIMIT)
+function inFamily(a: string, b: string): boolean {
+  return a === b || a.startsWith(`${b}${TAG_SEPARATOR}`) || b.startsWith(`${a}${TAG_SEPARATOR}`)
+}
+
+export function sharesTagFamily(cardTags: string[], searchTags: string[]): boolean {
+  return cardTags.some((a) => searchTags.some((b) => inFamily(a, b)))
+}
+
+function newestFirst(a: Card, b: Card): number {
+  return b.createdAt.getTime() - a.createdAt.getTime()
+}
+
+export function similarCards(matches: Card[], active: Card[], tags: string[]): Card[] {
+  const sharesFamily = (card: Card) => sharesTagFamily(card.tags, tags)
+  const matched = new Set(matches.map(({ id }) => id))
+  const familyOnly = active.filter((card) => !matched.has(card.id) && sharesFamily(card))
+  return [
+    ...matches.filter(sharesFamily),
+    ...matches.filter((card) => !sharesFamily(card)),
+    ...familyOnly.toSorted(newestFirst),
+  ].slice(0, SIMILAR_CARDS_LIMIT)
 }

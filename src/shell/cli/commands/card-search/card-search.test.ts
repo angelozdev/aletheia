@@ -15,10 +15,11 @@ beforeEach(() => {
   cli = cliOnTempStore()
 })
 
-function draftAsking(question: string): CardDraft {
+function draftAsking(question: string, tags = SAMPLE_DRAFT.tags): CardDraft {
   return {
     ...SAMPLE_DRAFT,
     question,
+    tags,
     answer: 'Una respuesta.',
     keyPoints: ['un punto'],
     situation: 'Una situación.',
@@ -51,6 +52,29 @@ function expectRefused({ code, stdout, stderr }: CliRun, message: string): void 
 }
 
 describe('aletheia card search', () => {
+  it('002-US1-AS1 card search lists cards sharing words and a tag, then words, then only a tag family', async () => {
+    const consumer = '¿Cómo confirma un consumidor un mensaje en Redis Streams?'
+    await addCards([
+      draftAsking(consumer, ['messaging::redis-streams']),
+      draftAsking(consumer, ['databases::postgres']),
+      draftAsking('¿Qué guarda la PEL?', ['messaging']),
+      draftAsking('¿Qué hace git rebase?', ['git']),
+    ])
+    const query = { words: 'consumidor mensaje Redis Streams', tags: ['messaging::redis-streams'] }
+
+    const { stdout } = await cli.run(['card', 'search', '--json'], JSON.stringify(query))
+    const { cards } = JSON.parse(stdout)
+
+    expect(cards.map(({ id }: { id: string }) => id)).toEqual(['0123', '4567', '89ab'])
+    expect(cards[0]).toEqual({
+      id: '0123',
+      type: SAMPLE_DRAFT.type,
+      tags: ['messaging::redis-streams'],
+      question: consumer,
+      answer: 'Una respuesta.',
+    })
+  })
+
   it('002-US1-AS2 card search finds a card that differs only in case, accents or singular and plural', async () => {
     await addCards([
       draftAsking('¿Cuántos consumidores lee un grupo?'),
