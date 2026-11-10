@@ -24,3 +24,13 @@ export function tagTree(cards: Card[]): TagCount[] {
   const tags = [...counts.keys()].toSorted(bySegments)
   return tags.map((tag) => ({ tag, cards: counts.get(tag) ?? 0 }))
 }
+
+function isUnder(tag: string, topicTag: string): boolean {
+  return tag === topicTag || tag.startsWith(`${topicTag}${TAG_SEPARATOR}`)
+}
+
+export function topicCards(cards: Card[], topic: string[]): Card[] {
+  return cards.filter((card) =>
+    card.tags.some((tag) => topic.some((topicTag) => isUnder(tag, topicTag))),
+  )
+}

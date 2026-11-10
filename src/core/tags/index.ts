@@ -1,2 +1,2 @@
 export { TAG_SEPARATOR } from './tags.constants.ts'
-export { tagTree } from './tags.ts'
+export { tagTree, topicCards } from './tags.ts'

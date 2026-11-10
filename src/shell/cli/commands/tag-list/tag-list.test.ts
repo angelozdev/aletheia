@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
+import { taggedDrafts } from '../../../../../tests/support/cards/cards.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 
@@ -13,19 +13,15 @@ function run(argv: string[], stdin = '') {
   return cli.run(argv, stdin)
 }
 
-async function addTagged(tagLists: string[][]): Promise<void> {
-  const drafts = tagLists.map((tags) => ({ ...SAMPLE_DRAFT, tags }))
-  await run(['card', 'add'], JSON.stringify(drafts))
-}
-
 describe('aletheia tag list', () => {
   it('003-US1-AS1 tag list gives every tag and its ancestors with the active cards each covers', async () => {
-    await addTagged([
+    const drafts = taggedDrafts([
       ['messaging::redis-streams'],
       ['messaging::rabbitmq'],
       ['docker::commands'],
       ['messaging::rabbitmq', 'messaging::redis-streams'],
     ])
+    await run(['card', 'add'], drafts)
 
     const { code, stdout } = await run(['tag', 'list'])
 

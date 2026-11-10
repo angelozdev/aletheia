@@ -132,7 +132,7 @@ spec's order, and refuses what it cannot answer.
 
 **Independent Test**: quickstart §1.
 
-- [ ] T003 [US1] `review topic` holds the cards under the tags and their descendants, by whole segments, each once, in `src/core/tags/tags.ts` and `src/shell/cli/commands/review-topic/review-topic.ts`
+- [X] T003 [US1] `review topic` holds the cards under the tags and their descendants, by whole segments, each once, in `src/core/tags/tags.ts` and `src/shell/cli/commands/review-topic/review-topic.ts`
   - **Test**:
     - `tags.test.ts`: `topicCards keeps the cards under a topic tag or its descendants` — over cards tagged `messaging`, `messaging::rabbitmq`, `messaging-legacy` and `docker`, topic `['messaging']` gives the first two and topic `['messaging::rabbitmq']` the second only. `topicCards lists a card once when several of its tags fall under the topic` — one card with `messaging::a` and `messaging::b`, topic `['messaging']` → one card.
     - `src/shell/cli/commands/review-topic/review-topic.test.ts`:

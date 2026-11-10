@@ -5,6 +5,7 @@ import { cardSearchCommand } from '../commands/card-search/card-search.ts'
 import { cardShowCommand } from '../commands/card-show/card-show.ts'
 import { reviewDueCommand } from '../commands/review-due/review-due.ts'
 import { reviewGradeCommand } from '../commands/review-grade/review-grade.ts'
+import { reviewTopicCommand } from '../commands/review-topic/review-topic.ts'
 import { tagListCommand } from '../commands/tag-list/tag-list.ts'
 import { COMMAND_GROUPS, ExitCode } from './main.constants.ts'
 import type { CliCommand, CliContext } from './main.types.ts'
@@ -16,6 +17,7 @@ const COMMANDS = [
   cardSearchCommand,
   tagListCommand,
   reviewDueCommand,
+  reviewTopicCommand,
   reviewGradeCommand,
 ]
 
