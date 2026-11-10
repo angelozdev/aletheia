@@ -5,6 +5,7 @@ import {
   INSTANT_WITH_OFFSET,
   NOT_AN_INSTANT,
   WHOLE_FROM_ONE,
+  WHOLE_FROM_ZERO,
   WHOLE_NUMBER,
 } from './session.constants.ts'
 
@@ -25,5 +26,6 @@ export function sessionFlagsSchema(now: Date) {
       .refine((start) => start <= now, IN_THE_FUTURE)
       .optional(),
     sessionSize: wholeNumber(1, WHOLE_FROM_ONE).optional(),
+    newPerDay: wholeNumber(0, WHOLE_FROM_ZERO).optional(),
   })
 }

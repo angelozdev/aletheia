@@ -6,16 +6,20 @@ export const SESSION_OPTIONS: CommandOption[] = [
     description: 'the session printed by the first list of this round',
   },
   { flags: '--session-size <n>', description: 'the most cards this session holds' },
+  { flags: '--new-per-day <n>', description: 'the most new cards introduced today' },
 ]
 
 export const OPTION_FLAGS: Record<string, string> = {
   session: '--session',
   sessionSize: '--session-size',
+  newPerDay: '--new-per-day',
 }
 
 export const WHOLE_NUMBER = /^\d+$/
 
 export const WHOLE_FROM_ONE = 'must be a whole number, 1 or more'
+
+export const WHOLE_FROM_ZERO = 'must be a whole number, 0 or more'
 
 export const INSTANT_WITH_OFFSET =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})$/

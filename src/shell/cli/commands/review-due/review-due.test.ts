@@ -280,4 +280,23 @@ describe('aletheia review due', () => {
       nextDue: '2026-11-12T00:00:00-05:00',
     })
   })
+
+  it('003-US3-AS4 asking for 20 new today, with 4 introduced, holds at most 16; the next session is back to 10 a day', async () => {
+    await addIntroducedToday(4, 30)
+
+    const asked = await list(['review', 'due', '--new-per-day', '20'])
+    const next = await list(['review', 'due'])
+
+    expect(asked).toMatchObject({ count: 16, heldBack: 14 })
+    expect(next).toMatchObject({ count: 6, heldBack: 24 })
+  })
+
+  it('review due refuses a daily limit below 0', async () => {
+    const refused = await run(['review', 'due', '--new-per-day', '-1'])
+
+    expect(refused).toMatchObject({ code: 1, stdout: '' })
+    expect(refused.stderr).toMatch(
+      /error: invalid options: --new-per-day: must be a whole number, 0 or more\n$/,
+    )
+  })
 })

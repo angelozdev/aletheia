@@ -266,7 +266,7 @@ a topic review is not capped.
   - **Test**: `review-topic.test.ts`: `003-US3-AS3 review topic includes all 15 new cards of the topic, even after 10 were introduced today`. There are 25 cards via `uniqueIdDraw()`. Ten are tagged `docker` and arranged as review due `2026-11-14T15:00:00.000Z`, with reviews inserted today and `state_before = 'new'`. Fifteen are new, tagged `messaging`. `review topic messaging --json` → `count: 15`, `heldBack: 0`.
   - **Code**: none expected beyond T011's `topic` branch. If the test passes at once, check it fails with the budget forced on for topics, then restore.
   - **Run**: `pnpm test -t 003-US3-AS3`
-- [ ] T013 [US3] `--new-per-day` sets the daily limit for one session, in `src/shell/cli/invocation/session/session.schema.ts`
+- [X] T013 [US3] `--new-per-day` sets the daily limit for one session, in `src/shell/cli/invocation/session/session.schema.ts`
   - **Test**: `review-due.test.ts`: `003-US3-AS4 asking for 20 new today, with 4 introduced, holds at most 16; the next session is back to 10 a day` — 34 cards via `uniqueIdDraw()`. Four were introduced today (as in AS2) and 30 are new. `review due --new-per-day 20 --json` → 16 new. `review due --json` → 6 new. `review due refuses a daily limit below 0` — `--new-per-day -1` → `error: invalid options: --new-per-day: must be a whole number, 0 or more\n`.
   - **Code**: `SESSION_OPTIONS` gains `--new-per-day <n>`; `WHOLE_FROM_ZERO`.
   - **Run**: `pnpm aletheia review due --new-per-day 20`
