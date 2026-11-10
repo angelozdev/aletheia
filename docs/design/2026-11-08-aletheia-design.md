@@ -277,7 +277,8 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
     Angelo recalls the concept rather than recognizing the wording. The key points
     stay as stored and grading checks them; the review log keeps the question as
     asked. A miss caused by Claude's rephrasing is voided without rewriting the
-    card. Three stored variants per card were rejected: triple the reading at
+    card, under its own flag, `badly-rephrased`, so stats and prune never take
+    Claude's rephrasing for a badly written card. Three stored variants per card were rejected: triple the reading at
     capture, a backfill of every existing card, and forced variants that turn into
     hints. — _Angelo's call, 2026-11-10, slice 5._
 
@@ -314,6 +315,9 @@ Run on demand. Claude lists candidates, each with its reason:
 3. **Problematic (leech):** failed repeatedly. Usually badly written or two ideas
    in one; the remedy is rewrite or split, not archive.
 4. **Overlapping:** two cards asking nearly the same thing.
+5. **Said to be useless:** during a review Angelo said the card adds nothing ("esto
+   no me sirve", "esto lo sé de memoria"). The review is flagged `not-useful`; its
+   grade stays real, and his words are the evidence. — _Raised 2026-11-10, spec 004._
 
 **Who detects what — my call:** mastered and leech are deterministic and
 computed by the core. No-current-situation and overlapping need judgment, so
