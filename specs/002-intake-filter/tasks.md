@@ -96,7 +96,7 @@ the slice.
     - framing words of design §7: `diferencia diferencias funciona hace pasa significa sirve usa`
     - English: `an and are as at be by do does for from how if in into is it its of on or that the this to was what when where which who why with`
   - **Run**: `pnpm test src/core/similar`
-- [ ] T003 [US1] `card search` lists the cards sharing words, most relevant first, at most 10, in `src/shell/cli/commands/card-search/card-search.ts`
+- [X] T003 [US1] `card search` lists the cards sharing words, most relevant first, at most 10, in `src/shell/cli/commands/card-search/card-search.ts`
   - **Test**:
     - `src/shell/db/cards/cards.test.ts`, over a store from `openTestStore(path)`: `matching returns the active cards holding a term as a prefix, most relevant first` — three cards saved with `saveAll` (one whose question says `docker docker ps`, one saying only `docker`, one with neither); `matching(['docker', 'ps'])` → the first two, in that order; `matching([])` → `[]`.
     - `src/shell/cli/commands/card-search/card-search.test.ts`: `002-US1-AS2 card search finds a card that differs only in case, accents or singular and plural` — cards whose questions hold `consumidores` and `configuración`; `{ "words": "Consumidor" }` and `{ "words": "configuracion" }` each list their card; `{ "words": "contenedor" }` lists the `SAMPLE_DRAFT` card (its answer says `contenedores`). `002-US1-AS3 card search lists only the 10 most similar` — twelve `SAMPLE_DRAFT` cards; `{ "words": "docker" }` lists 10. A third test: without `--json`, one `SAMPLE_DRAFT` card prints exactly the TOON block of `contracts/cli.md` with id `0123`.

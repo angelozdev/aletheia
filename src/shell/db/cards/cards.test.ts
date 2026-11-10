@@ -129,6 +129,27 @@ describe('StoreCardRepository', () => {
       { id: 'k7m2', due: '2026-11-10T15:00:00.000Z' },
     ])
   })
+
+  it('matching returns the active cards holding a term as a prefix, most relevant first', async () => {
+    const store = await openTestStore(path)
+    const now = new Date(NOW)
+    const plain = { ...SAMPLE_DRAFT, answer: 'a', keyPoints: ['k'], situation: 's' }
+    const repository = new StoreCardRepository(store)
+    repository.saveAll([
+      newCard({ ...plain, question: 'docker' }, 'p3x9', now),
+      newCard({ ...plain, question: 'git rebase' }, 'w4n8', now),
+      newCard({ ...plain, question: 'docker docker ps' }, 'k7m2', now),
+    ])
+
+    try {
+      const ids = repository.matching(['docker', 'ps']).map(({ id }) => id)
+
+      expect(ids).toEqual(['k7m2', 'p3x9'])
+      expect(repository.matching([])).toEqual([])
+    } finally {
+      closeStore(store)
+    }
+  })
 })
 
 describe('the cards table', () => {

@@ -1,3 +1,4 @@
+import type { Card } from '#core/cards'
 import {
   COMBINING_MARKS,
   COMMON_WORDS,
@@ -5,6 +6,7 @@ import {
   MIN_TERM_LENGTH,
   NOT_A_TERM_CHARACTER,
   SHORT_PLURAL,
+  SIMILAR_CARDS_LIMIT,
 } from './similar.constants.ts'
 
 function folded(text: string): string {
@@ -24,4 +26,8 @@ function singular(word: string): string {
 export function searchTerms(words: string): string[] {
   const terms = folded(words).split(NOT_A_TERM_CHARACTER).filter(counts).map(singular)
   return [...new Set(terms)]
+}
+
+export function similarCards(matches: Card[]): Card[] {
+  return matches.slice(0, SIMILAR_CARDS_LIMIT)
 }

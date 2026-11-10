@@ -1,1 +1,1 @@
-export { searchTerms } from './similar.ts'
+export { searchTerms, similarCards } from './similar.ts'
