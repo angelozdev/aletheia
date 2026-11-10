@@ -107,8 +107,10 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
 
 - TypeScript on Node 26, `pnpm`, `node:sqlite` through Drizzle ORM
   (`drizzle-orm/node-sqlite`), `zod` at the CLI edge, `commander` with
-  `@commander-js/extra-typings`, `ts-fsrs` for scheduling, `@toon-format/toon` for output,
-  `vitest`. Development and tests run the sources through Node's native type stripping; the
+  `@commander-js/extra-typings`, `ts-fsrs` for scheduling, `date-fns` for dates,
+  `@toon-format/toon` for output, `vitest`. `ts-fsrs` and `date-fns` are each imported by one
+  core module only. Instants are stored in UTC and shown in the local time of whoever runs
+  the CLI. Development and tests run the sources through Node's native type stripping; the
   installed `aletheia` is a release, a bundle of `main` packed and installed globally by
   `pnpm release`. The schema lives in TypeScript as the source of truth; `drizzle-kit generate`
   derives numbered SQL migration files, reviewed and committed, applied at startup by
@@ -166,4 +168,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.5.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
+**Version**: 1.5.1 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09
