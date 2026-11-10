@@ -78,8 +78,20 @@ JSON
 
 - `grade`: the final grade, after any dispute.
 - `claudeGrade`: the grade you gave first, before any dispute.
-- `answer`: Angelo's answer, as he wrote it.
+- `answer`: a summary of Angelo's answer, never his words as typed or dictated. In one to
+  three lines of Spanish, keep every claim he made, right or wrong, and any part he said he
+  did not know. Drop filler, repetitions, false starts and hedges ("no estoy seguro",
+  "creo que"); if hedging weighed on the grade, say so in the rationale. His doubts and
+  questions after the grade are not part of the answer.
 - `rationale`: your reason, in Spanish.
+
+For example, Angelo answered #5ks0 (VM vs. container) with "no estoy así 100% seguro pero la
+máquina virtual contiene el sistema operativo, el kernel y las aplicaciones que van encima
+mientras que el contenedor no, el contenedor no sé qué cosas tiene pero no tiene el sistema
+operativo dentro y por lo mismo tampoco tiene kernel entonces pero no sé exactamente que tiene
+el contenedor para comunicarse con con el kernel". The `answer` to record is "La VM trae SO,
+kernel y aplicaciones; el contenedor no trae SO ni kernel. No sabe qué trae el contenedor ni
+cómo usa el kernel del host."
 
 The JSON must be valid: escape `"` and `\` inside strings and write line breaks as `\n`.
 stdout gives `card`, `grade`, `state` and `due`, the instant the card comes back. If it exits
