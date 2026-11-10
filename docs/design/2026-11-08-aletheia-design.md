@@ -226,22 +226,28 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
 5. Claude states the grade and why, then shows the full answer.
 6. Angelo may dispute the grade; Claude adjusts before recording it.
 7. The rating is recorded through the CLI; FSRS computes the next due date.
-8. **Missing prerequisite** ("no recuerdo qué es un consumer group"): grade
+8. **A card from a doubt:** when one of Angelo's doubts about the card reveals an
+   idea worth remembering for what he is learning, Claude says so in a line
+   ("esto vale una tarjeta: …, ¿la agregamos?") and, if he agrees, drafts and
+   saves it through §8.1, with the same rules and approval. Most doubts make no
+   card; it is offered only when the idea passes §6 and no card in the session
+   covers it. — _Angelo's call, after the first real review._
+9. **Missing prerequisite** ("no recuerdo qué es un consumer group"): grade
    Again, explain the base concept in 2–3 lines (no lesson), then look for a card
    covering it. If one exists, pull it into this session. If not, propose it
    through the same rules and approval as §8.1. This Again is a real failure: it
    updates FSRS and counts toward retention, and the flag makes it count as a gap
    rather than toward leech detection. — _my call_
-9. **Badly written card** (failed because of the wording, not the knowledge):
+10. **Badly written card** (failed because of the wording, not the knowledge):
    the review is voided (§5) and Claude proposes a rewrite on the spot.
-10. **Same-session relearning:** FSRS short-term scheduling stays on (the
+11. **Same-session relearning:** FSRS short-term scheduling stays on (the
     `ts-fsrs` default). A card that becomes due again during the session, such
     as one graded Again, is shown again before the session ends. Re-shows do not
     count toward the session cap. — _my call_
-11. **Session cap:** about 20 cards, because every card passes through Claude
+12. **Session cap:** about 20 cards, because every card passes through Claude
     and costs context. The cap is soft: when reached, Claude says how many
     remain and asks whether to continue. — _my call_
-12. **New cards per day cap**, so a big capture session does not flood reviews.
+13. **New cards per day cap**, so a big capture session does not flood reviews.
     Default 10, configurable. It applies to general review only: topic review
     includes the tag's new cards without the cap, and cards pulled in as
     prerequisites or created by a rewrite, split or merge are exempt. All caps
