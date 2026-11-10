@@ -19,4 +19,12 @@ describe('the aletheia-review skill', () => {
 
     expect(skill.text).toContain('az-aletheia-add')
   })
+
+  it('003-US1-AS8 aletheia-review maps a named topic to tags from aletheia tag list and reviews them with aletheia review topic', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    expect(skill.description).toContain('repasemos <tema>')
+    for (const text of ['aletheia tag list', 'aletheia review topic', 'top-level tags'])
+      expect(skill.text).toContain(text)
+  })
 })

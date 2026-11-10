@@ -178,7 +178,7 @@ spec's order, and refuses what it cannot answer.
 **Independent Test**: `pnpm test -t 003-US1-AS8`. For real after the release (quickstart §5):
 the skill calls the installed `aletheia`.
 
-- [ ] T006 [US1] `aletheia-review` reviews a named topic through `tag list` and `review topic`, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T006 [US1] `aletheia-review` reviews a named topic through `tag list` and `review topic`, in `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `tests/skills/review-skill.test.ts`: `003-US1-AS8 aletheia-review maps a named topic to tags from aletheia tag list and reviews them with aletheia review topic`. The description contains `repasemos <tema>`; the text contains `aletheia tag list`, `aletheia review topic` and `top-level tags`; 001-US2-AS7 still passes (no `DEVELOPMENT_ONLY` string).
   - **Code**:
     - Description: add `"repasemos <tema>"` to the triggers.

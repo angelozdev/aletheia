@@ -1,11 +1,11 @@
 ---
 name: aletheia-review
-description: Use when Angelo wants to review his Aletheia cards in this repo. Triggers on "repasemos", "vamos a repasar", "¿qué tengo para hoy?", "toca repasar", "hagamos el repaso". Asks one due question at a time, grades his answer Again, Hard, Good or Easy against the card's key points, waits for him after every grade, and records his final grade through the installed aletheia CLI.
+description: Use when Angelo wants to review his Aletheia cards in this repo. Triggers on "repasemos", "repasemos <tema>", "vamos a repasar", "¿qué tengo para hoy?", "toca repasar", "hagamos el repaso". Asks one due question at a time, or one of a topic he names, grades his answer Again, Hard, Good or Easy against the card's key points, waits for him after every grade, and records his final grade through the installed aletheia CLI.
 ---
 
 # aletheia-review
 
-A review session over the cards due now, in Angelo's real deck. Talk to Angelo in Spanish.
+A review session over the cards due now, or over a topic Angelo names, in his real deck. Talk to Angelo in Spanish.
 The `aletheia` CLI holds the facts (what is due, when it comes back); you hold the judgment
 (the grade and why).
 
@@ -18,14 +18,34 @@ The `aletheia` CLI holds the facts (what is due, when it comes back); you hold t
 - Instants come in Angelo's local time with their offset (`2026-11-11T10:00:00-05:00`). Read
   them as printed; never convert a time zone.
 
-## 1. Ask what is due
+## 1. Ask what is due, or a topic
+
+For a general review ("repasemos", "¿qué tengo para hoy?"):
 
 ```sh
 aletheia review due
 ```
 
-It prints `count`, `nextDue` and `cards`, already in the order to study them. Each card has
-`id`, `type`, `tags`, `question`, `keyPoints` and `answer`.
+For a topic ("repasemos mensajería", "repasemos redis"), list the tags in use first:
+
+```sh
+aletheia tag list
+```
+
+It prints each tag with its ancestors and how many active cards it covers. Pick every tag that
+covers the topic Angelo named; a topic can span branches ("redis" → `messaging::redis-streams`
+and `databases::redis`). Then ask for the cards under them, descendants included:
+
+```sh
+aletheia review topic messaging::redis-streams databases::redis
+```
+
+When no tag covers the topic, say so and name the top-level tags (those without `::`) from the
+list, so he can pick one. Never guess a tag, and never fall back to the general review.
+
+Both lists print `count`, `nextDue` and `cards`, already in the order to study them. Each card
+has `id`, `type`, `tags`, `question`, `keyPoints` and `answer`. A topic's cards are reviewed
+like due cards, through sections 2 to 6, even those not due yet.
 
 With `count: 0`, tell Angelo there is nothing to review and when the next card comes, from
 `nextDue` (`null` means the deck is empty). Stop there.
@@ -131,8 +151,9 @@ already "sigue", go straight on.
 
 ## 6. Until nothing is due
 
-When the list runs out, run `aletheia review due` again: a card graded Again comes back within
-minutes, while nothing else is due. Go on until it answers `count: 0`, or until Angelo stops.
+When the list runs out, run the same command again (`aletheia review due`, or `aletheia review
+topic` with the same tags): a card graded Again comes back within minutes, while nothing else
+is due. Go on until it answers `count: 0`, or until Angelo stops.
 Then tell him when the next card comes, from `nextDue`. If he asks when a card comes back, run
 `aletheia card show <id>` and read its `due` as printed.
 
