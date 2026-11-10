@@ -9,6 +9,7 @@
 
 - Q: When a card on the missing concept exists, does Claude explain the concept first (design §8.2 step 9 as written) or ask the card first? → A: Ask it first, explaining nothing: its answer is the explanation, and its grade shows what Angelo remembers. Explaining first was rejected: he would answer what he had just heard, and FSRS would grow an interval he did not earn. Design §8.2 step 9 updated.
 - Q: Which grades can a review flagged `badly-written` carry? → A: Any grade, a right answer included: Claude may void a review whenever the wording, not Angelo's memory, decided the answer. Only Again or Hard was rejected; the cost accepted is that a voided Good leaves the card's schedule as it was.
+- Q: Is a card's text before a rewrite kept? → A: No: the edit replaces it. The voided review's rationale says why the card was rewritten, and from slice 5 every review keeps the question as asked. An edit history and bringing slice 5's asked question forward were rejected.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -70,7 +71,7 @@ Claude proposes clearer wording for #9p3x: the same knowledge, now naming the va
 - **Review flag**: `missing-prerequisite`, a real failure that counts as a gap of the card's topics; or `badly-written`, a voided review.
 - **Voided review**: kept in the log; schedules nothing; counts only toward its session's cap.
 - **Prerequisite review**: the review of a card asked because another card failed for its lack; names that card.
-- **Card edit**: replaces content fields of a card in place; the schedule and the reviews stay.
+- **Card edit**: replaces content fields of a card in place, keeping no copy of the old text; the schedule and the reviews stay.
 
 ## Success Criteria _(mandatory)_
 
