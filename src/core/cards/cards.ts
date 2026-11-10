@@ -6,7 +6,15 @@ import {
   NEW_STATE,
 } from './cards.constants.ts'
 import { CardIdTakenError, CardNotFoundError, NoFreeCardIdError } from './cards.errors.ts'
-import type { AddCardsDeps, Card, CardDraft, CardRepository, RandomIndex } from './cards.types.ts'
+import type {
+  AddCardsDeps,
+  Card,
+  CardDraft,
+  CardEdit,
+  CardRepository,
+  EditCardDeps,
+  RandomIndex,
+} from './cards.types.ts'
 
 export function cardId(randomIndex: RandomIndex): string {
   return Array.from({ length: ID_LENGTH }, () =>
@@ -59,6 +67,13 @@ export function cardById(repository: CardRepository, id: string): Card {
   const card = repository.find(id)
   if (card === null) throw new CardNotFoundError(id)
   return card
+}
+
+export function editCard({ card, ...changes }: CardEdit, { repository, now }: EditCardDeps): Card {
+  const found = cardById(repository, card)
+  const edited = { ...found, ...changes, updatedAt: now }
+  repository.update(edited)
+  return edited
 }
 
 export function bySaved(a: Card, b: Card): number {

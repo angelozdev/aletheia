@@ -1,4 +1,4 @@
-import type { cards } from './cards.schema.ts'
+import type { cards, cardTags } from './cards.schema.ts'
 
 export type CardRow = typeof cards.$inferInsert
 
@@ -14,5 +14,12 @@ export type ScheduleRow = Pick<
   | 'lapses'
   | 'lastReview'
 >
+
+export type ContentRow = Pick<
+  CardRow,
+  'type' | 'question' | 'answer' | 'situation' | 'keyPoints' | 'updatedAt'
+>
+
+export type TagRow = typeof cardTags.$inferInsert
 
 export type StoredCard = typeof cards.$inferSelect

@@ -15,17 +15,18 @@ const tags = z
     })
   })
 
-const cardSchema = z.strictObject({
+export const cardFields = {
   type: oneOf(CARD_TYPES),
   question: requiredText,
   answer: requiredText,
   situation: requiredText,
-  source: requiredText,
   keyPoints: z
     .array(requiredText, { error: requiredOr() })
     .min(MIN_KEY_POINTS, KEY_POINTS_COUNT)
     .max(MAX_KEY_POINTS, KEY_POINTS_COUNT),
   tags,
-})
+}
+
+const cardSchema = z.strictObject({ ...cardFields, source: requiredText })
 
 export const cardListSchema = z.array(cardSchema).min(1)

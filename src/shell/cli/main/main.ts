@@ -1,6 +1,7 @@
 import { Command, CommanderError, type CommandUnknownOpts } from '@commander-js/extra-typings'
 import { backupCommand } from '../commands/backup/backup.ts'
 import { cardAddCommand } from '../commands/card-add/card-add.ts'
+import { cardEditCommand } from '../commands/card-edit/card-edit.ts'
 import { cardSearchCommand } from '../commands/card-search/card-search.ts'
 import { cardShowCommand } from '../commands/card-show/card-show.ts'
 import { reviewDueCommand } from '../commands/review-due/review-due.ts'
@@ -16,6 +17,7 @@ const COMMANDS = [
   backupCommand,
   cardAddCommand,
   cardShowCommand,
+  cardEditCommand,
   cardSearchCommand,
   tagListCommand,
   reviewDueCommand,

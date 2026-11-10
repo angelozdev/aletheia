@@ -4,7 +4,7 @@ import { StoreCardRepository } from '#shell/db'
 import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand } from '../../main/main.types.ts'
 
-function shownCard(card: Card, timeZone: string) {
+export function shownCard(card: Card, timeZone: string) {
   const shown = (instant: Date) => shownInstant(instant, timeZone)
   return {
     id: card.id,

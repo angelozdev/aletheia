@@ -80,6 +80,38 @@ describe('StoreCardRepository', () => {
     ])
   })
 
+  it('update replaces the content and the tags and leaves the schedule', async () => {
+    const card = newCard(SAMPLE_DRAFT, 'k7m2', new Date(NOW))
+    const later = new Date('2026-11-10T15:00:00.000Z')
+    const kept = 'select state, due, reps, last_review, source, created_at from cards'
+    const saving = await openTestStore(path)
+    new StoreCardRepository(saving).saveAll([card])
+    closeStore(saving)
+    const before = selectAll(path, kept)
+
+    const store = await openTestStore(path)
+    const repository = new StoreCardRepository(store)
+    repository.update({
+      ...card,
+      question: 'q2',
+      tags: ['messaging::rabbitmq'],
+      updatedAt: later,
+      state: 'review',
+      reps: 3,
+      source: 'otro',
+      createdAt: later,
+    })
+    const found = repository.find('k7m2')
+    closeStore(store)
+
+    expect(found).toMatchObject({
+      question: 'q2',
+      tags: ['messaging::rabbitmq'],
+      updatedAt: later,
+    })
+    expect(selectAll(path, kept)).toEqual(before)
+  })
+
   it('001-US1-AS3 saveAll stores every card or none', async () => {
     const store = await openTestStore(path)
     const now = new Date(NOW)

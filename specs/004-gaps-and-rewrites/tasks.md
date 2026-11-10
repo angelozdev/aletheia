@@ -208,7 +208,7 @@ search sees the new text; the skill rewrites only after approval.
 
 **Independent Test**: quickstart §3.
 
-- [ ] T010 [P] [US3] `card edit` changes the fields given and keeps the rest, in `src/core/cards/cards.ts`, `src/shell/db/cards/cards.ts` and `src/shell/cli/commands/card-edit/card-edit.ts`
+- [X] T010 [P] [US3] `card edit` changes the fields given and keeps the rest, in `src/core/cards/cards.ts`, `src/shell/db/cards/cards.ts` and `src/shell/cli/commands/card-edit/card-edit.ts`
   - **Test**:
     - `src/shell/db/cards/cards.test.ts`: `update replaces the content and the tags and leaves the schedule` — save `card`, then `update({ ...card, question: 'q2', tags: ['messaging::rabbitmq'], updatedAt: later })` → `find` gives the new question, the one new tag and `updatedAt: later`; `select state, due, reps, last_review, source, created_at from cards` is unchanged.
     - `src/shell/cli/commands/card-edit/card-edit.test.ts`, with card `0123` saved at `T0` and graded Good at `T0`:

@@ -5,7 +5,7 @@ import { database } from '../database/database.ts'
 import type { Database, Store } from '../database/database.types.ts'
 import { TAKEN_ID, TERM_SEPARATOR } from './cards.constants.ts'
 import { cards, cardTags } from './cards.schema.ts'
-import type { CardRow, ScheduleRow, StoredCard } from './cards.types.ts'
+import type { CardRow, ContentRow, ScheduleRow, StoredCard, TagRow } from './cards.types.ts'
 
 export function scheduleRow(card: Card): ScheduleRow {
   return {
@@ -21,20 +21,30 @@ export function scheduleRow(card: Card): ScheduleRow {
   }
 }
 
-function cardRow(card: Card): CardRow {
+function contentRow(card: Card): ContentRow {
   return {
-    id: card.id,
     type: card.type,
     question: card.question,
     answer: card.answer,
     situation: card.situation,
-    source: card.source,
     keyPoints: JSON.stringify(card.keyPoints),
-    status: card.status,
-    ...scheduleRow(card),
-    createdAt: storedInstant(card.createdAt),
     updatedAt: storedInstant(card.updatedAt),
   }
+}
+
+function cardRow(card: Card): CardRow {
+  return {
+    id: card.id,
+    source: card.source,
+    status: card.status,
+    ...contentRow(card),
+    ...scheduleRow(card),
+    createdAt: storedInstant(card.createdAt),
+  }
+}
+
+function tagRows(card: Card): TagRow[] {
+  return card.tags.map((tag) => ({ cardId: card.id, tag }))
 }
 
 function isTakenId(error: unknown): boolean {
@@ -77,10 +87,16 @@ export class StoreCardRepository implements CardRepository {
     this.#db.transaction((tx) => {
       for (const card of saved) {
         tx.insert(cards).values(cardRow(card)).run()
-        tx.insert(cardTags)
-          .values(card.tags.map((tag) => ({ cardId: card.id, tag })))
-          .run()
+        tx.insert(cardTags).values(tagRows(card)).run()
       }
+    })
+  }
+
+  update(card: Card): void {
+    this.#db.transaction((tx) => {
+      tx.update(cards).set(contentRow(card)).where(eq(cards.id, card.id)).run()
+      tx.delete(cardTags).where(eq(cardTags.cardId, card.id)).run()
+      tx.insert(cardTags).values(tagRows(card)).run()
     })
   }
 
