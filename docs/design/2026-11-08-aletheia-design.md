@@ -338,7 +338,7 @@ My calls, mirroring diarium where it applies:
 
 - Node 26 with native TypeScript execution for development and tests, pnpm, vitest.
 - SQLite through `node:sqlite` with Drizzle's `node-sqlite` driver (as diarium).
-- `ts-fsrs` for scheduling.
+- `ts-fsrs` for scheduling; `date-fns` for dates, each behind one core module.
 - `commander` with `@commander-js/extra-typings` for the CLI (typed subcommands,
   generated `--help`).
 - `@toon-format/toon` for TOON output.
@@ -407,3 +407,9 @@ can use.
   calls, and the stored grades (Claude's next to Angelo's final one) will show
   whether grading needs help. It would be a new dependency and an ADR. Raised
   2026-11-09, not decided.
+- Moving to `ts-fsrs` 6 and its new scheduler. Slice 1 pins 5.4.2 with FSRS-6
+  (ADR-0012): 6.0.0 was twelve days old, its new API defaults to FSRS-7, which
+  spaces reviews far wider (a first Good comes back in 4.8 days instead of 2, a
+  first Easy in 54 instead of 8), and the API slice 1 uses is deprecated there.
+  To be thought through later: which model, the new card fields
+  (`stabilityFast`), and replaying the review log with its `Reschedule`.

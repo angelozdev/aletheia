@@ -14,6 +14,7 @@
 - Q: May a tag carry accents or `ñ`? → A: No: only `a`–`z`, digits and dashes. `mensajería` is refused, so a topic has one spelling and the tag tree never splits on an accent.
 - Q: What does a review keep that cannot be rebuilt later? → A: The grade Claude gave, next to Angelo's final one, and the card's state before the review. A dispute changed the grade when the two grades differ, so that flag is no longer stored. Decided while planning (research R4).
 - Q: In which language are tags written? → A: English (`messaging::redis-streams`), like the rest of the system (constitution 1.5.0). Angelo names a topic in Spanish and Claude finds its tag.
+- Q: In which time are instants stored and shown? → A: Stored in UTC, always; shown in the local time of whoever runs the CLI, so Claude never converts a time zone. "Today" stays the local day.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -84,8 +85,8 @@ In the Aletheia repo, Angelo says "repasemos". The review skill shows one questi
 
 ## Assumptions
 
-- FSRS runs with its default parameters and a desired retention of 0.9, except for one 10-minute learning step; no optimizer.
-- "Today" is Angelo's local calendar day, ending at midnight. Instants are stored in UTC.
+- FSRS-6 runs with its default parameters and a desired retention of 0.9, except for one 10-minute learning step; no optimizer.
+- "Today" is Angelo's local calendar day, ending at midnight. Instants are stored in UTC and shown in local time, with their offset.
 - The 20-minute window is Anki's learn-ahead default; it is what lets a failed card come back within the session.
 - The add skill fills the source with the current repo's name or the study context.
 - The one-time link (`ln -s ~/.aletheia/skills/az-aletheia-add ~/.claude/skills/az-aletheia-add`) is Angelo's to run, given in the quickstart. The plan decides whether this release step is a new ADR next to ADR-0005 and ADR-0008.
