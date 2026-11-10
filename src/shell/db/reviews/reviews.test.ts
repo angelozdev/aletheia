@@ -101,6 +101,22 @@ describe('StoreReviewRepository', () => {
     expect(selectAll(path, 'select count(*) as n from reviews')).toEqual([{ n: 0 }])
     expect(selectAll(path, SCHEDULE)).toEqual(before)
   })
+
+  it('INV-02 the store refuses to delete a review', () => {
+    runSql(path, insertReview())
+
+    expect(() => runSql(path, 'delete from reviews')).toThrow('reviews are never deleted')
+    expect(selectAll(path, 'select count(*) as n from reviews')).toEqual([{ n: 1 }])
+  })
+
+  it('INV-02 the store refuses to change a review', () => {
+    runSql(path, insertReview())
+
+    expect(() => runSql(path, "update reviews set grade = 'again'")).toThrow(
+      'reviews are never changed',
+    )
+    expect(selectAll(path, 'select grade from reviews')).toEqual([{ grade: 'good' }])
+  })
 })
 
 describe('the reviews table', () => {

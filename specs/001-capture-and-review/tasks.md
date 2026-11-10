@@ -206,7 +206,7 @@ the card comes back.
   - **Test**: `review-grade.test.ts`, each case exits 1 with an empty stdout, `select count(*) from reviews` at 0 and the card row equal to what it was: `001-US2-AS6 review grade refuses an unknown card` → `error: card "zzzz" not found`; `001-US2-AS6 review grade refuses a grade outside the four` → `error: invalid review: grade: must be again, hard, good or easy` (and `claudeGrade: must be again, hard, good or easy`); `001-US2-AS6 review grade refuses a missing answer or rationale` → `answer: is required`, `rationale: is required`, a blank one included, both joined by `; ` when both fail; a field `note` → `note: is not a review field`; `not json` → the line of T006.
   - **Code**: the rules of the contract's table in the zod schema; `InvalidReviewError` in `review-grade.errors.ts` → `invalid review: <field>: <message>; …`. Add the messages to `contracts/cli.md`.
   - **Run**: `pnpm aletheia review grade` with `"grade": "perfect"`; exit 1
-- [ ] T014 [US2] The store refuses to delete or change a review, in `migrations/<timestamp>_reviews_never_change/migration.sql`
+- [X] T014 [US2] The store refuses to delete or change a review, in `migrations/<timestamp>_reviews_never_change/migration.sql`
   - **Test**: `src/shell/db/reviews/reviews.test.ts`: `INV-02 the store refuses to delete a review` → `reviews are never deleted`; `INV-02 the store refuses to change a review` — `update reviews set grade = 'again'` → `reviews are never changed`; the row reads back as recorded.
   - **Code**: `pnpm exec drizzle-kit generate --custom --name reviews_never_change`, with a `BEFORE DELETE` and a `BEFORE UPDATE` trigger on `reviews`, each `SELECT RAISE(ABORT, '<message>')`.
   - **Run**: `pnpm test -t INV-02`
