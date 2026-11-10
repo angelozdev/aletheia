@@ -15,6 +15,12 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
   and it defaults to `prod` in `~/.aletheia/`. Aletheia's own skills (review, stats,
   prune) are the exception: they call the installed `aletheia`, because that is use, not
   development.
+- The CLI's commands: `backup`; `card add` and `review grade`, which read JSON on stdin (a
+  quoted heredoc, `<<'JSON'`); `card show <id>` and `review due`. `--help` on any of them
+  gives its usage; `specs/001-capture-and-review/contracts/cli.md` gives its output and errors.
+- `pnpm db:generate --name <name>` derives a migration from the `*.schema.ts` files;
+  `pnpm exec drizzle-kit generate --custom --name <name>` makes an empty one for triggers.
+  Read the SQL before committing it.
 - `pnpm test` runs vitest. `pnpm check` runs test, lint, format:check, typecheck, dead-code
   and duplication; it passes before a task is closed. `pnpm format` fixes formatting.
 - `pnpm release` is Angelo's: he runs it from a clean `main` after a merge. Give him the
@@ -30,6 +36,10 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
 - Conventional Commits, small, on feature branches only, never on `main`. No push.
 - Destructive operations (deleting data, resetting a repo, uninstalling) are handed to Angelo
   as commands to run.
+- Skills: `az-aletheia-add` (global) lives in `skills/az-aletheia-add/` and reaches Claude only
+  through a release, which copies it to `~/.aletheia/skills/`; editing it here changes nothing
+  until the next `pnpm release`. `aletheia-review` (local) lives in
+  `.claude/skills/aletheia-review/`. Both call the installed `aletheia`, never `pnpm aletheia`.
 
 ## Code
 
@@ -39,8 +49,12 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
 - `src/core` is pure: no `node:*`, no I/O, no clock; time and persistence are injected.
 - Only `src/shell/db` imports `node:sqlite` and `drizzle-orm`; everywhere else the `Store` is
   opaque (ADR-0010). A repository is a port `interface` owned by `src/core` and a class in
-  `src/shell/db` that implements it over a `Store` (`StoreCardRepository implements CardRepository`). `tests/support/store/` may use `node:sqlite` to arrange and inspect store
-  files, never `drizzle-orm`.
+  `src/shell/db` that implements it over a `Store` (`StoreCardRepository implements
+  CardRepository`), one per store opened. `tests/support/store/` may use `node:sqlite` to
+  arrange and inspect store files, never `drizzle-orm`.
+- Only `src/core/time` imports `date-fns` and `@date-fns/tz`; only `src/core/scheduling`
+  imports `ts-fsrs` (lint). Instants are stored in UTC (`2026-11-09T15:00:00.000Z`) and shown
+  in the local time of whoever runs the CLI, with the offset; "today" is the local day.
 - Units import each other through their barrels, `#core/<concept>` and `#shell/<adapter>`
   (one `index.ts` per unit); inside a unit, relative `.ts` imports (ADR-0004).
 - One folder per module: `<name>.ts`, `<name>.test.ts`, `<name>.types.ts`, `<name>.errors.ts`,
@@ -48,6 +62,8 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
   `.types.ts`, every failure is an error class, conventional literals are named constants
   (ADR-0007). File names are kebab-case.
 - `zod` validates input at the CLI edge; output is TOON by default, JSON with `--json`.
+- Tags are English, lowercase `a`–`z`, digits and dashes, in segments joined by `::`
+  (`messaging::redis-streams`); card content is Spanish.
 
 ## Data
 

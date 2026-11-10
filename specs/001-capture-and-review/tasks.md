@@ -258,7 +258,7 @@ both skills call the installed `aletheia`, so Angelo exercises them for real in 
 **Purpose**: The slice reaches `prod` and Angelo uses it. Documentation and a release, so no
 new behavior (named exception).
 
-- [ ] T019 Update `CLAUDE.md` at the repo root for what slice 1 added: the four commands under Commands; under Code, that only `src/core/time` imports `date-fns` and only `src/core/scheduling` imports `ts-fsrs`, that instants are stored in UTC and shown in local time, and that tags are English; under Workflow, where the two skills live and that `skills/az-aletheia-add/` reaches Claude only through a release. Walk quickstart §1 to §3 with `pnpm aletheia`; `pnpm check` green.
+- [X] T019 Update `CLAUDE.md` at the repo root for what slice 1 added: the four commands under Commands; under Code, that only `src/core/time` imports `date-fns` and only `src/core/scheduling` imports `ts-fsrs`, that instants are stored in UTC and shown in local time, and that tags are English; under Workflow, where the two skills live and that `skills/az-aletheia-add/` reaches Claude only through a release. Walk quickstart §1 to §3 with `pnpm aletheia`; `pnpm check` green.
 - [ ] T020 Hand Angelo the close, in this order, and fill the Measures table of `specs/001-capture-and-review/quickstart.md` with what he reports: merge the branch into `main`; `pnpm release` (his to run); `ln -s ~/.aletheia/skills/az-aletheia-add ~/.claude/skills/az-aletheia-add` (once); quickstart §4 and §5. SC-003 is measured from the sources on a temp store of 1,000 generated cards (`ALETHEIA_DB=<temp file> pnpm aletheia …`), never in `prod`.
 
 ---
