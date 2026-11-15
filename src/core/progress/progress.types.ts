@@ -31,12 +31,23 @@ export type CardFacts = {
   passed: number
   failures: number
   gaps: number
+  lastReview: Date | null
 }
 
 type TagSortField = (typeof TAG_SORT_FIELDS)[number]
 
 export type TagOrder = { field: TagSortField; desc: boolean }
 
-export type SortValue = string | number | null
+export type SortValue = string | number | Date | null
 
 export type Comparator<Row> = (a: Row, b: Row) => number
+
+export type CardProgress = {
+  card: Card
+  failures: number
+  gaps: number
+  weak: boolean
+  lastReview: Date | null
+}
+
+export type CardFilters = { weak?: boolean; gaps?: boolean }

@@ -191,7 +191,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
 
 **Independent Test**: quickstart §3.
 
-- [ ] T009 [US2] `card list [tags...] [--weak] [--gaps]` gives each matching card with its facts, in `src/core/progress/progress.ts` and `src/shell/cli/commands/card-list/card-list.ts`
+- [X] T009 [US2] `card list [tags...] [--weak] [--gaps]` gives each matching card with its facts, in `src/core/progress/progress.ts` and `src/shell/cli/commands/card-list/card-list.ts`
   - **Test**:
     - `progress.test.ts`, through `cardProgress(input, filters)`: each card carries `failures`, `gaps`, `weak` and `lastReview` ("its latest `reviewedAt`, voided reviews included; `null` if never reviewed"); `weak: true` keeps only weak cards, `gaps: true` only cards with `gaps > 0`, and both keep cards matching both.
     - `src/shell/cli/commands/card-list/card-list.test.ts`: `006-US2-AS1 card list gives the cards under a tag matching every filter, with id, question, tags, state, due, last review, failures and gaps`: a weak card with a gap, a weak card without, a card with neither; `card list messaging --weak --gaps --json` gives only the first, `due` and `lastReview` shown in local time. `rowCounts` unchanged.

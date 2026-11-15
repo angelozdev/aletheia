@@ -5,6 +5,8 @@ import { bySegments, coveredTags, isUnder, TAG_SEPARATOR, topicCards } from '#co
 import { DEFAULT_TAG_ORDER, PERCENT, TAG_FIELD, WEAK_FAILURES } from './progress.constants.ts'
 import type {
   CardFacts,
+  CardFilters,
+  CardProgress,
   Comparator,
   ProgressCounts,
   ProgressInput,
@@ -30,6 +32,13 @@ function hidesToday({ reviewedAt, flag }: Review, today: Date): boolean {
   return reviewedAt >= today && policyOf(flag).hidesUntilTomorrow
 }
 
+function latest(reviews: Review[]): Date | null {
+  return reviews.reduce<Date | null>(
+    (last, { reviewedAt }) => (last === null || reviewedAt > last ? reviewedAt : last),
+    null,
+  )
+}
+
 function cardFacts(card: Card, reviews: Review[], input: ProgressInput): CardFacts {
   const isNew = card.state === NEW_STATE
   const hidden = reviews.some((review) => hidesToday(review, input.today))
@@ -43,6 +52,7 @@ function cardFacts(card: Card, reviews: Review[], input: ProgressInput): CardFac
     passed: counted.filter(({ grade }) => grade !== AGAIN_GRADE).length,
     failures: reviews.filter(isFailure).length,
     gaps: reviews.filter((review) => isGap(review, input.windowStart)).length,
+    lastReview: latest(reviews),
   }
 }
 
@@ -73,13 +83,17 @@ function retentionOf(facts: CardFacts[]): number | null {
   return counted === 0 ? null : Math.round((passed * PERCENT) / counted)
 }
 
+function isWeak({ failures }: CardFacts): boolean {
+  return failures >= WEAK_FAILURES
+}
+
 function countsOf(facts: CardFacts[]): ProgressCounts {
   return {
     cards: facts.length,
     new: facts.filter(({ isNew }) => isNew).length,
     due: facts.filter(({ isDue }) => isDue).length,
     retention: retentionOf(facts),
-    weak: facts.filter(({ failures }) => failures >= WEAK_FAILURES).length,
+    weak: facts.filter(isWeak).length,
     gaps: total(facts, (cardFacts) => cardFacts.gaps),
   }
 }
@@ -95,14 +109,18 @@ function factsByTag(facts: Map<Card, CardFacts>): Map<string, CardFacts[]> {
   return byTag
 }
 
+function rankOf(value: SortValue): string | number | null {
+  return value instanceof Date ? value.getTime() : value
+}
+
 function byValue<Row>(
   value: (row: Row) => SortValue,
   desc: boolean,
   tieBreak: Comparator<Row>,
 ): Comparator<Row> {
   return (a, b) => {
-    const left = value(a)
-    const right = value(b)
+    const left = rankOf(value(a))
+    const right = rankOf(value(b))
     if (left === right) return tieBreak(a, b)
     if (left === null) return 1
     if (right === null) return -1
@@ -143,4 +161,28 @@ export function tagProgress(input: ProgressInput, order = DEFAULT_TAG_ORDER): Pr
   const rows = tags.map((tag) => ({ tag, ...countsOf(byTag.get(tag) ?? []) }))
   const deckFacts = [...facts.values()]
   return { deck: countsOf(deckFacts), tags: treeOrder(rows, tagComparator(rows, order)) }
+}
+
+const BY_ID = byValue(
+  (row: CardProgress) => row.card.id,
+  false,
+  () => 0,
+)
+
+const BY_LAST_REVIEW = byValue((row: CardProgress) => row.lastReview, false, BY_ID)
+
+function matches(row: CardProgress, { weak, gaps }: CardFilters): boolean {
+  return (weak !== true || row.weak) && (gaps !== true || row.gaps > 0)
+}
+
+export function cardProgress(input: ProgressInput, filters: CardFilters): CardProgress[] {
+  const facts = [...factsOf(input)]
+  const rows = facts.map(([card, cardFacts]) => ({
+    card,
+    failures: cardFacts.failures,
+    gaps: cardFacts.gaps,
+    weak: isWeak(cardFacts),
+    lastReview: cardFacts.lastReview,
+  }))
+  return rows.filter((row) => matches(row, filters)).toSorted(BY_LAST_REVIEW)
 }

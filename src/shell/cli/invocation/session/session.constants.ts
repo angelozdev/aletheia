@@ -21,6 +21,8 @@ export const OPTION_FLAGS: Record<string, string> = {
   newShare: '--new-share',
   sort: '--sort',
   desc: '--desc',
+  weak: '--weak',
+  gaps: '--gaps',
 }
 
 export const WHOLE_NUMBER = /^\d+$/

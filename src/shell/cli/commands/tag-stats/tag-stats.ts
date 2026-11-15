@@ -1,8 +1,6 @@
-import { EVER, PROGRESS_WINDOW_DAYS, tagProgress } from '#core/progress'
-import { startOfToday, startOfTomorrow, startOfWindow } from '#core/time'
-import { StoreCardRepository, StoreReviewRepository } from '#shell/db'
+import { tagProgress } from '#core/progress'
+import { progressInput } from '../../invocation/progress/progress.ts'
 import { optionsFrom } from '../../invocation/session/session.ts'
-import { topicFrom } from '../../invocation/topic/topic.ts'
 import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand } from '../../main/main.types.ts'
 import { TAG_STATS_OPTIONS } from './tag-stats.constants.ts'
@@ -18,17 +16,6 @@ export const tagStatsCommand: CliCommand = {
   run: (context, options, tags, flags) =>
     withStore(context, options, async (store) => {
       const order = optionsFrom(tagStatsFlagsSchema, flags)
-      const now = context.clock()
-      return tagProgress(
-        {
-          cards: new StoreCardRepository(store).active(),
-          topic: topicFrom(tags),
-          reviews: new StoreReviewRepository(store).since(EVER),
-          today: startOfToday(now, context.timeZone),
-          tomorrow: startOfTomorrow(now, context.timeZone),
-          windowStart: startOfWindow(now, PROGRESS_WINDOW_DAYS, context.timeZone),
-        },
-        order,
-      )
+      return tagProgress(progressInput(store, context, tags), order)
     }),
 }

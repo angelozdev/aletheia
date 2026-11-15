@@ -3,8 +3,8 @@ import { newCard, type Card, type CardState } from '#core/cards'
 import type { Review } from '#core/reviews'
 import { SAMPLE_DRAFT } from '../../../tests/support/cards/cards.constants.ts'
 import { reviewOf } from '../../../tests/support/reviews/reviews.ts'
-import { tagProgress } from './progress.ts'
-import type { ProgressTree, TagOrder } from './progress.types.ts'
+import { cardProgress, tagProgress } from './progress.ts'
+import type { CardFilters, ProgressInput, ProgressTree, TagOrder } from './progress.types.ts'
 
 const today = new Date('2026-11-15T05:00:00.000Z')
 const tomorrow = new Date('2026-11-16T05:00:00.000Z')
@@ -16,8 +16,12 @@ function cardOf(id: string, tags: string[], state: CardState = 'review', due = D
   return { ...card, state, due: new Date(due) }
 }
 
+function inputOf(cards: Card[], reviews: Review[]): ProgressInput {
+  return { cards, topic: [], reviews, today, tomorrow, windowStart }
+}
+
 function progressOf(cards: Card[], reviews: Review[] = [], order?: TagOrder): ProgressTree {
-  return tagProgress({ cards, topic: [], reviews, today, tomorrow, windowStart }, order)
+  return tagProgress(inputOf(cards, reviews), order)
 }
 
 describe('tag progress', () => {
@@ -214,5 +218,58 @@ describe('tag progress', () => {
         'docker',
       ])
     })
+  })
+})
+
+describe('card progress', () => {
+  const AGAIN = { grade: 'again' } as const
+  const GAP = { grade: 'again', flag: 'missing-prerequisite' } as const
+
+  function failed(cardId: string, times: number): Review[] {
+    return Array.from({ length: times }, (_, index) =>
+      reviewOf(cardId, `2026-11-0${index + 1}T15:00:00.000Z`, AGAIN),
+    )
+  }
+
+  const cards = [
+    cardOf('both', ['a']),
+    cardOf('weak', ['a']),
+    cardOf('gapd', ['a']),
+    cardOf('none', ['a']),
+  ]
+  const reviews = [
+    ...failed('both', 4),
+    reviewOf('both', '2026-11-12T15:00:00.000Z', GAP),
+    ...failed('weak', 4),
+    reviewOf('gapd', '2026-11-12T15:00:00.000Z', GAP),
+    reviewOf('gapd', '2026-11-13T15:00:00.000Z', { flag: 'badly-written' }),
+  ]
+
+  function listed(filters: CardFilters): string[] {
+    return cardProgress(inputOf(cards, reviews), filters).map(({ card }) => card.id)
+  }
+
+  it('cardProgress gives each card its failures, gaps, weak and last review, voided reviews included', () => {
+    const rows = cardProgress(inputOf(cards, reviews), {})
+    const factsOf = (id: string) => rows.find(({ card }) => card.id === id)
+
+    expect(factsOf('both')).toMatchObject({ failures: 4, gaps: 1, weak: true })
+    expect(factsOf('gapd')).toMatchObject({
+      failures: 0,
+      gaps: 1,
+      weak: false,
+      lastReview: new Date('2026-11-13T15:00:00.000Z'),
+    })
+    expect(factsOf('none')).toMatchObject({ failures: 0, gaps: 0, weak: false, lastReview: null })
+  })
+
+  it('cardProgress keeps the cards matching every filter given', () => {
+    expect(listed({ weak: true }).toSorted()).toEqual(['both', 'weak'])
+    expect(listed({ gaps: true }).toSorted()).toEqual(['both', 'gapd'])
+    expect(listed({ weak: true, gaps: true })).toEqual(['both'])
+  })
+
+  it('cardProgress orders by last review, then id, never reviewed last', () => {
+    expect(listed({})).toEqual(['weak', 'both', 'gapd', 'none'])
   })
 })
