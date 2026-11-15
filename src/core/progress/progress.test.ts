@@ -272,4 +272,25 @@ describe('card progress', () => {
   it('cardProgress orders by last review, then id, never reviewed last', () => {
     expect(listed({})).toEqual(['weak', 'both', 'gapd', 'none'])
   })
+
+  it('cardProgress with notReviewed keeps the cards with no review since then, and never-reviewed cards saved before it', () => {
+    const savedLate = { ...cardOf('late', ['a']), createdAt: new Date('2026-11-10T15:00:00.000Z') }
+    const stale = [cardOf('old1', ['a']), cardOf('rcnt', ['a']), cardOf('void', ['a'])]
+    const never = cardOf('nevr', ['a'])
+    const logged = [
+      reviewOf('old1', '2026-10-01T15:00:00.000Z'),
+      reviewOf('rcnt', '2026-11-01T15:00:00.000Z'),
+      reviewOf('void', '2026-11-01T15:00:00.000Z', { flag: 'badly-written' }),
+    ]
+
+    const rows = cardProgress(inputOf([...stale, never, savedLate], logged), {
+      notReviewed: windowStart,
+    })
+
+    expect(rows).toMatchObject([
+      { card: { id: 'old1' }, lastReview: new Date('2026-10-01T15:00:00.000Z') },
+      { card: { id: 'nevr' }, lastReview: null },
+    ])
+    expect(rows).toHaveLength(2)
+  })
 })

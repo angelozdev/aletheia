@@ -8,6 +8,7 @@ import {
   studied,
 } from '../../../../../tests/support/progress/progress.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
+import { runSql } from '../../../../../tests/support/store/store.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 
 const NOW = new Date('2026-11-15T20:00:00.000Z')
@@ -60,5 +61,37 @@ describe('aletheia card list', () => {
       ],
     })
     expect(rowCounts(cli.db)).toEqual(before)
+  })
+
+  it('006-US2-AS1 card list --not-reviewed 30 gives the cards with no review in the last 30 days', async () => {
+    const [stale, recent] = await addTagged(cli, [['messaging'], ['messaging'], ['messaging']])
+    reviewed(cli.db, stale, '2026-10-01T15:00:00.000Z')
+    reviewed(cli.db, recent, '2026-11-01T15:00:00.000Z')
+
+    expect(await list(['--not-reviewed', '30'])).toMatchObject({
+      cards: [{ id: stale, lastReview: '2026-10-01T10:00:00-05:00' }],
+    })
+  })
+
+  it('006-US2-AS2 card list --not-reviewed gives a card never reviewed when it was saved before the window', async () => {
+    const [savedEarly] = await addTagged(cli, [['messaging'], ['messaging']])
+    runSql(
+      cli.db,
+      `update cards set created_at = '2026-10-01T15:00:00.000Z' where id = '${savedEarly}'`,
+    )
+
+    expect(await list(['--not-reviewed', '30'])).toEqual({
+      cards: [expect.objectContaining({ id: savedEarly, lastReview: null })],
+    })
+  })
+
+  it.for(['0', 'x'])('card list --not-reviewed %s exits 1 naming the rule', async (days) => {
+    const { code, stdout, stderr } = await cli.run(['card', 'list', '--not-reviewed', days])
+
+    expect(code).toBe(1)
+    expect(stdout).toBe('')
+    expect(stderr).toMatch(
+      /error: invalid options: --not-reviewed: must be a whole number, 1 or more\n$/,
+    )
   })
 })

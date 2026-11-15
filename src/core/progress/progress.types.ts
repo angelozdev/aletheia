@@ -50,4 +50,4 @@ export type CardProgress = {
   lastReview: Date | null
 }
 
-export type CardFilters = { weak?: boolean; gaps?: boolean }
+export type CardFilters = { weak?: boolean; gaps?: boolean; notReviewed?: Date }

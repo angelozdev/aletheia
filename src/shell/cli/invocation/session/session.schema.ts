@@ -19,7 +19,7 @@ function wholeNumber({ min, max }: LimitRule, message: string) {
     .refine((value) => value >= min && value <= max, message)
 }
 
-function limit(rule: LimitRule) {
+export function limit(rule: LimitRule) {
   return wholeNumber(rule, rule.message).optional()
 }
 

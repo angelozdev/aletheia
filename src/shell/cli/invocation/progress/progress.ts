@@ -15,3 +15,7 @@ export function progressInput(store: Store, context: CliContext, tags: string[])
     windowStart: startOfWindow(now, PROGRESS_WINDOW_DAYS, context.timeZone),
   }
 }
+
+export function windowOf(days: number, context: CliContext): Date {
+  return startOfWindow(context.clock(), days, context.timeZone)
+}

@@ -171,8 +171,16 @@ const BY_ID = byValue(
 
 const BY_LAST_REVIEW = byValue((row: CardProgress) => row.lastReview, false, BY_ID)
 
-function matches(row: CardProgress, { weak, gaps }: CardFilters): boolean {
-  return (weak !== true || row.weak) && (gaps !== true || row.gaps > 0)
+function lastSeen({ lastReview, card }: CardProgress): Date {
+  return lastReview ?? card.createdAt
+}
+
+function matches(row: CardProgress, { weak, gaps, notReviewed }: CardFilters): boolean {
+  return (
+    (weak !== true || row.weak) &&
+    (gaps !== true || row.gaps > 0) &&
+    (notReviewed === undefined || lastSeen(row) < notReviewed)
+  )
 }
 
 export function cardProgress(input: ProgressInput, filters: CardFilters): CardProgress[] {

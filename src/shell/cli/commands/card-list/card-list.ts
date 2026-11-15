@@ -1,6 +1,6 @@
 import { cardProgress, type CardProgress } from '#core/progress'
 import { shownInstant } from '#core/time'
-import { progressInput } from '../../invocation/progress/progress.ts'
+import { progressInput, windowOf } from '../../invocation/progress/progress.ts'
 import { optionsFrom } from '../../invocation/session/session.ts'
 import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand } from '../../main/main.types.ts'
@@ -30,8 +30,10 @@ export const cardListCommand: CliCommand = {
   options: CARD_LIST_OPTIONS,
   run: (context, options, tags, flags) =>
     withStore(context, options, async (store) => {
-      const filters = optionsFrom(cardListFlagsSchema, flags)
-      const rows = cardProgress(progressInput(store, context, tags), filters)
+      const { notReviewed, ...filters } = optionsFrom(cardListFlagsSchema, flags)
+      const since = notReviewed === undefined ? undefined : windowOf(notReviewed, context)
+      const input = progressInput(store, context, tags)
+      const rows = cardProgress(input, { ...filters, notReviewed: since })
       return { cards: rows.map((row) => cardRow(row, context.timeZone)) }
     }),
 }
