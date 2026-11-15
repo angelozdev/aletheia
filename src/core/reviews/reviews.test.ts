@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { newCard, type Card } from '#core/cards'
 import { SAMPLE_DRAFT } from '../../../tests/support/cards/cards.constants.ts'
-import { dueList, topicList } from './reviews.ts'
+import { REVIEW_FLAGS } from './reviews.constants.ts'
+import { dueList, policyOf, topicList } from './reviews.ts'
 
 const now = new Date('2026-11-12T02:00:00.000Z')
 const today = new Date('2026-11-11T05:00:00.000Z')
@@ -123,5 +124,14 @@ describe('topic list', () => {
       cards: [{ id: 'graded-yesterday' }],
       nextDue: new Date('2026-11-14T15:00:00.000Z'),
     })
+  })
+})
+
+describe('flag policies', () => {
+  it('policyOf counts in stats a review with no flag or flagged missing-prerequisite, and never a voided one', () => {
+    const counted = REVIEW_FLAGS.filter((flag) => policyOf(flag).countsInStats)
+
+    expect(policyOf(null).countsInStats).toBe(true)
+    expect(counted).toEqual(['missing-prerequisite'])
   })
 })

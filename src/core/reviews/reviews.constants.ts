@@ -20,6 +20,7 @@ export const NO_FLAG: FlagPolicy = {
   schedule: scheduleAfter,
   hidesUntilTomorrow: false,
   countsAsIntroduced: true,
+  countsInStats: true,
 }
 
 const KEEP_SCHEDULE = (card: Card) => card
@@ -28,6 +29,7 @@ const VOIDED: FlagPolicy = {
   schedule: KEEP_SCHEDULE,
   hidesUntilTomorrow: true,
   countsAsIntroduced: false,
+  countsInStats: false,
 }
 
 export const FLAG_POLICIES: Record<ReviewFlag, FlagPolicy> = {

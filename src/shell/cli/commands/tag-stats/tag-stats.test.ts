@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { uniqueIdDraw } from '../../../../../tests/support/draws/draws.ts'
-import { addTagged, rowCounts, studied } from '../../../../../tests/support/progress/progress.ts'
+import {
+  addTagged,
+  reviewed,
+  rowCounts,
+  studied,
+} from '../../../../../tests/support/progress/progress.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 
@@ -44,7 +49,22 @@ describe('aletheia tag stats', () => {
     expect(rowCounts(cli.db)).toEqual(before)
   })
 
+  it("006-US1-AS2 tag stats gives a tag's retention over its cards' counted reviews", async () => {
+    const [first, second] = await addTagged(cli, [['messaging'], ['messaging']])
+    reviewed(cli.db, first, '2026-11-10T15:00:00.000Z')
+    reviewed(cli.db, first, '2026-11-12T15:00:00.000Z', { grade: 'again' })
+    reviewed(cli.db, second, '2026-11-14T15:00:00.000Z')
+
+    expect(await stats()).toMatchObject({
+      deck: { retention: 67 },
+      tags: [{ tag: 'messaging', retention: 67 }],
+    })
+  })
+
   it('tag stats on an empty deck gives a deck of zeros and no tags', async () => {
-    expect(await stats()).toMatchObject({ deck: { cards: 0, new: 0, due: 0 }, tags: [] })
+    expect(await stats()).toMatchObject({
+      deck: { cards: 0, new: 0, due: 0, retention: null },
+      tags: [],
+    })
   })
 })

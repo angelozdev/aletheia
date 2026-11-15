@@ -8,6 +8,7 @@ export type FlagPolicy = {
   schedule: (card: Card, grade: Grade, now: Date) => Card
   hidesUntilTomorrow: boolean
   countsAsIntroduced: boolean
+  countsInStats: boolean
 }
 
 export type DueList = { cards: Card[]; nextDue: Date | null }

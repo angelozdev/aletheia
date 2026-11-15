@@ -57,6 +57,56 @@ describe('tag progress', () => {
   })
 
   it('tagProgress on an empty deck gives a deck of zeros and no tags', () => {
-    expect(progressOf([])).toMatchObject({ deck: { cards: 0, new: 0, due: 0 }, tags: [] })
+    expect(progressOf([])).toMatchObject({
+      deck: { cards: 0, new: 0, due: 0, retention: null },
+      tags: [],
+    })
+  })
+
+  describe('006-US1-AS2 retention is the share passed of the counted reviews of the last 30 days', () => {
+    const IN_WINDOW = '2026-11-10T15:00:00.000Z'
+
+    it('pools the counted reviews of the cards a row covers, as a whole percent', () => {
+      const cards = [cardOf('aaaa', ['a']), cardOf('bbbb', ['a']), cardOf('cccc', ['b'])]
+      const reviews = [
+        reviewOf('aaaa', IN_WINDOW),
+        reviewOf('aaaa', IN_WINDOW, { grade: 'again' }),
+        reviewOf('bbbb', IN_WINDOW),
+        reviewOf('cccc', IN_WINDOW, { stateBefore: 'new' }),
+      ]
+
+      expect(progressOf(cards, reviews)).toMatchObject({
+        deck: { retention: 67 },
+        tags: [
+          { tag: 'a', retention: 67 },
+          { tag: 'b', retention: null },
+        ],
+      })
+    })
+
+    it('leaves out reviews of cards not yet learned, voided reviews and reviews before the window', () => {
+      const cards = [cardOf('aaaa', ['a'])]
+      const reviews = [
+        reviewOf('aaaa', IN_WINDOW, { grade: 'again' }),
+        reviewOf('aaaa', IN_WINDOW, { stateBefore: 'new' }),
+        reviewOf('aaaa', IN_WINDOW, { stateBefore: 'learning' }),
+        reviewOf('aaaa', IN_WINDOW, { stateBefore: 'relearning' }),
+        reviewOf('aaaa', IN_WINDOW, { flag: 'badly-written' }),
+        reviewOf('aaaa', IN_WINDOW, { grade: 'easy', flag: 'badly-rephrased' }),
+        reviewOf('aaaa', '2026-10-17T04:59:59.000Z'),
+      ]
+
+      expect(progressOf(cards, reviews).deck).toMatchObject({ retention: 0 })
+    })
+
+    it('counts a missing-prerequisite Again as not passed', () => {
+      const cards = [cardOf('aaaa', ['a'])]
+      const reviews = [
+        reviewOf('aaaa', IN_WINDOW),
+        reviewOf('aaaa', IN_WINDOW, { grade: 'again', flag: 'missing-prerequisite' }),
+      ]
+
+      expect(progressOf(cards, reviews).deck).toMatchObject({ retention: 50 })
+    })
   })
 })

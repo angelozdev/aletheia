@@ -1,23 +1,49 @@
 import { NEW_STATE, type Card } from '#core/cards'
-import { policyOf, type Review } from '#core/reviews'
+import { policyOf, REVIEW_STATE, type Review } from '#core/reviews'
+import { AGAIN_GRADE } from '#core/scheduling'
 import { bySegments, coveredTags } from '#core/tags'
+import { PERCENT } from './progress.constants.ts'
 import type { CardFacts, ProgressCounts, ProgressInput, ProgressTree } from './progress.types.ts'
 
-function hiddenToday(reviews: Review[], today: Date): Set<string> {
-  const hiding = reviews.filter(
-    ({ reviewedAt, flag }) => reviewedAt >= today && policyOf(flag).hidesUntilTomorrow,
-  )
-  return new Set(hiding.map(({ cardId }) => cardId))
+function isCounted({ flag, stateBefore }: Review): boolean {
+  return policyOf(flag).countsInStats && stateBefore === REVIEW_STATE
 }
 
-function factsOf({ cards, reviews, today, tomorrow }: ProgressInput): Map<Card, CardFacts> {
-  const hidden = hiddenToday(reviews, today)
-  const facts = cards.map((card): [Card, CardFacts] => {
-    const isNew = card.state === NEW_STATE
-    const isDue = !isNew && card.due < tomorrow && !hidden.has(card.id)
-    return [card, { isNew, isDue }]
+function hidesToday({ reviewedAt, flag }: Review, today: Date): boolean {
+  return reviewedAt >= today && policyOf(flag).hidesUntilTomorrow
+}
+
+function cardFacts(card: Card, reviews: Review[], input: ProgressInput): CardFacts {
+  const isNew = card.state === NEW_STATE
+  const hidden = reviews.some((review) => hidesToday(review, input.today))
+  const counted = reviews.filter(
+    (review) => review.reviewedAt >= input.windowStart && isCounted(review),
+  )
+  return {
+    isNew,
+    isDue: !isNew && card.due < input.tomorrow && !hidden,
+    counted: counted.length,
+    passed: counted.filter(({ grade }) => grade !== AGAIN_GRADE).length,
+  }
+}
+
+function factsOf(input: ProgressInput): Map<Card, CardFacts> {
+  const byCard = Map.groupBy(input.reviews, ({ cardId }) => cardId)
+  const facts = input.cards.map((card): [Card, CardFacts] => {
+    const reviews = byCard.get(card.id) ?? []
+    return [card, cardFacts(card, reviews, input)]
   })
   return new Map(facts)
+}
+
+function total(facts: CardFacts[], count: (facts: CardFacts) => number): number {
+  return facts.reduce((sum, cardFacts) => sum + count(cardFacts), 0)
+}
+
+function retentionOf(facts: CardFacts[]): number | null {
+  const counted = total(facts, (cardFacts) => cardFacts.counted)
+  const passed = total(facts, (cardFacts) => cardFacts.passed)
+  return counted === 0 ? null : Math.round((passed * PERCENT) / counted)
 }
 
 function countsOf(facts: CardFacts[]): ProgressCounts {
@@ -25,6 +51,7 @@ function countsOf(facts: CardFacts[]): ProgressCounts {
     cards: facts.length,
     new: facts.filter(({ isNew }) => isNew).length,
     due: facts.filter(({ isDue }) => isDue).length,
+    retention: retentionOf(facts),
   }
 }
 

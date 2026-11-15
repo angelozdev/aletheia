@@ -120,7 +120,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
     - `src/core/progress/`, new: `progress.types.ts` (`ProgressInput = { cards, reviews, today, tomorrow, windowStart }`, `ProgressCounts`, `TagProgress`, `ProgressTree = { deck, tags }`), `progress.constants.ts` (`EVER = new Date(0)`), `progress.ts` (`tagProgress`), `index.ts`. Due today follows data-model.md: "state `learning`, `relearning` or `review`, `due < tomorrow`, and no review since `today` whose policy `hidesUntilTomorrow`".
     - `src/shell/cli/commands/tag-stats/tag-stats.ts`: group `tag`, name `stats`; `withStore` reads `StoreCardRepository.active()` and `StoreReviewRepository.since(EVER)`, computes `today`, `tomorrow` and `windowStart` (30 days) through `#core/time`, and returns `tagProgress(…)`. Registered in `src/shell/cli/main/main.ts` after `tagListCommand`.
   - **Run**: `pnpm aletheia tag stats`
-- [ ] T003 [US1] `tag stats` gives retention over the counted reviews of the last 30 days, in `src/core/progress/progress.ts` and `src/core/reviews/reviews.constants.ts`
+- [X] T003 [US1] `tag stats` gives retention over the counted reviews of the last 30 days, in `src/core/progress/progress.ts` and `src/core/reviews/reviews.constants.ts`
   - **Test**:
     - `src/core/reviews/reviews.test.ts`: `countsInStats` is `true` for no flag and `missing-prerequisite`, `false` for `badly-written` and `badly-rephrased`.
     - `progress.test.ts`, `006-US1-AS2 retention is the share passed of the counted reviews of the last 30 days`:
