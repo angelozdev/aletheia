@@ -99,7 +99,7 @@ the rebuild; the skill asks every question rephrased.
 
 **Independent Test**: quickstart §1.
 
-- [ ] T002 [US1] `review grade` requires and records the question as asked, the store refuses a blank one, and migrating keeps every review, in `src/shell/db/reviews/reviews.schema.ts` and `src/shell/cli/commands/review-grade/review-grade.schema.ts`
+- [X] T002 [US1] `review grade` requires and records the question as asked, the store refuses a blank one, and migrating keeps every review, in `src/shell/db/reviews/reviews.schema.ts` and `src/shell/cli/commands/review-grade/review-grade.schema.ts`
   - **Test**:
     - `src/shell/db/reviews/reviews.test.ts`:
       - `INV-02 migrating a store keeps every review recorded before, with its flag and its prerequisite` (decision 3):

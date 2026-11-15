@@ -14,3 +14,5 @@ export const FAILING_MIGRATIONS = {
   '20261108000000_first': FIXTURE_MIGRATIONS['20261108000000_first'],
   '20261108000100_second': 'this is not sql;',
 }
+
+export const LAST_RELEASED_MIGRATION = '20261110202019_card_search_on_update'

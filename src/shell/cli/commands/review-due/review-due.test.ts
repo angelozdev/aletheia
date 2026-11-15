@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
+import { ASKED, SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
 import { taggedDrafts } from '../../../../../tests/support/cards/cards.ts'
 import { uniqueIdDraw } from '../../../../../tests/support/draws/draws.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
@@ -86,6 +86,7 @@ function grade(fields: Record<string, string>) {
     claudeGrade: 'again',
     answer: 'No lo recuerda.',
     rationale: 'Le falta el concepto.',
+    askedQuestion: ASKED,
     ...fields,
   }
   return run(['review', 'grade'], JSON.stringify(review))

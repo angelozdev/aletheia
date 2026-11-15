@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { ASKED } from '../../../../../tests/support/cards/cards.constants.ts'
 import { taggedDrafts } from '../../../../../tests/support/cards/cards.ts'
 import { uniqueIdDraw } from '../../../../../tests/support/draws/draws.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
@@ -44,7 +45,14 @@ function messagingCards(count: number): Promise<void> {
 }
 
 function grade(card: string, grade: string) {
-  const review = { card, grade, claudeGrade: grade, answer: 'x', rationale: 'y' }
+  const review = {
+    card,
+    grade,
+    claudeGrade: grade,
+    answer: 'x',
+    rationale: 'y',
+    askedQuestion: ASKED,
+  }
   return run(['review', 'grade'], JSON.stringify(review))
 }
 

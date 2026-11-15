@@ -41,6 +41,7 @@ function graded(cardId: string, reviewedAt: string, stateBefore: Card['state'] =
     rationale: 'r',
     flag: null,
     prerequisiteOf: null,
+    askedQuestion: null,
   }
 }
 

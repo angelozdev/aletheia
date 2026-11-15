@@ -22,6 +22,7 @@ export type Review = {
   rationale: string
   flag: ReviewFlag | null
   prerequisiteOf: string | null
+  askedQuestion: string | null
 }
 
 export type ReviewDraft = {
@@ -30,6 +31,7 @@ export type ReviewDraft = {
   claudeGrade: Grade
   answer: string
   rationale: string
+  askedQuestion: string
   flag?: ReviewFlag
   prerequisiteOf?: string
 }

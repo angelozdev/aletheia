@@ -11,6 +11,7 @@ export const reviewSchema = z
     claudeGrade: oneOf(GRADES),
     answer: requiredText,
     rationale: requiredText,
+    askedQuestion: requiredText,
     flag: oneOf(REVIEW_FLAGS).optional(),
     prerequisiteOf: requiredText.optional(),
   })

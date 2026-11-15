@@ -88,6 +88,7 @@ export function gradeCard(draft: ReviewDraft, { cards, reviews, now }: GradeCard
       rationale: draft.rationale,
       flag: draft.flag ?? null,
       prerequisiteOf: draft.prerequisiteOf ?? null,
+      askedQuestion: draft.askedQuestion,
     },
     graded,
   )

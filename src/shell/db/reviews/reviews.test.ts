@@ -3,7 +3,9 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { newCard } from '#core/cards'
 import type { Review } from '#core/reviews'
 import { scheduleAfter, type Grade } from '#core/scheduling'
-import { SAMPLE_DRAFT } from '../../../../tests/support/cards/cards.constants.ts'
+import { ASKED, SAMPLE_DRAFT } from '../../../../tests/support/cards/cards.constants.ts'
+import { LAST_RELEASED_MIGRATION } from '../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
+import { migrationsUpTo } from '../../../../tests/support/fixture-migrations/fixture-migrations.ts'
 import {
   insertSql,
   openTestStore,
@@ -31,6 +33,7 @@ const REVIEW: Review = {
   rationale: 'Cubre los dos key points, sin dudar.',
   flag: null,
   prerequisiteOf: null,
+  askedQuestion: null,
 }
 
 const VALID_REVIEW: Record<string, string> = {
@@ -47,8 +50,12 @@ const SCHEDULE = 'select state, due, reps, last_review from cards'
 
 let path: string
 
-async function withStore(action: (store: Store) => void): Promise<void> {
-  const store = await openTestStore(path)
+async function withStore(
+  action: (store: Store) => void,
+  at = path,
+  migrationsDir?: string,
+): Promise<void> {
+  const store = await openTestStore(at, migrationsDir)
   try {
     action(store)
   } finally {
@@ -123,6 +130,22 @@ describe('StoreReviewRepository', () => {
     expect(since).toEqual([gap])
   })
 
+  it('record stores the question as asked', async () => {
+    const asked: Review = { ...REVIEW, askedQuestion: ASKED }
+    let since: Review[] = []
+
+    await withStore((store) => {
+      const reviews = new StoreReviewRepository(store)
+      reviews.record(asked, scheduleAfter(card, 'good', now))
+      since = reviews.since(now)
+    })
+
+    expect(selectAll(path, 'select asked_question from reviews')).toEqual([
+      { asked_question: ASKED },
+    ])
+    expect(since).toEqual([asked])
+  })
+
   it('record stores the prerequisite link', async () => {
     const prerequisite: Review = { ...REVIEW, cardId: otherCard.id, prerequisiteOf: card.id }
     let since: Review[] = []
@@ -165,11 +188,40 @@ describe('StoreReviewRepository', () => {
     )
     expect(selectAll(path, 'select grade from reviews')).toEqual([{ grade: 'good' }])
   })
+
+  it('INV-02 migrating a store keeps every review recorded before, with its flag and its prerequisite', async () => {
+    const released = join(tempDir('aletheia-store-'), 'store.sqlite')
+    const upToReleased = migrationsUpTo(LAST_RELEASED_MIGRATION)
+    await withStore(
+      (store) => new StoreCardRepository(store).saveAll([card, otherCard]),
+      released,
+      upToReleased,
+    )
+    const recorded = [
+      insertReview(),
+      insertReview({ flag: 'badly-written', grade: 'good' }),
+      insertReview({ prerequisite_of: otherCard.id }),
+    ]
+    for (const review of recorded) runSql(released, review)
+    const kept = selectAll(released, 'select * from reviews order by id')
+
+    await withStore(() => {}, released)
+
+    expect(selectAll(released, 'select * from reviews order by id')).toEqual(
+      kept.map((row) => ({ ...row, asked_question: null })),
+    )
+  })
 })
 
 describe('the reviews table', () => {
   it('accepts a valid review', () => {
     runSql(path, insertReview())
+
+    expect(selectAll(path, 'select count(*) as n from reviews')).toEqual([{ n: 1 }])
+  })
+
+  it('accepts a review with its question as asked', () => {
+    runSql(path, insertReview({ asked_question: ASKED }))
 
     expect(selectAll(path, 'select count(*) as n from reviews')).toEqual([{ n: 1 }])
   })
@@ -190,6 +242,7 @@ describe('the reviews table', () => {
     ['a state before outside the four', { state_before: 'done' }],
     ['a blank answer', { answer: '  ' }],
     ['a blank rationale', { rationale: '  ' }],
+    ['a blank question as asked', { asked_question: '  ' }],
     ['a review for a card that does not exist', { card_id: 'zzzz' }],
     ['a flag outside the two', { flag: 'trivia' }],
     ['a missing prerequisite that is not Again', { flag: 'missing-prerequisite', grade: 'hard' }],

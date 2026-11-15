@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
+import { ASKED, SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 import { selectAll } from '../../../../../tests/support/store/store.ts'
@@ -14,6 +14,7 @@ const GOOD = {
   claudeGrade: 'good',
   answer: 'ps muestra los que corren, -a todos',
   rationale: 'Cubre los dos key points.',
+  askedQuestion: ASKED,
 }
 
 let now: Date

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
+import { ASKED, SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
 import { cliOnTempStore, runOnStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { CliRun, StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 import { runSql, selectAll } from '../../../../../tests/support/store/store.ts'
@@ -13,6 +13,7 @@ const GRADE = {
   claudeGrade: 'good',
   answer: 'ps muestra los que corren, -a todos',
   rationale: 'Cubre los dos key points, sin dudar.',
+  askedQuestion: ASKED,
 }
 
 let cli: StoreCli
@@ -110,6 +111,16 @@ describe('aletheia review grade', () => {
       nextDue: '2026-11-10T10:10:00-05:00',
       cards: [],
     })
+  })
+
+  it("005-US1-AS1 review grade logs the question as asked and leaves the card's stored question unchanged", async () => {
+    const { code } = await grade({ askedQuestion: ASKED })
+
+    expect(code).toBe(0)
+    expect(selectAll(cli.db, 'select asked_question from reviews')).toEqual([
+      { asked_question: ASKED },
+    ])
+    expect((await shownCard()).question).toBe(SAMPLE_DRAFT.question)
   })
 
   it('004-US1-AS1 review grade logs a missing-prerequisite Again and reschedules the card like any Again', async () => {
@@ -216,6 +227,13 @@ describe('aletheia review grade', () => {
       ['a blank rationale', JSON.stringify({ ...GRADE, rationale: ' ' })],
     ])('001-US2-AS6 review grade refuses %s', async ([, stdin]) => {
       expectRefused(await gradeText(stdin), line('invalid review: rationale: is required'))
+    })
+
+    it.for<[string, string]>([
+      ['no question as asked', gradeWithout('askedQuestion')],
+      ['a blank question as asked', JSON.stringify({ ...GRADE, askedQuestion: '  ' })],
+    ])('005-US1-AS2 review grade refuses %s', async ([, stdin]) => {
+      expectRefused(await gradeText(stdin), line('invalid review: askedQuestion: is required'))
     })
 
     it('001-US2-AS6 review grade names a missing answer and rationale together', async () => {

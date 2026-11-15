@@ -21,6 +21,7 @@ export const reviews = sqliteTable(
     rationale: text().notNull(),
     flag: text().$type<ReviewFlag>(),
     prerequisiteOf: text('prerequisite_of').references(() => cards.id),
+    askedQuestion: text('asked_question'),
   },
   (table) => [
     check('reviews_grade', oneOf(table.grade, GRADES)),
@@ -36,6 +37,10 @@ export const reviews = sqliteTable(
     check(
       'reviews_prerequisite_of',
       sql`${table.prerequisiteOf} IS NULL OR ${table.prerequisiteOf} <> ${table.cardId}`,
+    ),
+    check(
+      'reviews_asked_question',
+      sql`${table.askedQuestion} IS NULL OR ${notBlank(table.askedQuestion)}`,
     ),
   ],
 )

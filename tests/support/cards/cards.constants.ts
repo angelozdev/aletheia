@@ -9,3 +9,5 @@ export const SAMPLE_DRAFT: CardDraft = {
   tags: ['docker::commands'],
   source: 'diarium',
 }
+
+export const ASKED = 'Si corres docker ps y luego docker ps -a, ¿qué contenedores añade el segundo?'
