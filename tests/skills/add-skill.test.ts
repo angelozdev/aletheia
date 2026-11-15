@@ -33,4 +33,19 @@ describe('the az-aletheia-add skill', () => {
       skill.text.indexOf('## 1. Draft'),
     )
   })
+
+  it('007-US1-AS7 az-aletheia-add says when a draft matches an archived card, quoting it and its reason, and offers to drop the draft, save it or restore the card', () => {
+    const skill = readSkill('skills/az-aletheia-add/SKILL.md')
+
+    for (const text of [
+      'status: archived',
+      'archiveReason',
+      'archivada',
+      'drop the draft',
+      'save it anyway',
+      'restore the archived card',
+      'aletheia card restore',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })

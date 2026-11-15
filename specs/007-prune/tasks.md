@@ -150,7 +150,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
   - **Test**: `src/shell/cli/commands/card-search/card-search.test.ts`, `007-US1-AS2 card search gives an archived card that matches the words, with its status and reason`: an archived card matching a word comes with `status: archived` and its `archiveReason`; an active one with `status: active`, `archiveReason: null`; an archived card sharing only a tag family is not given. The 002 tests stay green.
   - **Code**: `matching` drops the `status = active` condition; `similarCards` keeps `active()` for tag-family-only matches; `similarItem` gains `status` and `archiveReason`. The description says "the cards", not "the active cards".
   - **Run**: quickstart §2
-- [ ] T008 [US1] `az-aletheia-add` quotes an archived match and offers drop, save or restore, in `skills/az-aletheia-add/SKILL.md`
+- [X] T008 [US1] `az-aletheia-add` quotes an archived match and offers drop, save or restore, in `skills/az-aletheia-add/SKILL.md`
   - **Test**: `tests/skills/add-skill.test.ts`, `007-US1-AS7 az-aletheia-add says when a draft matches an archived card, quoting it and its reason, and offers to drop the draft, save it or restore the card`: the text holds `status: archived`, `archiveReason`, `aletheia card restore` and the three choices.
   - **Code**: in the duplicate step: an archived match is shown as archived, with its stored question and Angelo's reason; he chooses to drop the draft, save it anyway, or restore the old card. It reaches `prod` with the release (CLAUDE.md).
   - **Run**: `pnpm test -t 007-US1-AS7`

@@ -102,13 +102,16 @@ JSON
   differently still comes back. The JSON rules of `card add` apply.
 - `tags`: the draft's tags.
 
-stdout lists up to 10 cards, `cards[n]` with `id`, `type`, `tags`, `question` and `answer`, or
-`cards: []` when nothing is similar. They are candidates, never verdicts: read every listed
-card and judge it against the draft.
+stdout lists up to 10 cards, `cards[n]` with `id`, `type`, `tags`, `question`, `answer`,
+`status` and `archiveReason`, or `cards: []` when nothing is similar. They are candidates,
+never verdicts: read every listed card and judge it against the draft.
 
 - The draft says what a card already says: flag it `⚠ duplica a #<id>`.
 - The draft repeats part of a card and adds something:
   `⚠ se solapa con #<id>: <qué repite>; agrega <qué es nuevo>`.
+- The card it repeats is listed with `status: archived`: Angelo retired it. Add `archivada` and
+  his reason, the card's `archiveReason`, to the flag, and quote the archived card's question:
+  `⚠ duplica a #<id>, archivada: «<archiveReason>»`.
 - Sharing a word or a tag alone is not a repeat: no flag.
 
 Two drafts of the same batch that repeat each other are merged, or one is dropped, before
@@ -133,6 +136,16 @@ Show flagged drafts with the rest, never drop one silently. Ask Angelo to approv
 reject each one; a flagged draft is decided like any other, and its flag is not stored. Apply
 his edits exactly. A rejected draft is dropped and never stored. If he approves none, save
 nothing.
+
+A draft that repeats an archived card offers three choices: drop the draft, save it anyway as
+a new card, or restore the archived card instead of saving the draft. Restore it only when he
+chooses so, the id without `#`, and drop the draft:
+
+```sh
+aletheia card restore k7m2
+```
+
+It comes back with the schedule it had.
 
 ## 4. Save the approved cards
 
