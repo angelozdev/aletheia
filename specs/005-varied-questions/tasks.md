@@ -174,7 +174,7 @@ card; the skill tells a bad rephrasing from a badly written card.
       - Run `pnpm db:generate --name badly_rephrased`. Read the SQL: `reviews_flag` reads "`flag IS NULL OR flag IN ('missing-prerequisite','badly-written','badly-rephrased')`", `reviews` is rebuilt, and its `INSERT` copies `asked_question`, `flag` and `prerequisite_of`.
       - Run `pnpm exec drizzle-kit generate --custom --name reviews_never_change_after_badly_rephrased`, with the same two triggers.
   - **Run**: quickstart §2
-- [ ] T005 [US2] `aletheia-review` tells a bad rephrasing from a badly written card, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T005 [US2] `aletheia-review` tells a bad rephrasing from a badly written card, in `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `review-skill.test.ts`: `005-US2-AS3 aletheia-review voids a review its rephrasing decided as badly-rephrased with no rewrite, and one the stored wording would have decided too as badly-written`.
     - The text contains `"flag":"badly-rephrased"`, `only your rephrasing`, `propose no rewrite`, `the stored wording would have decided it too` and `"flag":"badly-written"`.
     - The 004-US2-AS4 phrases stay.

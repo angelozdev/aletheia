@@ -126,4 +126,17 @@ describe('the aletheia-review skill', () => {
     expect(grades.length).toBeGreaterThan(0)
     expect(asked).toEqual(grades)
   })
+
+  it('005-US2-AS3 aletheia-review voids a review its rephrasing decided as badly-rephrased with no rewrite, and one the stored wording would have decided too as badly-written', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    for (const text of [
+      '"flag":"badly-rephrased"',
+      'only your rephrasing',
+      'propose no rewrite',
+      'the stored wording would have decided it too',
+      '"flag":"badly-written"',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })

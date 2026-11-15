@@ -221,32 +221,45 @@ session ends, like any Again.
 
 ### The wording decided it
 
-Sometimes the card, not Angelo's memory, decided the answer, right or wrong: the question can
-be read two ways, lacks context it should carry, asks something other than its key points, or
-gives its answer away. Grade the answer as usual, and say why in a line with the grade ("la
-pregunta no dice si la cola es clásica o quorum, así que tu respuesta vale para las dos").
-Once his reply settles it, record it with the flag:
+Sometimes the wording, not Angelo's memory, decided the answer, right or wrong: the question
+can be read two ways, lacks context it should carry, asks something other than its key points,
+or gives its answer away. Grade the answer as usual, then tell which wording decided it:
 
-```sh
-aletheia review grade <<'JSON'
-{"card":"9p3x","grade":"again","claudeGrade":"again","answer":"Dice que el mensaje se queda en la cola tras el ack.","rationale":"La pregunta se lee de dos formas: no dice si la cola es clásica o quorum.","askedQuestion":"Cuando el consumidor hace `ack` de un mensaje, ¿qué pasa con él?","flag":"badly-written"}
-JSON
-```
+- **If only your rephrasing decided it**, say so in a line with the grade ("mi reformulación
+  quitó el `ack`, así que se leía como otra cosa"). Once his reply settles it, record it with
+  the flag `badly-rephrased`, and propose no rewrite: the stored card is fine.
 
-The review is voided: the card keeps its schedule and comes back tomorrow at the earliest,
-not today, in this session or the next. Its printed `due` is the old one; never read it as
-when the card comes back.
+  ```sh
+  aletheia review grade <<'JSON'
+  {"card":"9p3x","grade":"again","claudeGrade":"again","answer":"Habla de la respuesta HTTP del consumidor.","rationale":"Mi reformulación quitó el ack y se leyó como otra cosa.","askedQuestion":"¿Qué le pasa al mensaje cuando el consumidor responde?","flag":"badly-rephrased"}
+  JSON
+  ```
 
-Angelo may dispute a voiding ("no, la pregunta está bien"), or ask for one ("esa pregunta está
-mal escrita"), as he disputes a grade; his word is final, and the review is recorded with the
-flag or without it as he says.
+- **If the stored wording would have decided it too**, say why in a line with the grade ("la
+  pregunta no dice si la cola es clásica o quorum, así que tu respuesta vale para las dos").
+  Once his reply settles it, record it with the flag `badly-written`:
 
-After a voided review, propose a rewrite of the card (see "A rewrite").
+  ```sh
+  aletheia review grade <<'JSON'
+  {"card":"9p3x","grade":"again","claudeGrade":"again","answer":"Dice que el mensaje se queda en la cola tras el ack.","rationale":"La pregunta se lee de dos formas: no dice si la cola es clásica o quorum.","askedQuestion":"Cuando el consumidor hace `ack` de un mensaje, ¿qué pasa con él?","flag":"badly-written"}
+  JSON
+  ```
+
+  Then propose a rewrite of the card (see "A rewrite").
+
+Both flags void the review: the card keeps its schedule and comes back tomorrow at the
+earliest, not today, in this session or the next. Its printed `due` is the old one; never read
+it as when the card comes back.
+
+Angelo may dispute either flag ("no, la pregunta está bien"), or ask for one ("esa pregunta
+está mal escrita", "esa la reformulaste mal"), as he disputes a grade; his word is final, and
+the review is recorded with the flag he says, or without one.
 
 ### A rewrite
 
-After a voided review, or when Angelo asks for one ("la pregunta de #9p3x se entiende mal"),
-propose a rewrite only when the card still asks for the same knowledge: a clearer question, a
+After a review voided as `badly-written`, or when Angelo asks for one ("la pregunta de #9p3x
+se entiende mal"), propose a rewrite only when the card still asks for the same knowledge: a
+clearer question, a
 tidier answer or key points of the same meaning, adjusted tags, situation or type. It follows
 the card rules of the `az-aletheia-add` skill.
 
