@@ -37,7 +37,7 @@ ancestors, in tag order, so a child follows its parent. Each row has:
 - `due`: of them, cards already seen and due before today ends.
 - `retention`: the share passed (Hard, Good or Easy) of the reviews of cards already learned in
   the last 30 days, as a whole percent. `null` means "sin repasos que cuenten aún", never 0%.
-- `weak`: cards with 4 failures or more, ever.
+- `weak`: cards with 3 failures or more, ever.
 - `gaps`: reviews flagged `missing-prerequisite` in the last 30 days.
 
 Lead with the deck in a line (cards, due today, retention), then only the topics worth a
@@ -45,7 +45,7 @@ remark: low retention, weak cards, gaps, many due. Not every row.
 
 The first time `weak` or `gaps` appear in the conversation, say in a line what they mean:
 
-- A weak card has 4 failures or more (Again on a card already learned, not voided, not flagged
+- A weak card has 3 failures or more (Again on a card already learned, not voided, not flagged
   `missing-prerequisite`). It is usually badly written or holds two ideas.
 - A gap is a review flagged `missing-prerequisite` in the last 30 days: the card failed for a
   base concept it lacked. A topic with gaps lacks a base, which is not the same as a weak topic.

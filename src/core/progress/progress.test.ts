@@ -114,7 +114,7 @@ describe('tag progress', () => {
     })
   })
 
-  describe("006-US1-AS3 a card with 4 failures is weak under each of its tags, and a gap counts under the reviewed card's tags", () => {
+  describe("006-US1-AS3 a card with 3 failures is weak under each of its tags, and a gap counts under the reviewed card's tags", () => {
     const AGAIN = { grade: 'again' } as const
 
     function failed(cardId: string, times: number): Review[] {
@@ -123,12 +123,12 @@ describe('tag progress', () => {
       )
     }
 
-    it('4 failures ever make a card weak in each row covering it, and 3 do not', () => {
-      const cards = [cardOf('weak', ['a::b']), cardOf('3ago', ['a'])]
+    it('3 failures ever make a card weak in each row covering it, and 2 do not', () => {
+      const cards = [cardOf('weak', ['a::b']), cardOf('2ago', ['a'])]
       const reviews = [
         reviewOf('weak', '2026-01-01T15:00:00.000Z', AGAIN),
-        ...failed('weak', 3),
-        ...failed('3ago', 3),
+        ...failed('weak', 2),
+        ...failed('2ago', 2),
       ]
 
       expect(progressOf(cards, reviews)).toMatchObject({
@@ -143,7 +143,7 @@ describe('tag progress', () => {
     it('an Again flagged missing-prerequisite or voided, or on a card not yet learned, is not a failure', () => {
       const cards = [cardOf('aaaa', ['a'])]
       const reviews = [
-        ...failed('aaaa', 3),
+        ...failed('aaaa', 2),
         reviewOf('aaaa', '2026-11-10T15:00:00.000Z', { ...AGAIN, flag: 'missing-prerequisite' }),
         reviewOf('aaaa', '2026-11-10T15:00:00.000Z', { ...AGAIN, flag: 'badly-written' }),
         reviewOf('aaaa', '2026-11-10T15:00:00.000Z', { ...AGAIN, stateBefore: 'learning' }),
@@ -238,9 +238,9 @@ describe('card progress', () => {
     cardOf('none', ['a']),
   ]
   const reviews = [
-    ...failed('both', 4),
+    ...failed('both', 3),
     reviewOf('both', '2026-11-12T15:00:00.000Z', GAP),
-    ...failed('weak', 4),
+    ...failed('weak', 3),
     reviewOf('gapd', '2026-11-12T15:00:00.000Z', GAP),
     reviewOf('gapd', '2026-11-13T15:00:00.000Z', { flag: 'badly-written' }),
   ]
@@ -253,7 +253,7 @@ describe('card progress', () => {
     const rows = cardProgress(inputOf(cards, reviews), {})
     const factsOf = (id: string) => rows.find(({ card }) => card.id === id)
 
-    expect(factsOf('both')).toMatchObject({ failures: 4, gaps: 1, weak: true })
+    expect(factsOf('both')).toMatchObject({ failures: 3, gaps: 1, weak: true })
     expect(factsOf('gapd')).toMatchObject({
       failures: 0,
       gaps: 1,

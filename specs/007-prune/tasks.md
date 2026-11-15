@@ -167,7 +167,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
   - **Test**: none new; the 006 tests stay green unchanged.
   - **Code**: `isCounted` ("`policyOf(flag).countsInStats` and `stateBefore = review`") and `isFailure` ("counted, `grade = again`, and `flag ≠ missing-prerequisite`") move to `src/core/reviews/reviews.ts`, exported from its `index.ts`; `progress.ts` imports them.
   - **Run**: `pnpm test`
-- [ ] T010 [US1] A leech is 3 failures, and weak follows it, in `src/core/progress/progress.constants.ts`
+- [X] T010 [US1] A leech is 3 failures, and weak follows it, in `src/core/progress/progress.constants.ts`
   - **Test** (decision 4): `progress.test.ts`'s `006-US1-AS3` cases become "3 failures make a card weak, and 2 do not", and `cardProgress`'s weak fixture uses 3; `tests/skills/stats-skill.test.ts` expects `3 failures` in place of `4 failures`. The test names keep their ids.
   - **Code**: `WEAK_FAILURES = 3`; the stats skill says "3 fallos o más".
   - **Run**: `pnpm aletheia tag stats`

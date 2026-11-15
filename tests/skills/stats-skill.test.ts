@@ -34,7 +34,7 @@ describe('the aletheia-stats skill', () => {
       'aletheia tag stats',
       'aletheia tag list',
       'never from memory',
-      '4 failures',
+      '3 failures',
       'missing-prerequisite',
       'repasemos',
     ])
