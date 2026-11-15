@@ -47,7 +47,6 @@ describe('the aletheia-prune skill', () => {
       'lastFailure',
       'aletheia card edit',
       'same knowledge',
-      'slice 8',
     ])
       expect(skill.text).toContain(text)
   })
@@ -113,5 +112,19 @@ describe('the aletheia-prune skill', () => {
 
     for (const text of ['still active beside', 'archive it again', 'a second time'])
       expect(skill.text).toContain(text)
+  })
+
+  it('008-US2-AS1 aletheia-prune offers split for a card with two ideas and replace when the fix changes what the key points mean, saved and archived as for a merge', () => {
+    const skill = readSkill(PRUNE_SKILL)
+
+    for (const text of [
+      '**Split it**',
+      'two ideas',
+      '**Replace it**',
+      'changes what the key points mean',
+      '### Replace, split or merge',
+    ])
+      expect(skill.text).toContain(text)
+    expect(skill.text).not.toContain('slice 8')
   })
 })

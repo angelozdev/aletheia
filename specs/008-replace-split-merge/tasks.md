@@ -96,7 +96,7 @@ replaced, at prune and in review.
 
 **Independent Test**: quickstart §2.
 
-- [ ] T004 [US2] `aletheia-prune` offers split and replace for a candidate, and replace for an outdated situation whose fix changes meaning, in `.claude/skills/aletheia-prune/SKILL.md`
+- [X] T004 [US2] `aletheia-prune` offers split and replace for a candidate, and replace for an outdated situation whose fix changes meaning, in `.claude/skills/aletheia-prune/SKILL.md`
   - **Test**: `prune-skill.test.ts`, `008-US2-AS1 aletheia-prune offers split for a card with two ideas and replace when the fix changes what the key points mean, saved and archived as for a merge`: the text holds `**Split it**`, `two ideas`, `**Replace it**`, `changes what the key points mean`, `### Replace, split or merge`; it does not hold `slice 8`. Restate `007-US1-AS6`'s second test (decision 2): drop `slice 8`.
   - **Code**: section 2's choices gain **Split it** (the card holds two ideas: one draft per idea) and **Replace it** (the fix would change what the key points mean: one new draft), both through the subsection of T002; the line "When the fix would change what the key points mean, the card needs replacing, which arrives with slice 8" goes. In section 3, an outdated situation offers replace when the card changes meaning, an in-place edit otherwise.
   - **Run**: `pnpm test -t 008-US2-AS1`

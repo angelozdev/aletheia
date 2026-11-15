@@ -118,8 +118,12 @@ Offer what can be done with it, and wait for Angelo to choose before the next on
   JSON
   ```
 
-  When the fix would change what the key points mean, the card needs replacing, which arrives
-  with slice 8: say so in a line and offer the other choices.
+  When the fix changes what the key points mean, offer **Replace it** instead.
+- **Split it**: the card holds two ideas, as a leech often does. One draft per idea, saved and
+  archived as in "Replace, split or merge" below
+  (`reemplazada por #b4n8, #c5p9: tenía dos ideas en una`).
+- **Replace it**: the fix changes what the key points mean. One new draft, saved and archived
+  as in "Replace, split or merge" below.
 - **Keep it**: Angelo wants it as it is. Record the keep for the reason he was shown, one
   call per reason when the card has two and he keeps it for both:
 
@@ -203,9 +207,10 @@ every card of the topic, and skip a card that the `kept` list of `aletheia card 
 names for the same reason: Angelo kept it in the last six months, or the months he set.
 
 - **An outdated situation**: the card's situation is about work Angelo no longer does, by his
-  profile. Quote the situation and the line of the profile it contradicts. Offer: archive it,
-  rewrite the situation in place (section 2, same knowledge only), keep it
-  (`aletheia card keep <id> --reason outdated-situation`), or leave it.
+  profile. Quote the situation and the line of the profile it contradicts. Offer: archive it;
+  rewrite the situation in place (section 2) when the card still asks for the same knowledge,
+  or replace it (section 2) when the new situation changes what the card asks; keep it
+  (`aletheia card keep <id> --reason outdated-situation`); or leave it.
 - **An overlap**: two cards ask nearly the same. Quote both questions. Search the deck for its
   overlaps in other topics too:
 
