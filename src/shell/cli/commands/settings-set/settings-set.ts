@@ -6,6 +6,7 @@ import { optionMessages } from '../../invocation/session/session.ts'
 import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand, Flags } from '../../main/main.types.ts'
 import { shownSettings } from '../settings-show/settings-show.ts'
+import { PRUNE_SETTING_OPTIONS } from './settings-set.constants.ts'
 import { InvalidSettingsError, NoSettingNamedError } from './settings-set.errors.ts'
 
 function changesFrom(flags: Flags): Partial<StoredSettings> {
@@ -18,8 +19,8 @@ function changesFrom(flags: Flags): Partial<StoredSettings> {
 export const settingsSetCommand: CliCommand = {
   group: 'settings',
   name: 'set',
-  options: LIMIT_OPTIONS,
-  description: 'change the review settings named; default forgets one',
+  options: [...LIMIT_OPTIONS, ...PRUNE_SETTING_OPTIONS],
+  description: 'change the settings named; default forgets one',
   run: (context, options, _args, flags) =>
     withStore(context, options, async (store) => {
       const changes = changesFrom(flags)

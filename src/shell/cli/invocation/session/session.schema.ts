@@ -47,4 +47,6 @@ export const settingFlagsSchema = z.object({
   sessionSize: setting(LIMIT_RULES.sessionSize),
   newPerDay: setting(LIMIT_RULES.newPerDay),
   newShare: setting(LIMIT_RULES.newShare),
+  leechFailures: setting(LIMIT_RULES.leechFailures),
+  keepMonths: setting(LIMIT_RULES.keepMonths),
 })

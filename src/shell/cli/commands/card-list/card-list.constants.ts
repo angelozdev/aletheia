@@ -2,7 +2,7 @@ import { DESC_OPTION } from '../../invocation/session/session.constants.ts'
 import type { CommandOption } from '../../main/main.types.ts'
 
 export const CARD_LIST_OPTIONS: CommandOption[] = [
-  { flags: '--weak', description: 'only cards with 3 failures or more' },
+  { flags: '--weak', description: 'only cards with leech-failures failures or more, 3 by default' },
   { flags: '--gaps', description: 'only cards with a gap in the last 30 days' },
   {
     flags: '--not-reviewed <days>',

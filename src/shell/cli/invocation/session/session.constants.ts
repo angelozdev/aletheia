@@ -35,6 +35,8 @@ export const OPTION_FLAGS: Record<string, string> = {
   reason: '--reason',
   overlaps: '--overlaps',
   content: '--content',
+  leechFailures: '--leech-failures',
+  keepMonths: '--keep-months',
 }
 
 export const WHOLE_NUMBER = /^\d+$/
@@ -45,6 +47,8 @@ export const LIMIT_RULES = {
   sessionSize: { message: 'must be a whole number, 1 or more', min: 1, max: Infinity },
   newPerDay: { message: 'must be a whole number, 0 or more', min: 0, max: Infinity },
   newShare: { message: 'must be a whole number from 0 to 100', min: 0, max: MAX_PERCENT },
+  leechFailures: { message: 'must be a whole number, 1 or more', min: 1, max: Infinity },
+  keepMonths: { message: 'must be a whole number, 1 or more', min: 1, max: Infinity },
 } as const
 
 export const DEFAULT_VALUE = 'default'

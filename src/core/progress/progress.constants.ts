@@ -6,8 +6,6 @@ export const PROGRESS_WINDOW_DAYS = 30
 
 export const PERCENT = 100
 
-export const WEAK_FAILURES = 3
-
 export const TAG_SORT_FIELDS = ['tag', 'cards', 'new', 'due', 'retention', 'weak', 'gaps'] as const
 
 export const TAG_FIELD = 'tag'

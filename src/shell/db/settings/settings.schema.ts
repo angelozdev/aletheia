@@ -8,6 +8,8 @@ export const settings = sqliteTable(
     sessionSize: integer('session_size'),
     newPerDay: integer('new_per_day'),
     newShare: integer('new_share'),
+    leechFailures: integer('leech_failures'),
+    keepMonths: integer('keep_months'),
   },
   (table) => [
     check('settings_single_row', sql`${table.id} = 1`),
@@ -17,5 +19,10 @@ export const settings = sqliteTable(
       'settings_new_share',
       sql`${table.newShare} IS NULL OR ${table.newShare} BETWEEN 0 AND 100`,
     ),
+    check(
+      'settings_leech_failures',
+      sql`${table.leechFailures} IS NULL OR ${table.leechFailures} >= 1`,
+    ),
+    check('settings_keep_months', sql`${table.keepMonths} IS NULL OR ${table.keepMonths} >= 1`),
   ],
 )

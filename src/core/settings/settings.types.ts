@@ -1,4 +1,10 @@
-export type Settings = { sessionSize: number; newPerDay: number; newShare: number }
+export type Settings = {
+  sessionSize: number
+  newPerDay: number
+  newShare: number
+  leechFailures: number
+  keepMonths: number
+}
 
 export type StoredSettings = { [K in keyof Settings]: number | null }
 

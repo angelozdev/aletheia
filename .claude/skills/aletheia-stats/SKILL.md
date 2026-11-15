@@ -37,7 +37,8 @@ ancestors, in tag order, so a child follows its parent. Each row has:
 - `due`: of them, cards already seen and due before today ends.
 - `retention`: the share passed (Hard, Good or Easy) of the reviews of cards already learned in
   the last 30 days, as a whole percent. `null` means "sin repasos que cuenten aún", never 0%.
-- `weak`: cards with 3 failures or more, ever.
+- `weak`: cards with 3 failures or more, ever (the `leech-failures` setting, 3 unless Angelo
+  changed it).
 - `gaps`: reviews flagged `missing-prerequisite` in the last 30 days.
 
 `deck` also has `candidates`: how many cards the CLI proposes to prune, leeches and cards

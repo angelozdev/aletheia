@@ -5,7 +5,13 @@ import type { Database, Store } from '../database/database.types.ts'
 import { SETTINGS_ROW } from './settings.constants.ts'
 import { settings } from './settings.schema.ts'
 
-const NOTHING_STORED: StoredSettings = { sessionSize: null, newPerDay: null, newShare: null }
+const NOTHING_STORED: StoredSettings = {
+  sessionSize: null,
+  newPerDay: null,
+  newShare: null,
+  leechFailures: null,
+  keepMonths: null,
+}
 
 export class StoreSettingsRepository implements SettingsRepository {
   readonly #db: Database

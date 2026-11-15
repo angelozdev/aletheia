@@ -277,7 +277,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
 
 **Independent Test**: quickstart §7.
 
-- [ ] T022 [US5] `settings set --leech-failures <n> --keep-months <n>`, read by the candidates and progress, in `src/core/settings/` and `src/shell/db/settings/`
+- [X] T022 [US5] `settings set --leech-failures <n> --keep-months <n>`, read by the candidates and progress, in `src/core/settings/` and `src/shell/db/settings/`
   - **Test**:
     - `settings-set.test.ts`, `007-US5-AS1 settings set changes the leech failures and the keep months, default brings back 3 and 6, and a value below 1 is refused`: `--leech-failures 0` and `--keep-months x` exit 1 with `--leech-failures: must be a whole number, 1 or more, or default` and its twin; `settings show` gives each with `default`.
     - `card-candidates.test.ts` and `tag-stats.test.ts`: `007-US5-AS1 the candidates and weak cards follow the leech setting from the next query`: with `--leech-failures 4`, a card with 3 failures is neither a candidate nor weak; with `default`, it is both. `--keep-months 1` brings back a `not-useful` kept two months ago.

@@ -3,6 +3,7 @@ import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants
 import { addTagged, reviewed, rowCounts } from '../../../../../tests/support/progress/progress.ts'
 import { LAST_OF_THREE_FAILURES } from '../../../../../tests/support/prune/prune.constants.ts'
 import { archiveCard, failed, jsonOf, pruneCli } from '../../../../../tests/support/prune/prune.ts'
+import { runOnStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 
 let cli: StoreCli
@@ -136,5 +137,36 @@ describe('aletheia card candidates', () => {
         '',
       ].join('\n'),
     )
+  })
+
+  it('007-US5-AS1 the candidates and weak cards follow the leech setting from the next query', async () => {
+    const [leech] = await addTagged(cli, [['docker']])
+    failed(cli, leech)
+
+    await cli.run(['settings', 'set', '--leech-failures', '4'])
+    const raised = await jsonOf(cli, ['card', 'candidates'])
+    const raisedList = await jsonOf(cli, ['card', 'list'])
+    await cli.run(['settings', 'set', '--leech-failures', 'default'])
+    const restored = await jsonOf(cli, ['card', 'candidates'])
+    const restoredList = await jsonOf(cli, ['card', 'list'])
+
+    expect(raised.candidates).toEqual([])
+    expect(raisedList.cards).toMatchObject([{ id: leech, weak: false }])
+    expect(restored.candidates).toMatchObject([{ id: leech, reasons: ['leech'] }])
+    expect(restoredList.cards).toMatchObject([{ id: leech, weak: true }])
+  })
+
+  it('007-US5-AS1 the keep months setting brings back a not-useful kept before them', async () => {
+    const [useless] = await addTagged(cli, [['docker']])
+    reviewed(cli.db, useless, '2026-09-01T15:00:00.000Z', { flag: 'not-useful' })
+    const twoMonthsAgo = { clock: () => new Date('2026-09-15T20:00:00.000Z') }
+    await runOnStore(cli.db, ['card', 'keep', useless, '--reason', 'not-useful'], '', twoMonthsAgo)
+
+    const withinSix = await jsonOf(cli, ['card', 'candidates'])
+    await cli.run(['settings', 'set', '--keep-months', '1'])
+    const afterOne = await jsonOf(cli, ['card', 'candidates'])
+
+    expect(withinSix).toMatchObject({ candidates: [], kept: [{ card: useless }] })
+    expect(afterOne).toMatchObject({ candidates: [{ id: useless }], kept: [] })
   })
 })

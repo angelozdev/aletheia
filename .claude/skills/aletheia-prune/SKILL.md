@@ -83,9 +83,9 @@ aletheia card candidates messaging::redis-streams databases::redis
 It prints `candidates`, each with `id`, `question` (as stored), `tags`, `reasons` and the
 evidence for each reason:
 
-- `leech`: the card failed `failures` times, ever, its last failure at `lastFailure`. A
-  failure is an Again on a card already learned, not voided and not flagged
-  `missing-prerequisite`. A leech is usually badly written, holds two ideas, or is something
+- `leech`: the card failed `failures` times, ever, its last failure at `lastFailure`; 3
+  failures make a leech, unless Angelo changed the `leech-failures` setting. A failure is an
+  Again on a card already learned, not voided and not flagged `missing-prerequisite`. A leech is usually badly written, holds two ideas, or is something
   Angelo no longer needs.
 - `not-useful`: Angelo said in a review that the card adds nothing. `notUseful` gives when
   (`at`) and the rationale of the latest such review, which quotes him; quote it back.
@@ -128,8 +128,8 @@ Offer what can be done with it, and wait for Angelo to choose before the next on
   ```
 
   `--reason` is `leech` or `not-useful`, as printed in `reasons`. A kept leech is not proposed
-  again until a new failure after the keep; a card kept as `not-useful`, not for six months.
-  Say so in a line.
+  again until a new failure after the keep; a card kept as `not-useful`, not for six months
+  (the `keep-months` setting). Say so in a line.
 - **Leave it**: nothing is recorded, and the CLI lists it again next time.
 
 Never choose for him, and never act on two cards at once.
@@ -175,3 +175,15 @@ names for the same reason: Angelo kept it in the last six months, or the months 
 
 One card or pair at a time, waiting for Angelo after each. When a topic is done, ask whether
 to go on with the next one, and stop when he says so.
+
+## 4. The thresholds ("pon el leech en 6 fallos")
+
+Two settings shape the candidates: `leech-failures` (3) and `keep-months` (6). When Angelo asks
+to change one, show the exact command and run it only after he approves:
+
+```sh
+aletheia settings set --leech-failures 6
+```
+
+`default` brings back the built-in value (`--keep-months default`). `aletheia settings show`
+prints every setting and whether it is the default.
