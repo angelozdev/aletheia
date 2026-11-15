@@ -192,7 +192,7 @@ card; the skill tells a bad rephrasing from a badly written card.
 
 ## Phase 5: Close
 
-- [ ] T006 Close the slice's docs
+- [X] T006 Close the slice's docs
   - In `CLAUDE.md` Commands, `review grade` lists its required `askedQuestion` beside the optional `flag` and `prerequisiteOf`, and the contracts list gains `specs/005-varied-questions/contracts/cli.md`.
   - The contract gets any message a task changed.
   - Run quickstart §1 and §2 in `test` through `pnpm aletheia`.
