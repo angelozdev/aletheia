@@ -15,8 +15,9 @@ query that answers his question and say what its numbers mean.
   from earlier in the session, even when you printed the same numbers a minute ago.
 - Every number you state is one the CLI printed in that turn. Never count, add up or estimate
   numbers yourself.
-- You only read: `aletheia tag stats`, `aletheia tag list` and `aletheia card list`. This skill
-  writes nothing to the deck: no card, no grade, no setting.
+- You only read: `aletheia tag stats`, `aletheia tag list`, `aletheia card list` and
+  `aletheia review history`. This skill writes nothing to the deck: no card, no grade, no
+  setting.
 - Never open, read or edit a store file, never write SQL, never choose an environment: plain
   `aletheia` is the real deck.
 - Instants come in Angelo's local time with their offset (`2026-11-11T10:00:00-05:00`). Read
@@ -115,7 +116,37 @@ the numbers that answer the question. `cards: []` means none matches; say so.
 When no query answers the question ("¿qué tarjeta me costó más tiempo?"), say that the CLI does
 not keep that, and stop. Never estimate it or answer from what you remember of the session.
 
-## 3. Studying what is weak
+## 3. How the reviews went ("¿qué fallé esta semana?")
+
+Questions about past reviews are read from the log:
+
+```sh
+aletheia review history --days 7 --grade again
+```
+
+It prints `counts` (`reviews`; `grades`, one per grade; `flags`, one per flag; `disputed`, the
+reviews where Angelo's grade differs from yours) and `reviews`, newest first, each with `card`,
+`reviewedAt`, `grade`, `claudeGrade`, `flag` and `askedQuestion` (the question as you asked
+it; `null` for reviews before questions were rephrased). Tags narrow it as in section 1.
+
+- `--days <n>`: the last n days, counting today; 7 when not given. "hoy" is `--days 1`,
+  "esta semana" `--days 7`, "estas dos semanas" `--days 14`.
+- `--grade <grade>`: only reviews Angelo graded `again`, `hard`, `good` or `easy`.
+- `--flag <flag>`: only reviews flagged `missing-prerequisite`, `badly-written` or
+  `badly-rephrased`.
+
+The counts cover the reviews listed, after every filter.
+
+- "¿qué fallé esta semana?": `aletheia review history --days 7 --grade again`; give each Again
+  with its card and the question as asked.
+- "¿cuántos repasos anulaste por reformulación estas dos semanas?": run
+  `aletheia review history --days 14 --flag badly-rephrased` and
+  `aletheia review history --days 14`, and give the first `counts.reviews` out of the second's.
+- "¿en cuántos te discutí la nota?": `disputed` from `aletheia review history --days <n>`.
+
+Always quote the counts the CLI prints; never count the rows yourself.
+
+## 4. Studying what is weak
 
 This skill does not review. When Angelo wants to study a topic, offer "repasemos <tema>" with
 the topic in Spanish; `aletheia-review` takes it from there.

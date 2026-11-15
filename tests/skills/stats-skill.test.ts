@@ -68,4 +68,19 @@ describe('the aletheia-stats skill', () => {
     ])
       expect(skill.text).toContain(text)
   })
+
+  it('006-US3-AS2 aletheia-stats answers questions about past reviews from aletheia review history and quotes its counts', () => {
+    const skill = readSkill(STATS_SKILL)
+
+    for (const text of [
+      'aletheia review history',
+      '--days 7',
+      '--days 14',
+      '--grade again',
+      '--flag badly-rephrased',
+      'disputed',
+      'quote the counts',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })
