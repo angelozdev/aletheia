@@ -1,8 +1,8 @@
 import { bySaved, type Card } from '#core/cards'
-import { isFailure, type Review } from '#core/reviews'
+import { isFailure, NOT_USEFUL, type Review } from '#core/reviews'
 import { topicCards } from '#core/tags'
 import { LEECH } from './prune.constants.ts'
-import type { Candidate, PruneInput } from './prune.types.ts'
+import type { Candidate, CandidateReason, PruneInput } from './prune.types.ts'
 
 function inScope({ cards, topic }: PruneInput): Card[] {
   return topic.length === 0 ? cards : topicCards(cards, topic)
@@ -17,11 +17,17 @@ function latestOf(reviews: Review[]): Review | null {
 
 function candidateOf(card: Card, reviews: Review[], input: PruneInput): Candidate {
   const failures = reviews.filter(isFailure)
+  const notUseful = latestOf(reviews.filter(({ flag }) => flag === NOT_USEFUL))
+  const reasons: CandidateReason[] = []
+  if (failures.length >= input.leechFailures) reasons.push(LEECH)
+  if (notUseful !== null) reasons.push(NOT_USEFUL)
   return {
     card,
-    reasons: failures.length >= input.leechFailures ? [LEECH] : [],
+    reasons,
     failures: failures.length,
     lastFailure: latestOf(failures)?.reviewedAt ?? null,
+    notUseful:
+      notUseful === null ? null : { at: notUseful.reviewedAt, rationale: notUseful.rationale },
   }
 }
 

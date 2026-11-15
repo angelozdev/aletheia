@@ -87,6 +87,10 @@ evidence for each reason:
   failure is an Again on a card already learned, not voided and not flagged
   `missing-prerequisite`. A leech is usually badly written, holds two ideas, or is something
   Angelo no longer needs.
+- `not-useful`: Angelo said in a review that the card adds nothing. `notUseful` gives when
+  (`at`) and the rationale of the latest such review, which quotes him; quote it back.
+
+A card can carry both reasons; show both.
 
 `candidates: []` means the CLI finds nothing to prune there; say so.
 
@@ -97,6 +101,7 @@ question and its reasons with their evidence, in Spanish:
 #k7m2 · messaging::redis-streams
   En Redis Streams, ¿cómo reparte un consumer group los mensajes entre sus consumidores?
   Leech: 5 fallos, el último el 20 de noviembre.
+  Dijiste que no te sirve (18 de noviembre): «esto no me sirve, nunca lo uso».
 ```
 
 Offer what can be done with it, and wait for Angelo to choose before the next one:

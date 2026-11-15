@@ -21,7 +21,7 @@ const BADLY_WRITTEN = 'badly-written'
 
 const BADLY_REPHRASED = 'badly-rephrased'
 
-const NOT_USEFUL = 'not-useful'
+export const NOT_USEFUL = 'not-useful'
 
 export const NO_FLAG: FlagPolicy = {
   schedule: scheduleAfter,

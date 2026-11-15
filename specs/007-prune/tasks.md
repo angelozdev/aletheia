@@ -207,7 +207,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
     - Restated (decision 4): the flag messages of `review-grade.test.ts` and `review-history.test.ts` name `not-useful`; `review-history.test.ts`'s `flags` gain `not-useful: 0`.
   - **Code**: `REVIEW_FLAGS` gains `not-useful`, `FLAG_POLICIES` maps it to `NO_FLAG`. `pnpm db:generate --name not_useful`, then `drizzle-kit generate --custom --name reviews_never_change_after_not_useful` with both triggers word for word.
   - **Run**: quickstart §4, the grade
-- [ ] T015 [US2] `card candidates` gives a card with a `not-useful` review, with its latest one's instant and rationale, in `src/core/prune/prune.ts`
+- [X] T015 [US2] `card candidates` gives a card with a `not-useful` review, with its latest one's instant and rationale, in `src/core/prune/prune.ts`
   - **Test**: `prune.test.ts`: two `not-useful` reviews → `reasons: ['not-useful']`, `notUseful` the latest's `{ at, rationale }`; a leech with one → `reasons: ['leech', 'not-useful']`, one row. `card-candidates.test.ts`: `007-US2-AS2 card candidates gives a card said to be useless, with the instant and rationale of its latest not-useful review`.
   - **Code**: the `not-useful` rule of data-model.md, without keeps yet.
   - **Run**: quickstart §4

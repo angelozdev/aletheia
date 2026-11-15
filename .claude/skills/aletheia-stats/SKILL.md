@@ -40,7 +40,8 @@ ancestors, in tag order, so a child follows its parent. Each row has:
 - `weak`: cards with 3 failures or more, ever.
 - `gaps`: reviews flagged `missing-prerequisite` in the last 30 days.
 
-`deck` also has `candidates`: how many cards the CLI proposes to prune (leeches, for now).
+`deck` also has `candidates`: how many cards the CLI proposes to prune, leeches and cards
+Angelo said were useless in a review.
 
 Lead with the deck in a line (cards, due today, retention), then only the topics worth a
 remark: low retention, weak cards, gaps, many due. Not every row. When `candidates` is above 0,

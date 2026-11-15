@@ -7,6 +7,7 @@ import { candidates } from './prune.ts'
 import type { PruneInput } from './prune.types.ts'
 
 const AGAIN = { grade: 'again' } as const
+const NOT_USEFUL = { flag: 'not-useful' } as const
 const LEECH_FAILURES = 3
 
 function cardOf(id: string, tags = ['a'], savedAt = '2026-10-01T10:00:00.000Z'): Card {
@@ -36,8 +37,38 @@ describe('prune candidates', () => {
         reasons: ['leech'],
         failures: 3,
         lastFailure: new Date('2026-11-03T15:00:00.000Z'),
+        notUseful: null,
       },
     ])
+  })
+
+  it('a card with a not-useful review is a candidate, with the instant and rationale of its latest one', () => {
+    const card = cardOf('aaaa')
+    const reviews = [
+      reviewOf('aaaa', '2026-11-02T15:00:00.000Z', { ...NOT_USEFUL, rationale: 'antes' }),
+      reviewOf('aaaa', '2026-11-09T15:00:00.000Z', { ...NOT_USEFUL, rationale: 'después' }),
+      reviewOf('aaaa', '2026-11-12T15:00:00.000Z'),
+    ]
+
+    const found = candidates(inputOf([card], reviews))
+
+    expect(found).toEqual([
+      {
+        card,
+        reasons: ['not-useful'],
+        failures: 0,
+        lastFailure: null,
+        notUseful: { at: new Date('2026-11-09T15:00:00.000Z'), rationale: 'después' },
+      },
+    ])
+  })
+
+  it('a leech said to be useless is one candidate with both reasons, leech first', () => {
+    const reviews = [...failed('aaaa', 3), ...failed('aaaa', 1, NOT_USEFUL)]
+
+    const found = candidates(inputOf([cardOf('aaaa')], reviews))
+
+    expect(found).toMatchObject([{ reasons: ['leech', 'not-useful'], failures: 4 }])
   })
 
   it('2 failures, a voided Again, a missing-prerequisite Again and an Again before learning do not make a leech', () => {
