@@ -1,5 +1,6 @@
 import type { Card } from '#core/cards'
 import type { Review } from '#core/reviews'
+import type { TAG_SORT_FIELDS } from './progress.constants.ts'
 
 export type ProgressInput = {
   cards: Card[]
@@ -19,7 +20,7 @@ export type ProgressCounts = {
   gaps: number
 }
 
-type TagProgress = { tag: string } & ProgressCounts
+export type TagProgress = { tag: string } & ProgressCounts
 
 export type ProgressTree = { deck: ProgressCounts; tags: TagProgress[] }
 
@@ -31,3 +32,11 @@ export type CardFacts = {
   failures: number
   gaps: number
 }
+
+type TagSortField = (typeof TAG_SORT_FIELDS)[number]
+
+export type TagOrder = { field: TagSortField; desc: boolean }
+
+export type SortValue = string | number | null
+
+export type Comparator<Row> = (a: Row, b: Row) => number

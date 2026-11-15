@@ -31,7 +31,7 @@ type CommandArgument = { name: string; description: string }
 
 export type CommandOption = { flags: string; description: string }
 
-export type Flags = Record<string, string | undefined>
+export type Flags = Record<string, string | boolean | undefined>
 
 export type CliCommand = {
   group?: CommandGroup

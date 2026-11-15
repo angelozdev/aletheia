@@ -1,9 +1,18 @@
 import { NEW_STATE, type Card } from '#core/cards'
 import { MISSING_PREREQUISITE, policyOf, REVIEW_STATE, type Review } from '#core/reviews'
 import { AGAIN_GRADE } from '#core/scheduling'
-import { bySegments, coveredTags, isUnder, topicCards } from '#core/tags'
-import { PERCENT, WEAK_FAILURES } from './progress.constants.ts'
-import type { CardFacts, ProgressCounts, ProgressInput, ProgressTree } from './progress.types.ts'
+import { bySegments, coveredTags, isUnder, TAG_SEPARATOR, topicCards } from '#core/tags'
+import { DEFAULT_TAG_ORDER, PERCENT, TAG_FIELD, WEAK_FAILURES } from './progress.constants.ts'
+import type {
+  CardFacts,
+  Comparator,
+  ProgressCounts,
+  ProgressInput,
+  ProgressTree,
+  SortValue,
+  TagOrder,
+  TagProgress,
+} from './progress.types.ts'
 
 function isCounted({ flag, stateBefore }: Review): boolean {
   return policyOf(flag).countsInStats && stateBefore === REVIEW_STATE
@@ -86,13 +95,52 @@ function factsByTag(facts: Map<Card, CardFacts>): Map<string, CardFacts[]> {
   return byTag
 }
 
-export function tagProgress(input: ProgressInput): ProgressTree {
+function byValue<Row>(
+  value: (row: Row) => SortValue,
+  desc: boolean,
+  tieBreak: Comparator<Row>,
+): Comparator<Row> {
+  return (a, b) => {
+    const left = value(a)
+    const right = value(b)
+    if (left === right) return tieBreak(a, b)
+    if (left === null) return 1
+    if (right === null) return -1
+    const order = left < right ? -1 : 1
+    return desc ? -order : order
+  }
+}
+
+function tagComparator(rows: TagProgress[], { field, desc }: TagOrder): Comparator<TagProgress> {
+  const positions = new Map(rows.map((row, index) => [row, index]))
+  const position = (row: TagProgress) => positions.get(row) ?? 0
+  const inSegmentOrder = (a: TagProgress, b: TagProgress) => position(a) - position(b)
+  const value = field === TAG_FIELD ? position : (row: TagProgress) => row[field]
+  return byValue(value, desc, inSegmentOrder)
+}
+
+function parentTag(tag: string): string {
+  return tag.split(TAG_SEPARATOR).slice(0, -1).join(TAG_SEPARATOR)
+}
+
+function treeOrder(rows: TagProgress[], compare: Comparator<TagProgress>): TagProgress[] {
+  const tags = new Set(rows.map(({ tag }) => tag))
+  const children = Map.groupBy(rows, ({ tag }) => {
+    const parent = parentTag(tag)
+    return tags.has(parent) ? parent : null
+  })
+  const below = (parent: string | null): TagProgress[] => {
+    const siblings = children.get(parent) ?? []
+    return siblings.toSorted(compare).flatMap((row) => [row, ...below(row.tag)])
+  }
+  return below(null)
+}
+
+export function tagProgress(input: ProgressInput, order = DEFAULT_TAG_ORDER): ProgressTree {
   const facts = factsOf(input)
   const byTag = factsByTag(facts)
   const tags = [...byTag.keys()].filter((tag) => inTopic(tag, input.topic)).toSorted(bySegments)
+  const rows = tags.map((tag) => ({ tag, ...countsOf(byTag.get(tag) ?? []) }))
   const deckFacts = [...facts.values()]
-  return {
-    deck: countsOf(deckFacts),
-    tags: tags.map((tag) => ({ tag, ...countsOf(byTag.get(tag) ?? []) })),
-  }
+  return { deck: countsOf(deckFacts), tags: treeOrder(rows, tagComparator(rows, order)) }
 }

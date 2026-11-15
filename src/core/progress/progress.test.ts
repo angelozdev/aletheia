@@ -4,7 +4,7 @@ import type { Review } from '#core/reviews'
 import { SAMPLE_DRAFT } from '../../../tests/support/cards/cards.constants.ts'
 import { reviewOf } from '../../../tests/support/reviews/reviews.ts'
 import { tagProgress } from './progress.ts'
-import type { ProgressTree } from './progress.types.ts'
+import type { ProgressTree, TagOrder } from './progress.types.ts'
 
 const today = new Date('2026-11-15T05:00:00.000Z')
 const tomorrow = new Date('2026-11-16T05:00:00.000Z')
@@ -16,8 +16,8 @@ function cardOf(id: string, tags: string[], state: CardState = 'review', due = D
   return { ...card, state, due: new Date(due) }
 }
 
-function progressOf(cards: Card[], reviews: Review[] = []): ProgressTree {
-  return tagProgress({ cards, topic: [], reviews, today, tomorrow, windowStart })
+function progressOf(cards: Card[], reviews: Review[] = [], order?: TagOrder): ProgressTree {
+  return tagProgress({ cards, topic: [], reviews, today, tomorrow, windowStart }, order)
 }
 
 describe('tag progress', () => {
@@ -165,6 +165,54 @@ describe('tag progress', () => {
           { tag: 'c', gaps: 1 },
         ],
       })
+    })
+  })
+
+  describe('sorted by a field', () => {
+    const IN_WINDOW = '2026-11-10T15:00:00.000Z'
+    const cards = [
+      cardOf('rabb', ['messaging::rabbitmq']),
+      cardOf('redi', ['messaging::redis-streams']),
+      cardOf('kafk', ['messaging::kafka']),
+      cardOf('dock', ['docker']),
+      cardOf('aws1', ['aws']),
+    ]
+    const halfPassed = (cardId: string) => [
+      reviewOf(cardId, IN_WINDOW),
+      reviewOf(cardId, IN_WINDOW, { grade: 'again' }),
+    ]
+    const reviews = [
+      reviewOf('rabb', IN_WINDOW),
+      ...halfPassed('redi'),
+      ...halfPassed('dock'),
+      ...halfPassed('aws1'),
+    ]
+
+    function sortedTags(desc: boolean): string[] {
+      const { tags } = progressOf(cards, reviews, { field: 'retention', desc })
+      return tags.map(({ tag }) => tag)
+    }
+
+    it('tagProgress orders siblings under their parent, null last and ties in segment order', () => {
+      expect(sortedTags(false)).toEqual([
+        'aws',
+        'docker',
+        'messaging',
+        'messaging::redis-streams',
+        'messaging::rabbitmq',
+        'messaging::kafka',
+      ])
+    })
+
+    it('tagProgress reverses the field with desc, still null last and ties in segment order', () => {
+      expect(sortedTags(true)).toEqual([
+        'messaging',
+        'messaging::rabbitmq',
+        'messaging::redis-streams',
+        'messaging::kafka',
+        'aws',
+        'docker',
+      ])
     })
   })
 })

@@ -39,11 +39,15 @@ export function optionMessages(issues: z.core.$ZodIssue[]): string[] {
   return issues.map((issue) => `${OPTION_FLAGS[String(issue.path[0])]}: ${issue.message}`)
 }
 
+export function optionsFrom<Options>(schema: z.ZodType<Options>, flags: Flags): Options {
+  const parsed = schema.safeParse(flags)
+  if (!parsed.success) throw new InvalidOptionsError(optionMessages(parsed.error.issues))
+  return parsed.data
+}
+
 export function sessionFrom(flags: Flags, context: CliContext): SessionRequest {
   const now = context.clock()
-  const parsed = sessionFlagsSchema(now).safeParse(flags)
-  if (!parsed.success) throw new InvalidOptionsError(optionMessages(parsed.error.issues))
-  const { session, ...limits } = parsed.data
+  const { session, ...limits } = optionsFrom(sessionFlagsSchema(now), flags)
   return { now, start: session ?? now, limits }
 }
 

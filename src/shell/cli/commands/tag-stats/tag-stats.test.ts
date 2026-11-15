@@ -105,6 +105,40 @@ describe('aletheia tag stats', () => {
     expect(malformed.stderr).toMatch(/error: invalid topic: messaging::Redis: /)
   })
 
+  it('006-US1-AS5 tag stats sorts siblings by a field in either direction', async () => {
+    const [rabbit, redis] = await addTagged(cli, [
+      ['messaging::rabbitmq'],
+      ['messaging::redis-streams'],
+    ])
+    reviewed(cli.db, rabbit, '2026-11-10T15:00:00.000Z')
+    reviewed(cli.db, redis, '2026-11-10T15:00:00.000Z', { grade: 'again' })
+    const rowsOf = ({ tags }: { tags: { tag: string }[] }) => tags.map(({ tag }) => tag)
+
+    const ascending = await stats(['--sort', 'retention'])
+    const descending = await stats(['--sort', 'retention', '--desc'])
+
+    expect(rowsOf(ascending)).toEqual([
+      'messaging',
+      'messaging::redis-streams',
+      'messaging::rabbitmq',
+    ])
+    expect(rowsOf(descending)).toEqual([
+      'messaging',
+      'messaging::rabbitmq',
+      'messaging::redis-streams',
+    ])
+  })
+
+  it('006-US1-AS5 tag stats refuses an unknown sort field naming the valid ones', async () => {
+    const { code, stdout, stderr } = await cli.run(['tag', 'stats', '--sort', 'nope'])
+
+    expect(code).toBe(1)
+    expect(stdout).toBe('')
+    expect(stderr).toMatch(
+      /error: invalid options: --sort: must be tag, cards, new, due, retention, weak or gaps\n$/,
+    )
+  })
+
   it('tag stats prints the tree as TOON', async () => {
     const [studiedCard] = await addTagged(cli, [['messaging'], ['messaging::rabbitmq']])
     studied(cli.db, studiedCard, 'review', DUE_TODAY)

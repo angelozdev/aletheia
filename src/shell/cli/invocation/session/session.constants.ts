@@ -19,6 +19,8 @@ export const OPTION_FLAGS: Record<string, string> = {
   sessionSize: '--session-size',
   newPerDay: '--new-per-day',
   newShare: '--new-share',
+  sort: '--sort',
+  desc: '--desc',
 }
 
 export const WHOLE_NUMBER = /^\d+$/

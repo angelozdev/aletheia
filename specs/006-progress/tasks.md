@@ -170,7 +170,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
     - `006-US1-AS4 tag stats refuses a tag with no active card under it`: `tag stats kafka` exits 1, stdout empty, stderr `error: no active card under kafka`. A malformed tag gives `error: invalid topic: …`, as in `review topic`.
   - **Code**: decision 5; `tag-stats.ts` takes `argument: { name: '[tags...]', … }`, and with tags scopes the cards through `topicCards(active, topicFrom(tags))` before `tagProgress`. Rows outside the topic tags (their ancestors) are left out.
   - **Run**: quickstart §2, the first command
-- [ ] T007 [US1] `tag stats --sort <field> [--desc]` orders siblings under their parent, in `src/core/progress/progress.ts`
+- [X] T007 [US1] `tag stats --sort <field> [--desc]` orders siblings under their parent, in `src/core/progress/progress.ts`
   - **Test**:
     - `progress.test.ts`: under `--sort retention`, `messaging::rabbitmq` (91) and `messaging::redis-streams` (71) swap, each still after `messaging`; `--desc` reverses them; a row with `retention: null` is last in either direction; ties keep segment order.
     - `tag-stats.test.ts`: `006-US1-AS5 tag stats sorts siblings by a field in either direction` (`--sort retention`, then with `--desc`), and `006-US1-AS5 tag stats refuses an unknown sort field naming the valid ones`: `--sort nope` exits 1 with `error: invalid options: --sort: must be tag, cards, new, due, retention, weak or gaps`.
