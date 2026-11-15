@@ -1,5 +1,5 @@
-import { FIELD_SEPARATOR } from '../../invocation/input/input.constants.ts'
-import { MALFORMED_TAG } from '../card-add/card-add.constants.ts'
+import { MALFORMED_TAG } from '../../commands/card-add/card-add.constants.ts'
+import { FIELD_SEPARATOR } from '../input/input.constants.ts'
 
 export class InvalidTopicError extends Error {
   constructor(tags: string[]) {

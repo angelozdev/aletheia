@@ -1,7 +1,7 @@
 import { NEW_STATE, type Card } from '#core/cards'
 import { MISSING_PREREQUISITE, policyOf, REVIEW_STATE, type Review } from '#core/reviews'
 import { AGAIN_GRADE } from '#core/scheduling'
-import { bySegments, coveredTags } from '#core/tags'
+import { bySegments, coveredTags, isUnder, topicCards } from '#core/tags'
 import { PERCENT, WEAK_FAILURES } from './progress.constants.ts'
 import type { CardFacts, ProgressCounts, ProgressInput, ProgressTree } from './progress.types.ts'
 
@@ -37,9 +37,17 @@ function cardFacts(card: Card, reviews: Review[], input: ProgressInput): CardFac
   }
 }
 
+function inScope({ cards, topic }: ProgressInput): Card[] {
+  return topic.length === 0 ? cards : topicCards(cards, topic)
+}
+
+function inTopic(tag: string, topic: string[]): boolean {
+  return topic.length === 0 || topic.some((topicTag) => isUnder(tag, topicTag))
+}
+
 function factsOf(input: ProgressInput): Map<Card, CardFacts> {
   const byCard = Map.groupBy(input.reviews, ({ cardId }) => cardId)
-  const facts = input.cards.map((card): [Card, CardFacts] => {
+  const facts = inScope(input).map((card): [Card, CardFacts] => {
     const reviews = byCard.get(card.id) ?? []
     return [card, cardFacts(card, reviews, input)]
   })
@@ -81,7 +89,7 @@ function factsByTag(facts: Map<Card, CardFacts>): Map<string, CardFacts[]> {
 export function tagProgress(input: ProgressInput): ProgressTree {
   const facts = factsOf(input)
   const byTag = factsByTag(facts)
-  const tags = [...byTag.keys()].toSorted(bySegments)
+  const tags = [...byTag.keys()].filter((tag) => inTopic(tag, input.topic)).toSorted(bySegments)
   const deckFacts = [...facts.values()]
   return {
     deck: countsOf(deckFacts),

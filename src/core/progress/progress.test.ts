@@ -17,7 +17,7 @@ function cardOf(id: string, tags: string[], state: CardState = 'review', due = D
 }
 
 function progressOf(cards: Card[], reviews: Review[] = []): ProgressTree {
-  return tagProgress({ cards, reviews, today, tomorrow, windowStart })
+  return tagProgress({ cards, topic: [], reviews, today, tomorrow, windowStart })
 }
 
 describe('tag progress', () => {

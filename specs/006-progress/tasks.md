@@ -164,7 +164,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
 
 **Independent Test**: quickstart §2.
 
-- [ ] T006 [US1] `tag stats [tags...]` gives only those tags and their descendants, in `src/shell/cli/commands/tag-stats/tag-stats.ts`
+- [X] T006 [US1] `tag stats [tags...]` gives only those tags and their descendants, in `src/shell/cli/commands/tag-stats/tag-stats.ts`
   - **Test**: `tag-stats.test.ts`:
     - `006-US1-AS4 tag stats under a tag gives only it and its descendants, and a deck over their cards`: cards under `messaging::…` and `docker::…`; `tag stats messaging --json` gives only `messaging…` rows, and `deck.cards` counts the `messaging` cards.
     - `006-US1-AS4 tag stats refuses a tag with no active card under it`: `tag stats kafka` exits 1, stdout empty, stderr `error: no active card under kafka`. A malformed tag gives `error: invalid topic: …`, as in `review topic`.

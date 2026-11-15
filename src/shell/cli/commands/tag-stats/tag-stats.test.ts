@@ -83,6 +83,28 @@ describe('aletheia tag stats', () => {
     })
   })
 
+  it('006-US1-AS4 tag stats under a tag gives only it and its descendants, and a deck over their cards', async () => {
+    await addTagged(cli, [['messaging::rabbitmq'], ['messaging', 'docker'], ['docker::logs']])
+
+    const tree = await stats(['messaging'])
+    const rows = tree.tags.map(({ tag }: { tag: string }) => tag)
+
+    expect(tree.deck).toMatchObject({ cards: 2 })
+    expect(rows).toEqual(['messaging', 'messaging::rabbitmq'])
+  })
+
+  it('006-US1-AS4 tag stats refuses a tag with no active card under it', async () => {
+    await addTagged(cli, [['messaging']])
+
+    const uncovered = await cli.run(['tag', 'stats', 'kafka'])
+    const malformed = await cli.run(['tag', 'stats', 'messaging::Redis'])
+
+    expect(uncovered).toMatchObject({ code: 1, stdout: '' })
+    expect(uncovered.stderr).toMatch(/error: no active card under kafka\n$/)
+    expect(malformed).toMatchObject({ code: 1, stdout: '' })
+    expect(malformed.stderr).toMatch(/error: invalid topic: messaging::Redis: /)
+  })
+
   it('tag stats prints the tree as TOON', async () => {
     const [studiedCard] = await addTagged(cli, [['messaging'], ['messaging::rabbitmq']])
     studied(cli.db, studiedCard, 'review', DUE_TODAY)

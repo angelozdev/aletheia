@@ -29,7 +29,7 @@ export function tagTree(cards: Card[]): TagCount[] {
   return tags.map((tag) => ({ tag, cards: counts.get(tag) ?? 0 }))
 }
 
-function isUnder(tag: string, topicTag: string): boolean {
+export function isUnder(tag: string, topicTag: string): boolean {
   return tag === topicTag || tag.startsWith(`${topicTag}${TAG_SEPARATOR}`)
 }
 

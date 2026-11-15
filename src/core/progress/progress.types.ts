@@ -3,6 +3,7 @@ import type { Review } from '#core/reviews'
 
 export type ProgressInput = {
   cards: Card[]
+  topic: string[]
   reviews: Review[]
   today: Date
   tomorrow: Date
