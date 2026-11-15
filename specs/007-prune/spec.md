@@ -47,7 +47,7 @@ Reviewing #q3rt, Angelo says "esto no me sirve, nunca lo uso". Claude grades his
 Claude also reads the deck, topic by topic: #m4cd's situation, "cuando prepare el examen de AWS", no longer fits `PROFILE.md`, which says he passed it; #9p3x and #w2ab ask nearly the same about acks, one in Redis Streams and one in RabbitMQ. Each comes with Claude's reason, said to be its judgment. Angelo would rather have one card with the agnostic concept and examples in both: that is a merge, in slice 8, so for now he keeps the pair, archives one, or leaves it for the merge.
 **Independent Test**: on a tag with three cards, one query gives each with its question, key points and situation.
 
-1. **007-US3-AS1** Given active cards under a tag, When they are asked for reading, Then one query gives each with its id, question, key points, situation and its keeps of the last six months (US4).
+1. **007-US3-AS1** Given active cards under a tag, When they are asked with their content, Then one query gives each with its id, question, key points and situation, and the candidates give the keeps of the last six months (US4).
 2. **007-US3-AS2** Given the prune skill file, When it is read, Then it reads `PROFILE.md` and the cards of the topic Angelo named, or of each topic in turn, through the installed `aletheia`, asking after each topic whether to go on; it proposes a card whose situation no longer applies, quoting both, and two cards asking nearly the same, quoting both questions and searching the deck (002) for overlaps across topics; it skips a card kept for that reason in the last six months and says each reason is its judgment; it offers the choices of 007-US1-AS6 for a situation, and for an overlap no rewrite: keep the pair, archive one, or leave it for the merge (slice 8), which records nothing.
 
 ### User Story 4 - A kept card is not proposed again (Priority: P3)
@@ -81,7 +81,7 @@ Angelo keeps #k7m2: "falla porque es difícil, no porque esté mal escrita". The
 ### Functional Requirements
 
 - **FR-001**: The CLI MUST give the candidates it can find on its own (leech, not useful), of the whole deck or under the tags named, each with its reasons and evidence, leaving out the reasons kept (FR-004).
-- **FR-002**: The CLI MUST archive an active card with a required reason and restore an archived one, keeping its schedule and reviews; an archived card MUST leave every list and progress, MUST be found by the deck search marked archived with its reason, and MUST NOT be graded, edited or named as a prerequisite. Nothing is deleted (INV-02).
+- **FR-002**: The CLI MUST archive an active card with a required reason and restore an archived one, keeping its schedule and reviews; an archived card MUST leave every list and progress, MUST be found by the deck search marked archived with its reason, and MUST NOT be graded, edited or named as a prerequisite. Nothing is deleted (INV-02). **INV-03** No archive, restore or keep is ever deleted or changed; the store refuses both.
 - **FR-003**: A review MUST accept the flag `not-useful`, which counts like no flag everywhere and marks the card as a candidate.
 - **FR-004**: The CLI MUST record a keep per card and reason, and leave a kept reason out until new evidence or the keep's months pass (007-US4-AS2) or, for the reasons it cannot see, give the keep to the skill.
 - **FR-005**: The progress tree MUST give the count of FR-001's candidates.
