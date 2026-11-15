@@ -43,7 +43,8 @@ tags[3]{tag,cards,new,due,retention,weak,gaps}:
 - `deck`: every card in scope, each once.
 - `due`: cards already seen, due before the local day ends; `new` counts the cards never seen.
 - `retention`: a whole percent over the last 30 days, or `null`.
-- `weak`: cards with 4 failures or more, ever. `gaps`: reviews flagged `missing-prerequisite` in
+- `weak`: cards with 4 failures or more, ever (amended by spec 007: the `leech-failures`
+  setting, 3 by default). `gaps`: reviews flagged `missing-prerequisite` in
   the last 30 days.
 
 | Option | Value | Message when broken |

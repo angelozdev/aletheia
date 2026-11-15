@@ -60,7 +60,8 @@ cards and reviews (constitution II, VI).
     pooled over the cards a row covers and rounded to a whole percent; `null` when there are
     none;
   - a **failure** is a counted review graded Again and not flagged `missing-prerequisite`;
-    a card with 4 failures, ever, is **weak** (`WEAK_FAILURES`, **Angelo**);
+    a card with 4 failures, ever, is **weak** (`WEAK_FAILURES`, **Angelo**; amended by spec
+    007 R6: the `leechFailures` setting, 3 by default);
   - a **gap** is a review flagged `missing-prerequisite` in the window.
 - **Rationale**: spec 004 R11 keeps what a flag does in one policy, so `not-useful` (slice 7)
   will not compile until it says whether it counts. A gap is the flag itself, read in one

@@ -31,7 +31,7 @@ No table, column or migration changes: every number is derived from `cards`, `ca
 | Field | Rule |
 |---|---|
 | `failures` | its failures, ever |
-| `weak` | `failures ≥ WEAK_FAILURES` |
+| `weak` | `failures ≥ WEAK_FAILURES` (amended by spec 007: `failures ≥ leechFailures`) |
 | `gaps` | its gaps |
 | `lastReview` | its latest `reviewedAt`, voided reviews included; `null` if never reviewed |
 | due today | state `learning`, `relearning` or `review`, `due < tomorrow`, and no review since `today` whose policy `hidesUntilTomorrow` |
