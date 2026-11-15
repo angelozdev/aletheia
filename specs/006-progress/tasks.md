@@ -250,7 +250,7 @@ from the log.
 
 ## Phase 7: Close
 
-- [ ] T016 Close the slice's docs
+- [X] T016 Close the slice's docs
   - In `CLAUDE.md` Commands, add `tag stats`, `card list` and `review history` with their flags (`--sort`, `--desc`, `--weak`, `--gaps`, `--not-reviewed`, `--days`, `--grade`, `--flag`), and `specs/006-progress/contracts/cli.md` to the contracts list. In Workflow's skills bullet, add `aletheia-stats` (local) beside `aletheia-review`.
   - The contract takes the TOON and messages the tests fixed (decision 3).
   - Run quickstart §1 to §4 in `test` through `pnpm aletheia`.

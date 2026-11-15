@@ -106,12 +106,12 @@ counts:
     good: 1
     easy: 0
   flags:
-    missing-prerequisite: 0
-    badly-written: 0
-    badly-rephrased: 1
+    "missing-prerequisite": 0
+    "badly-written": 0
+    "badly-rephrased": 1
   disputed: 1
 reviews[2]{card,reviewedAt,grade,claudeGrade,flag,askedQuestion}:
-  9p3x,"2026-11-14T09:30:00-05:00",good,good,badly-rephrased,"¿Qué le pasa al mensaje cuando el consumidor responde?"
+  9p3x,"2026-11-14T09:30:00-05:00",good,good,badly-rephrased,¿Qué le pasa al mensaje cuando el consumidor responde?
   k7m2,"2026-11-13T19:05:00-05:00",again,hard,null,null
 ```
 
