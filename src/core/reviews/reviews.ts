@@ -1,9 +1,11 @@
 import { activeCardById, bySaved, NEW_STATE, type Card } from '#core/cards'
+import { AGAIN_GRADE } from '#core/scheduling'
 import { minutesAfter } from '#core/time'
 import {
   FLAG_POLICIES,
   LEARN_AHEAD_MINUTES,
   LEARNING_STATES,
+  MISSING_PREREQUISITE,
   NO_FLAG,
   REVIEW_STATE,
 } from './reviews.constants.ts'
@@ -11,6 +13,7 @@ import type {
   DueList,
   FlagPolicy,
   GradeCardDeps,
+  Review,
   ReviewDraft,
   ReviewFlag,
 } from './reviews.types.ts'
@@ -71,6 +74,14 @@ export function topicList(cards: Card[], now: Date, today: Date, tomorrow: Date)
 
 export function policyOf(flag: ReviewFlag | null): FlagPolicy {
   return flag === null ? NO_FLAG : FLAG_POLICIES[flag]
+}
+
+export function isCounted({ flag, stateBefore }: Review): boolean {
+  return policyOf(flag).countsInStats && stateBefore === REVIEW_STATE
+}
+
+export function isFailure(review: Review): boolean {
+  return isCounted(review) && review.grade === AGAIN_GRADE && review.flag !== MISSING_PREREQUISITE
 }
 
 export function gradeCard(draft: ReviewDraft, { cards, reviews, now }: GradeCardDeps): Card {

@@ -1,9 +1,10 @@
 import { NEW_STATE, type Card } from '#core/cards'
 import {
+  isCounted,
+  isFailure,
   MISSING_PREREQUISITE,
   policyOf,
   REVIEW_FLAGS,
-  REVIEW_STATE,
   type Review,
 } from '#core/reviews'
 import { AGAIN_GRADE, GRADES } from '#core/scheduling'
@@ -32,14 +33,6 @@ import type {
   TagOrder,
   TagProgress,
 } from './progress.types.ts'
-
-function isCounted({ flag, stateBefore }: Review): boolean {
-  return policyOf(flag).countsInStats && stateBefore === REVIEW_STATE
-}
-
-function isFailure(review: Review): boolean {
-  return isCounted(review) && review.grade === AGAIN_GRADE && review.flag !== MISSING_PREREQUISITE
-}
 
 function isGap({ flag, reviewedAt }: Review, windowStart: Date): boolean {
   return flag === MISSING_PREREQUISITE && reviewedAt >= windowStart

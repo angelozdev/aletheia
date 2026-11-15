@@ -163,7 +163,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
 
 **Independent Test**: quickstart §3.
 
-- [ ] T009 [US1] Move the failure rule to `#core/reviews` (pure refactor), in `src/core/reviews/reviews.ts` and `src/core/progress/progress.ts`
+- [X] T009 [US1] Move the failure rule to `#core/reviews` (pure refactor), in `src/core/reviews/reviews.ts` and `src/core/progress/progress.ts`
   - **Test**: none new; the 006 tests stay green unchanged.
   - **Code**: `isCounted` ("`policyOf(flag).countsInStats` and `stateBefore = review`") and `isFailure` ("counted, `grade = again`, and `flag ≠ missing-prerequisite`") move to `src/core/reviews/reviews.ts`, exported from its `index.ts`; `progress.ts` imports them.
   - **Run**: `pnpm test`
