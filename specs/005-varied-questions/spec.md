@@ -3,6 +3,14 @@
 **Feature Branch**: `005-varied-questions` | **Created**: 2026-11-11 | **Status**: Draft
 **Input**: Slice 5 of `docs/design/2026-11-08-aletheia-design.md` §13: varied questions. Claude rephrases each card's question on every review, the key points stay fixed, and the question as asked is logged with the review (design §8.2 step 16). A miss caused by Claude's rephrasing is voided without rewriting the card, under its own flag `badly-rephrased`, so stats and prune never take it for a badly written card (spec 004 research R11). Angelo exercises it with a card seen before that comes back worded differently.
 
+## Clarifications
+
+### Session 2026-11-11
+
+- Q: Does the CLI require the question as asked on every new review, rejecting a grade without it? → A: Yes: a grade with none, or a blank one, exits 1 and records nothing. The CLI checks only that it is there; whether it is the question Claude really asked, and whether it differs from the stored one, is judgment it cannot see. Optional in the CLI, left to the skill, was rejected: a forgotten question would reach the log with no test to catch it.
+- Q: Which grades can a review flagged `badly-rephrased` carry? → A: Any grade, a right answer included, with exactly `badly-written`'s effects: Claude voids it whenever its rephrasing, not Angelo's memory, decided the answer, as when it gave the answer away. Only Again or Hard was rejected: a hint would earn the card an interval Angelo did not earn.
+- Q: When Angelo does not understand a rephrasing and Claude rewords it before he answers, which wording is recorded? → A: Only the last one, the one he answered; the review is voided or not by the usual rule, on that wording. Keeping every wording (a list, not one text) and always voiding such a review were rejected. The cost accepted: a rephrasing Angelo caught before answering is not counted by SC-002.
+
 ## User Scenarios & Testing _(mandatory)_
 
 Rephrasing a question, judging whether a rephrasing still asks for the same key points, and telling a bad rephrasing from a badly written card are judgment (constitution II). What a flag does to scheduling, to the lists and to the caps, and what the log keeps, are facts the CLI computes, never the skill.
@@ -30,6 +38,7 @@ Claude asks #9p3x as "¿Qué le pasa al mensaje cuando el consumidor responde?",
 - A `code` or `command` card: the code block, the commands and their flags stay as stored; only the words around them change.
 - A question so short that no rewording keeps what it asks: Claude asks it as stored, and records that as the question asked.
 - Angelo asks for the stored wording ("pregúntamela como está"): Claude asks it as stored, records it as asked, and goes back to rephrasing on the next card.
+- Angelo does not understand a rephrasing ("¿responde cómo?"): Claude rewords it before he answers, and records only the wording he answered.
 - A card shown again in the same session, such as one graded Again, is worded differently from the times it was asked earlier in the session.
 - A prerequisite pulled in (spec 004) and a topic review's cards are rephrased like any other.
 - After a rewrite (`card edit`), rephrasings start from the new stored question.
@@ -39,7 +48,7 @@ Claude asks #9p3x as "¿Qué le pasa al mensaje cuando el consumidor responde?",
 
 ### Functional Requirements
 
-- **FR-001**: Every review recorded from this slice on MUST carry the question as asked, not blank. Reviews recorded before keep none.
+- **FR-001**: Every review recorded from this slice on MUST carry the question as asked, not blank; the CLI rejects a grade without it and records nothing. Reviews recorded before keep none.
 - **FR-002**: A review MAY carry the flag `badly-rephrased`, and still at most one flag (spec 004 FR-001). A review flagged `badly-rephrased` is voided exactly as one flagged `badly-written` (spec 004 FR-002), with any grade: it leaves the card's schedule unchanged, the card is left out of every list until the next local day, and it counts toward its session's cap and never toward the day's new cards.
 - **FR-003**: The review skill MUST rephrase the question on every review. The rephrasing keeps what the stored question asks for (its key points), names the technology and the variant, keeps code and commands verbatim, and gives no hint the stored question does not give. It differs from the stored wording and from wordings asked earlier in the session.
 - **FR-004**: The grade MUST be checked against the stored key points, never against the rephrased wording; the answer shown after the grade is the stored one.
@@ -48,7 +57,7 @@ Claude asks #9p3x as "¿Qué le pasa al mensaje cuando el consumidor responde?",
 
 ### Key Entities
 
-- **Question as asked**: the exact question Claude asked in a review, kept with that review; the card's stored question stays as it is.
+- **Question as asked**: the exact question Claude asked in a review, the last wording before Angelo answered, kept with that review as one text; the card's stored question stays as it is.
 - **Review flag**: gains `badly-rephrased`, a voided review caused by Claude's rephrasing, told apart from `badly-written`, a voided review caused by the stored card.
 
 ## Success Criteria _(mandatory)_
