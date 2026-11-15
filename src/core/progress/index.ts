@@ -5,6 +5,7 @@ export {
   EVER,
   PROGRESS_WINDOW_DAYS,
   TAG_SORT_FIELDS,
+  WEAK_FAILURES,
 } from './progress.constants.ts'
 export { cardProgress, reviewHistory, tagProgress } from './progress.ts'
 export type { CardProgress, HistoryEntry, ProgressInput } from './progress.types.ts'

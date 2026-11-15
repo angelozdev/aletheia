@@ -52,6 +52,10 @@ describe('progress on 1,000 cards and 20,000 reviews', () => {
     expect(await elapsedMs(['card', 'list', '--sort', 'failures', '--desc'])).toBeLessThan(LIMIT_MS)
   })
 
+  it('SC-004 card candidates answers in under 1 second on 1,000 cards and 20,000 reviews', async () => {
+    expect(await elapsedMs(['card', 'candidates'])).toBeLessThan(LIMIT_MS)
+  })
+
   it('SC-003 review history answers in under 1 second on 1,000 cards and 20,000 reviews', async () => {
     expect(await elapsedMs(['review', 'history', '--days', '30'])).toBeLessThan(LIMIT_MS)
   })

@@ -2,6 +2,7 @@ import { Command, CommanderError, type CommandUnknownOpts } from '@commander-js/
 import { backupCommand } from '../commands/backup/backup.ts'
 import { cardAddCommand } from '../commands/card-add/card-add.ts'
 import { cardArchiveCommand } from '../commands/card-archive/card-archive.ts'
+import { cardCandidatesCommand } from '../commands/card-candidates/card-candidates.ts'
 import { cardEditCommand } from '../commands/card-edit/card-edit.ts'
 import { cardListCommand } from '../commands/card-list/card-list.ts'
 import { cardRestoreCommand } from '../commands/card-restore/card-restore.ts'
@@ -27,6 +28,7 @@ const COMMANDS = [
   cardRestoreCommand,
   cardSearchCommand,
   cardListCommand,
+  cardCandidatesCommand,
   tagListCommand,
   tagStatsCommand,
   reviewDueCommand,

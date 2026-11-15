@@ -171,12 +171,12 @@ Intentionally empty. Every table, type and field lands with the first task that 
   - **Test** (decision 4): `progress.test.ts`'s `006-US1-AS3` cases become "3 failures make a card weak, and 2 do not", and `cardProgress`'s weak fixture uses 3; `tests/skills/stats-skill.test.ts` expects `3 failures` in place of `4 failures`. The test names keep their ids.
   - **Code**: `WEAK_FAILURES = 3`; the stats skill says "3 fallos o más".
   - **Run**: `pnpm aletheia tag stats`
-- [ ] T011 [US1] `card candidates [tags...]` gives the leeches with their failures and last failure, in `src/core/prune/` and `src/shell/cli/commands/card-candidates/`
+- [X] T011 [US1] `card candidates [tags...]` gives the leeches with their failures and last failure, in `src/core/prune/` and `src/shell/cli/commands/card-candidates/`
   - **Test**:
     - `src/core/prune/prune.test.ts`, through `candidates(input)`: a card with 3 counted failures is a candidate `reasons: ['leech']`, `failures: 3`, `lastFailure` its latest; 2 failures, a voided Again and a `missing-prerequisite` Again do not make one; archived cards are not in the input; order as saved.
     - `src/shell/cli/commands/card-candidates/card-candidates.test.ts`:
       - `007-US1-AS1 card candidates gives each leech of the deck or under the tags, with id, question, tags, reasons and evidence`: cards under two families, one failed 3 times in each; `--json` gives both; `messaging` gives one; a tag with no active card exits 1 with `no active card under …`. `rowCounts` unchanged.
-      - `card candidates prints the candidates as TOON` (decision 3).
+      - `card candidates prints the candidates as TOON` (decision 3): moved to T018, the last task that changes the command's output.
     - `tests/progress/performance.test.ts`: `SC-004 card candidates answers in under 1 second on 1,000 cards and 20,000 reviews`.
   - **Code**: `src/core/prune/` new: `prune.types.ts` (`PruneInput = { cards, topic, reviews, leechFailures }`, `Candidate`), `prune.constants.ts` (`CANDIDATE_REASONS = ['leech', 'not-useful'] as const`), `prune.ts` (`candidates`), `index.ts`. The command: group `card`, name `candidates`, `[tags...]` through `topicFrom`, returns `{ candidates, kept: [] }`. Registered after `cardListCommand`.
   - **Run**: quickstart §3, the first command
