@@ -17,7 +17,7 @@ export function shownSettings(stored: StoredSettings) {
 export const settingsShowCommand: CliCommand = {
   group: 'settings',
   name: 'show',
-  description: 'print each review setting and whether it is the built-in default',
+  description: 'print each setting and whether it is the built-in default',
   run: (context, options) =>
     withStore(context, options, async (store) => {
       const stored = new StoreSettingsRepository(store).stored()
