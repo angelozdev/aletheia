@@ -1,6 +1,12 @@
 import { NEW_STATE, type Card } from '#core/cards'
-import { MISSING_PREREQUISITE, policyOf, REVIEW_STATE, type Review } from '#core/reviews'
-import { AGAIN_GRADE } from '#core/scheduling'
+import {
+  MISSING_PREREQUISITE,
+  policyOf,
+  REVIEW_FLAGS,
+  REVIEW_STATE,
+  type Review,
+} from '#core/reviews'
+import { AGAIN_GRADE, GRADES } from '#core/scheduling'
 import { bySegments, coveredTags, isUnder, TAG_SEPARATOR, topicCards } from '#core/tags'
 import {
   DEFAULT_CARD_ORDER,
@@ -14,10 +20,13 @@ import type {
   CardFilters,
   CardProgress,
   CardSortField,
+  HistoryCounts,
+  HistoryEntry,
   Comparator,
   ProgressCounts,
   ProgressInput,
   ProgressTree,
+  ReviewHistory,
   SortValue,
   TagOrder,
   TagProgress,
@@ -212,4 +221,48 @@ export function cardProgress(
   }))
   const compare = byValue(CARD_VALUES[field], desc, BY_ID)
   return rows.filter((row) => matches(row, filters)).toSorted(compare)
+}
+
+function historyEntry(review: Review): HistoryEntry {
+  return {
+    card: review.cardId,
+    reviewedAt: review.reviewedAt,
+    grade: review.grade,
+    claudeGrade: review.claudeGrade,
+    flag: review.flag,
+    askedQuestion: review.askedQuestion,
+  }
+}
+
+function countEach<Key extends string>(
+  keys: readonly Key[],
+  keyOf: (entry: HistoryEntry) => Key | null,
+  entries: HistoryEntry[],
+): Record<string, number> {
+  const counts = keys.map((key) => [key, entries.filter((entry) => keyOf(entry) === key).length])
+  return Object.fromEntries(counts)
+}
+
+function historyCounts(entries: HistoryEntry[]): HistoryCounts {
+  return {
+    reviews: entries.length,
+    grades: countEach(GRADES, ({ grade }) => grade, entries),
+    flags: countEach(REVIEW_FLAGS, ({ flag }) => flag, entries),
+    disputed: entries.filter(({ grade, claudeGrade }) => grade !== claudeGrade).length,
+  }
+}
+
+const NEWEST_FIRST = byValue(
+  (entry: HistoryEntry) => entry.reviewedAt,
+  true,
+  () => 0,
+)
+
+export function reviewHistory(input: ProgressInput): ReviewHistory {
+  const scope = new Set(inScope(input).map(({ id }) => id))
+  const entries = input.reviews
+    .filter(({ cardId, reviewedAt }) => scope.has(cardId) && reviewedAt >= input.windowStart)
+    .map(historyEntry)
+    .toSorted(NEWEST_FIRST)
+  return { counts: historyCounts(entries), reviews: entries }
 }

@@ -225,7 +225,7 @@ from the log.
 
 **Independent Test**: quickstart §4.
 
-- [ ] T013 [US3] `review history [tags...] [--days <n>]` gives the window's reviews, newest first, and their counts, in `src/core/progress/progress.ts` and `src/shell/cli/commands/review-history/review-history.ts`
+- [X] T013 [US3] `review history [tags...] [--days <n>]` gives the window's reviews, newest first, and their counts, in `src/core/progress/progress.ts` and `src/shell/cli/commands/review-history/review-history.ts`
   - **Test**:
     - `progress.test.ts`, through `reviewHistory(input, filters)`: reviews at or after `windowStart` only, newest first; `counts.reviews`, `counts.grades` (`again`, `hard`, `good`, `easy`, zeros included), `counts.flags` (one per `REVIEW_FLAGS` value, zeros included) and `counts.disputed` (`grade ≠ claudeGrade`) over them.
     - `src/shell/cli/commands/review-history/review-history.test.ts`:

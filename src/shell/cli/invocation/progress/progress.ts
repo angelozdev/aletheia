@@ -4,7 +4,12 @@ import { StoreCardRepository, StoreReviewRepository, type Store } from '#shell/d
 import type { CliContext } from '../../main/main.types.ts'
 import { topicFrom } from '../topic/topic.ts'
 
-export function progressInput(store: Store, context: CliContext, tags: string[]): ProgressInput {
+export function progressInput(
+  store: Store,
+  context: CliContext,
+  tags: string[],
+  days = PROGRESS_WINDOW_DAYS,
+): ProgressInput {
   const now = context.clock()
   return {
     cards: new StoreCardRepository(store).active(),
@@ -12,7 +17,7 @@ export function progressInput(store: Store, context: CliContext, tags: string[])
     reviews: new StoreReviewRepository(store).since(EVER),
     today: startOfToday(now, context.timeZone),
     tomorrow: startOfTomorrow(now, context.timeZone),
-    windowStart: startOfWindow(now, PROGRESS_WINDOW_DAYS, context.timeZone),
+    windowStart: startOfWindow(now, days, context.timeZone),
   }
 }
 

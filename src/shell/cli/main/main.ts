@@ -7,6 +7,7 @@ import { cardSearchCommand } from '../commands/card-search/card-search.ts'
 import { cardShowCommand } from '../commands/card-show/card-show.ts'
 import { reviewDueCommand } from '../commands/review-due/review-due.ts'
 import { reviewGradeCommand } from '../commands/review-grade/review-grade.ts'
+import { reviewHistoryCommand } from '../commands/review-history/review-history.ts'
 import { reviewTopicCommand } from '../commands/review-topic/review-topic.ts'
 import { settingsSetCommand } from '../commands/settings-set/settings-set.ts'
 import { settingsShowCommand } from '../commands/settings-show/settings-show.ts'
@@ -27,6 +28,7 @@ const COMMANDS = [
   reviewDueCommand,
   reviewTopicCommand,
   reviewGradeCommand,
+  reviewHistoryCommand,
   settingsShowCommand,
   settingsSetCommand,
 ]

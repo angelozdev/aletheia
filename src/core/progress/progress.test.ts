@@ -3,7 +3,7 @@ import { newCard, type Card, type CardState } from '#core/cards'
 import type { Review } from '#core/reviews'
 import { SAMPLE_DRAFT } from '../../../tests/support/cards/cards.constants.ts'
 import { reviewOf } from '../../../tests/support/reviews/reviews.ts'
-import { cardProgress, tagProgress } from './progress.ts'
+import { cardProgress, reviewHistory, tagProgress } from './progress.ts'
 import type { CardFilters, ProgressInput, ProgressTree, TagOrder } from './progress.types.ts'
 
 const today = new Date('2026-11-15T05:00:00.000Z')
@@ -292,5 +292,53 @@ describe('card progress', () => {
       { card: { id: 'nevr' }, lastReview: null },
     ])
     expect(rows).toHaveLength(2)
+  })
+})
+
+describe('review history', () => {
+  const cards = [cardOf('aaaa', ['a']), cardOf('bbbb', ['b'])]
+  const reviews = [
+    reviewOf('aaaa', '2026-10-17T04:59:59.000Z'),
+    reviewOf('aaaa', '2026-11-01T15:00:00.000Z', { grade: 'again', claudeGrade: 'hard' }),
+    reviewOf('bbbb', '2026-11-10T15:00:00.000Z', { flag: 'badly-rephrased' }),
+    reviewOf('aaaa', '2026-10-17T05:00:00.000Z', { grade: 'easy', claudeGrade: 'easy' }),
+  ]
+
+  function listed(input: ProgressInput): [string, string][] {
+    return reviewHistory(input).reviews.map(({ card, reviewedAt }) => [
+      card,
+      reviewedAt.toISOString(),
+    ])
+  }
+
+  it('reviewHistory gives the reviews since the window start, newest first, with their counts by grade, by flag and disputed', () => {
+    const input = inputOf(cards, reviews)
+    const history = reviewHistory(input)
+
+    expect(listed(input)).toEqual([
+      ['bbbb', '2026-11-10T15:00:00.000Z'],
+      ['aaaa', '2026-11-01T15:00:00.000Z'],
+      ['aaaa', '2026-10-17T05:00:00.000Z'],
+    ])
+    expect(history.reviews[0]).toEqual({
+      card: 'bbbb',
+      reviewedAt: new Date('2026-11-10T15:00:00.000Z'),
+      grade: 'good',
+      claudeGrade: 'good',
+      flag: 'badly-rephrased',
+      askedQuestion: null,
+    })
+    expect(history.counts).toEqual({
+      reviews: 3,
+      grades: { again: 1, hard: 0, good: 1, easy: 1 },
+      flags: { 'missing-prerequisite': 0, 'badly-written': 0, 'badly-rephrased': 1 },
+      disputed: 1,
+    })
+  })
+
+  it('reviewHistory under a topic gives only the reviews of its cards', () => {
+    const input = { ...inputOf(cards, reviews), topic: ['b'] }
+
+    expect(listed(input)).toEqual([['bbbb', '2026-11-10T15:00:00.000Z']])
   })
 })

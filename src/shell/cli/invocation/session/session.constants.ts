@@ -29,6 +29,7 @@ export const OPTION_FLAGS: Record<string, string> = {
   weak: '--weak',
   gaps: '--gaps',
   notReviewed: '--not-reviewed',
+  days: '--days',
 }
 
 export const WHOLE_NUMBER = /^\d+$/
