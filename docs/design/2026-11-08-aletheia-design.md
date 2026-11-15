@@ -291,7 +291,7 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
 - "Weak" = cards failed repeatedly (leeches). "Gaps" = reviews flagged
   `missing-prerequisite`. A topic with gaps is different from a weak topic.
 - Shows how many prune candidates exist among the ones the core can detect on
-  its own (mastered and leech, §8.4).
+  its own (mastered and leech, §8.4). This count arrives with prune (slice 7).
 - Free-form questions ("¿qué tengo flojo de mensajería?", "¿qué no repaso hace
   un mes?") are answered by Claude using the CLI's filterable queries. Views
   asked for often become commands later.
@@ -417,7 +417,8 @@ My calls, mirroring diarium where it applies:
   migration). Verify FTS5 is available in Node's bundled SQLite.
 - Whether oxlint covers the rules diarium enforces with eslint (no comments,
   file naming, sonarjs-style checks), and how to fill any gaps.
-- Retention formula and time window for stats; leech threshold; config storage.
+- Config storage. The retention formula, the stats window and the leech threshold
+  were decided in `specs/006-progress/research.md` (R3, R4).
 - Card id format.
 - Backup trigger (explicit command, before migrations, or both).
 

@@ -82,7 +82,7 @@ Shared by the tests of this slice:
 
 ## Phase 1: Setup (gate)
 
-- [ ] T001 The design catches up (research R10), in `docs/design/2026-11-08-aletheia-design.md`
+- [X] T001 The design catches up (research R10), in `docs/design/2026-11-08-aletheia-design.md`
   - §8.3, the bullet on prune candidates: "Shows how many prune candidates exist … arrives with
     prune (slice 7)."
   - §12: drop "Retention formula and time window for stats; leech threshold", and point to
