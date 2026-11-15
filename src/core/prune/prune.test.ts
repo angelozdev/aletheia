@@ -162,12 +162,18 @@ describe('prune candidates', () => {
     expect(deck).toEqual([keeps[3], keeps[2], keeps[1]])
   })
 
-  it('007-US3-AS1 kept under the topic of the other card of an overlap gives that keep', () => {
+  it('007-US4-AS2 kept gives an overlap keep under the topic of either card, and leaves it out once one of the pair is archived', () => {
     const cards = [cardOf('aaaa', ['a']), cardOf('bbbb', ['b'])]
     const keeps = [keptAt('aaaa', 'overlapping', '2026-11-02T15:00:00.000Z', 'bbbb')]
+    const archivedPairs = [
+      keptAt('zzzz', 'overlapping', '2026-11-02T15:00:00.000Z', 'bbbb'),
+      keptAt('aaaa', 'overlapping', '2026-11-02T15:00:00.000Z', 'zzzz'),
+    ]
 
     const underB = kept(inputOf(cards, [], ['b'], keeps))
+    const deck = kept(inputOf(cards, [], [], archivedPairs))
 
     expect(underB).toEqual(keeps)
+    expect(deck).toEqual([])
   })
 })

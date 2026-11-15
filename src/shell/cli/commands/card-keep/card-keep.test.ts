@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { addTagged, reviewed, rowCounts } from '../../../../../tests/support/progress/progress.ts'
-import { archiveCard, failed, jsonOf, pruneCli } from '../../../../../tests/support/prune/prune.ts'
+import { addTagged, rowCounts } from '../../../../../tests/support/progress/progress.ts'
+import {
+  archiveCard,
+  failed,
+  jsonOf,
+  keepLeechAndUseless,
+  pruneCli,
+} from '../../../../../tests/support/prune/prune.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 import { selectAll } from '../../../../../tests/support/store/store.ts'
 
@@ -81,19 +87,21 @@ describe('aletheia card keep', () => {
 
   it('007-US4-AS1 card keep refuses a leech or not-useful keep for a card that is not that candidate, or no longer is once kept, and records nothing more', async () => {
     const [card, leech, useless] = await addTagged(cli, [['docker'], ['docker'], ['docker']])
-    failed(cli, leech)
-    reviewed(cli.db, useless, '2026-11-09T15:00:00.000Z', { flag: 'not-useful' })
-    await cli.run(['card', 'keep', leech, '--reason', 'leech'])
+    await keepLeechAndUseless(cli, leech, useless)
     const refusals: [string[], string][] = [
       [[card, '--reason', 'leech'], `card "${card}" is not a leech candidate`],
       [[card, '--reason', 'not-useful'], `card "${card}" is not a not-useful candidate`],
       [[useless, '--reason', 'leech'], `card "${useless}" is not a leech candidate`],
       [[leech, '--reason', 'leech'], `card "${leech}" is not a leech candidate`],
+      [[useless, '--reason', 'not-useful'], `card "${useless}" is not a not-useful candidate`],
     ]
 
     await expectRefused(refusals)
-    expect(keeps()).toMatchObject([{ card_id: leech, reason: 'leech' }])
-    expect(keeps()).toHaveLength(1)
+    expect(keeps()).toMatchObject([
+      { card_id: leech, reason: 'leech' },
+      { card_id: useless, reason: 'not-useful' },
+    ])
+    expect(keeps()).toHaveLength(2)
   })
 
   it('card keep prints the keep as TOON', async () => {

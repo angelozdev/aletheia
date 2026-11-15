@@ -78,11 +78,14 @@ function newestFirst(a: Keep, b: Keep): number {
 }
 
 export function kept(input: PruneInput): Keep[] {
+  const active = new Set(input.cards.map(({ id }) => id))
   const scope = new Set(inScope(input).map(({ id }) => id))
+  const ofActive = ({ card, overlaps }: Keep) =>
+    active.has(card) && (overlaps === null || active.has(overlaps))
   const inScopeKeep = ({ card, overlaps }: Keep) =>
     scope.has(card) || (overlaps !== null && scope.has(overlaps))
   return input.keeps
-    .filter((keep) => inScopeKeep(keep) && keep.keptAt >= input.keepStart)
+    .filter((keep) => ofActive(keep) && inScopeKeep(keep) && keep.keptAt >= input.keepStart)
     .toReversed()
     .toSorted(newestFirst)
 }

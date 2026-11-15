@@ -106,8 +106,8 @@ the name `card_status_history`. No new dependency.
 - **Decision**: lists that read `active()` drop it with no change: `review due`,
   `review topic`, `tag list`, `tag stats`, `card list`, `card candidates`. `card show` reads it
   with its latest status change. `review history` reads reviews over every card (a new
-  `CardRepository.all()`), so an archived card's reviews stay; its tags are still checked
-  against the active cards. `card search` matches words over every card; cards sharing only a
+  `CardRepository.all()`), so an archived card's reviews stay; its tags are checked against
+  every card, so a tag left with only archived cards still gives their reviews. `card search` matches words over every card; cards sharing only a
   tag family stay active ones.
 - **Rationale**: 007-US1-AS2 and AS7; the Measures of slices 4 and 5 count every review.
 

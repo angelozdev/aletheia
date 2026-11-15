@@ -71,8 +71,8 @@ Candidate row: `id`, `question` (stored), `tags`, `reasons` (`leech` before `not
 `failures`, `lastFailure` (`null` without failures), `notUseful` (`{ at, rationale }` of its
 latest `not-useful` review, or `null`). Order: as saved (`bySaved`).
 
-`kept`: the keeps of the cards in scope, or whose `overlaps` is in scope, with
-`keptAt >= keepStart`, newest first, each
+`kept`: the keeps of active cards (and, for an overlap, an active other card) whose card or
+`overlaps` is in scope, with `keptAt >= keepStart`, newest first, each
 `card`, `reason`, `overlaps` (`null` unless overlapping), `keptAt`.
 
 `deck.candidates` in `tag stats`: the candidate rows of its scope.

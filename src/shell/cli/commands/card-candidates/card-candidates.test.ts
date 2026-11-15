@@ -2,7 +2,13 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
 import { addTagged, reviewed, rowCounts } from '../../../../../tests/support/progress/progress.ts'
 import { LAST_OF_THREE_FAILURES } from '../../../../../tests/support/prune/prune.constants.ts'
-import { archiveCard, failed, jsonOf, pruneCli } from '../../../../../tests/support/prune/prune.ts'
+import {
+  archiveCard,
+  failed,
+  jsonOf,
+  keepLeechAndUseless,
+  pruneCli,
+} from '../../../../../tests/support/prune/prune.ts'
 import { runOnStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 
@@ -76,10 +82,7 @@ describe('aletheia card candidates', () => {
 
   it('007-US4-AS2 card candidates leaves a kept leech out until a later failure, a kept not-useful for the keep months, and lists the recent keeps', async () => {
     const [leech, useless, other] = await addTagged(cli, [['docker'], ['docker'], ['docker']])
-    failed(cli, leech)
-    reviewed(cli.db, useless, '2026-11-09T15:00:00.000Z', { flag: 'not-useful' })
-    await cli.run(['card', 'keep', leech, '--reason', 'leech'])
-    await cli.run(['card', 'keep', useless, '--reason', 'not-useful'])
+    await keepLeechAndUseless(cli, leech, useless)
     await cli.run(['card', 'keep', other, '--reason', 'overlapping', '--overlaps', leech])
 
     const whileKept = await jsonOf(cli, ['card', 'candidates'])

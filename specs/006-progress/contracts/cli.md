@@ -14,7 +14,9 @@ with their offset. No command here writes to the store. Rules are in
 - `--sort <field>`, `--desc`: an output field, as printed; `--desc` reverses its order. `null`
   is last either way.
 - Errors, in this order: the option messages, in one `invalid options:` line joined by `; `;
-  then `error: invalid topic: …` and `error: no active card under …`, as in `review topic`.
+  then `error: invalid topic: …` and `error: no active card under …`, as in `review topic`
+  (amended by spec 007: `review history` gives it only when no card, active or archived, is
+  under the tag).
 - A window of N days runs from the start of the local day N−1 days ago up to now: 1 is today.
 
 ## `aletheia tag stats [tags...]`

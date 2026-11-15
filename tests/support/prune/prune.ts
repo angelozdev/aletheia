@@ -33,3 +33,14 @@ export function failed(cli: StoreCli, id: string, times = LEECH_TIMES): void {
   for (let day = 1; day <= times; day++)
     reviewed(cli.db, id, `2026-11-0${day}T15:00:00.000Z`, { grade: 'again' })
 }
+
+export async function keepLeechAndUseless(
+  cli: StoreCli,
+  leech: string,
+  useless: string,
+): Promise<void> {
+  failed(cli, leech)
+  reviewed(cli.db, useless, '2026-11-09T15:00:00.000Z', { flag: 'not-useful' })
+  await cli.run(['card', 'keep', leech, '--reason', 'leech'])
+  await cli.run(['card', 'keep', useless, '--reason', 'not-useful'])
+}
