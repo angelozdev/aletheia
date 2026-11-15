@@ -1,4 +1,4 @@
-import { bySaved, cardById, NEW_STATE, type Card } from '#core/cards'
+import { activeCardById, bySaved, NEW_STATE, type Card } from '#core/cards'
 import { minutesAfter } from '#core/time'
 import {
   FLAG_POLICIES,
@@ -74,8 +74,8 @@ export function policyOf(flag: ReviewFlag | null): FlagPolicy {
 }
 
 export function gradeCard(draft: ReviewDraft, { cards, reviews, now }: GradeCardDeps): Card {
-  const card = cardById(cards, draft.card)
-  if (draft.prerequisiteOf !== undefined) cardById(cards, draft.prerequisiteOf)
+  const card = activeCardById(cards, draft.card)
+  if (draft.prerequisiteOf !== undefined) activeCardById(cards, draft.prerequisiteOf)
   const graded = policyOf(draft.flag ?? null).schedule(card, draft.grade, now)
   reviews.record(
     {

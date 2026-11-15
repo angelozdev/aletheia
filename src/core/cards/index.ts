@@ -11,6 +11,7 @@ export {
 } from './cards.constants.ts'
 export { CardIdTakenError } from './cards.errors.ts'
 export {
+  activeCardById,
   addCards,
   archiveCard,
   bySaved,

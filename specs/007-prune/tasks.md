@@ -118,7 +118,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
   - **Test**: `card-archive.test.ts`, `007-US1-AS2 an archived card leaves review due, review topic, card list, tag list and tag stats, and its reviews stay in review history`: two cards under one tag, one reviewed and then archived; it is absent from `review due`, `review topic <tag>`, `card list`, `tag list` and `tag stats` (`deck.cards: 1`), and `review history --days 7` still gives its review.
   - **Code**: `CardRepository.all()`; `review history` reads reviews over `all()`, its tags still checked against the active cards (research R8). The other lists already read `active()`.
   - **Run**: quickstart §1
-- [ ] T004 [US1] `card restore <id>` makes an archived card active with the schedule it had, in `src/shell/cli/commands/card-restore/`
+- [X] T004 [US1] `card restore <id>` makes an archived card active with the schedule it had, in `src/shell/cli/commands/card-restore/`
   - **Test**:
     - `cards.test.ts`: `restore` sets `cards.status` to `active` and adds a row `status: active`, `reason: null`; `archiveOf` is then `null`.
     - `src/shell/cli/commands/card-restore/card-restore.test.ts`:
@@ -127,7 +127,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
       - Archive, restore, archive again: `card show` gives the second reason, and `card_status_history` holds three rows.
   - **Code**: `CardNotArchivedError`; `restoreCard` in `src/core/cards/cards.ts`; `restore` in `src/shell/db/cards/cards.ts`; command group `card`, name `restore`, argument `<id>`, prints `shownCard`.
   - **Run**: quickstart §1, the last command
-- [ ] T005 [US1] An archived card cannot be graded, edited or named as a prerequisite, in `src/core/reviews/reviews.ts` and `src/core/cards/cards.ts`
+- [X] T005 [US1] An archived card cannot be graded, edited or named as a prerequisite, in `src/core/reviews/reviews.ts` and `src/core/cards/cards.ts`
   - **Test**: `007-US1-AS4 review grade and card edit refuse an archived card, and review grade an archived prerequisiteOf`, in `src/shell/cli/commands/review-grade/review-grade.test.ts` and `card-edit/card-edit.test.ts`: each exits 1 with `card <id> is archived`; `rowCounts` unchanged.
   - **Code**: `gradeCard` uses `activeCardById` for `draft.card` and `draft.prerequisiteOf`; `editCard` for its card.
   - **Run**: quickstart §1, the grading point

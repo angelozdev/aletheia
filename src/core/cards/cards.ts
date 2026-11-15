@@ -77,7 +77,7 @@ export function cardById(repository: CardRepository, id: string): Card {
   return card
 }
 
-function activeCardById(repository: CardRepository, id: string): Card {
+export function activeCardById(repository: CardRepository, id: string): Card {
   const card = cardById(repository, id)
   if (card.status !== ACTIVE_STATUS) throw new CardArchivedError(id)
   return card
@@ -100,7 +100,7 @@ export function restoreCard(id: string, { repository, now }: EditCardDeps): Card
 }
 
 export function editCard({ card, ...changes }: CardEdit, { repository, now }: EditCardDeps): Card {
-  const found = cardById(repository, card)
+  const found = activeCardById(repository, card)
   const edited = { ...found, ...changes, updatedAt: now }
   repository.update(edited)
   return edited

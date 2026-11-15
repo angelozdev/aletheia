@@ -104,4 +104,15 @@ describe('aletheia card edit', () => {
     expect(byNewWord.cards).toMatchObject([{ id: '0123' }])
     expect(byOldWord.cards).toEqual([])
   })
+
+  it('007-US1-AS4 card edit refuses an archived card and changes nothing', async () => {
+    await cli.run(['card', 'archive'], JSON.stringify({ card: '0123', reason: 'ya no la uso' }))
+    const before = await shownCard()
+
+    const { code, stdout, stderr } = await edit({ question: NEW_QUESTION })
+
+    expect({ code, stdout }).toEqual({ code: 1, stdout: '' })
+    expect(stderr).toMatch(/\nerror: card "0123" is archived\n$/)
+    expect(await shownCard()).toEqual(before)
+  })
 })

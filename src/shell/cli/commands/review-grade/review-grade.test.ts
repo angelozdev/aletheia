@@ -286,4 +286,25 @@ describe('aletheia review grade', () => {
       expectRefused(await gradeText('not json'), /\nerror: invalid JSON on stdin: [^\n]+\n$/)
     })
   })
+
+  describe('an archived card', () => {
+    beforeEach(async () => {
+      await cli.run(['card', 'add'], JSON.stringify([SAMPLE_DRAFT]))
+      await cli.run(['card', 'archive'], JSON.stringify({ card: '4567', reason: 'ya no la uso' }))
+    })
+
+    it.for([{ card: '4567' }, { prerequisiteOf: '4567' }])(
+      '007-US1-AS4 review grade refuses an archived card, or an archived prerequisiteOf, and records nothing: %j',
+      async (fields) => {
+        const cards = selectAll(cli.db, 'select * from cards')
+
+        const { code, stdout, stderr } = await grade(fields)
+
+        expect({ code, stdout }).toEqual({ code: 1, stdout: '' })
+        expect(stderr).toMatch(/\nerror: card "4567" is archived\n$/)
+        expect(selectAll(cli.db, 'select count(*) as n from reviews')).toEqual([{ n: 0 }])
+        expect(selectAll(cli.db, 'select * from cards')).toEqual(cards)
+      },
+    )
+  })
 })
