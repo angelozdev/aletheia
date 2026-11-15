@@ -54,4 +54,18 @@ describe('the aletheia-stats skill', () => {
     ])
       expect(skill.text).toContain(text)
   })
+
+  it('006-US2-AS4 aletheia-stats answers a free-form question with the tree or card list filters, and says so when none answers', () => {
+    const skill = readSkill(STATS_SKILL)
+
+    for (const text of [
+      'aletheia card list',
+      '--weak',
+      '--gaps',
+      '--not-reviewed 30',
+      '--sort failures --desc',
+      'no query answers',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })

@@ -209,7 +209,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
     - `performance.test.ts`: `SC-003 card list answers in under 1 second on 1,000 cards and 20,000 reviews`, on the same arranged store.
   - **Code**: `CARD_SORT_FIELDS = ['id', 'state', 'due', 'lastReview', 'failures', 'gaps'] as const`; `id` and `state` as text, `due` and `lastReview` as instants, `null` last, ties by `id`. The sort shares T007's comparator.
   - **Run**: quickstart §3
-- [ ] T012 [US2] `aletheia-stats` turns a free-form question into `card list` filters, or says none answers, in `.claude/skills/aletheia-stats/SKILL.md`
+- [X] T012 [US2] `aletheia-stats` turns a free-form question into `card list` filters, or says none answers, in `.claude/skills/aletheia-stats/SKILL.md`
   - **Test**: `stats-skill.test.ts`: `006-US2-AS4 aletheia-stats answers a free-form question with the tree or card list filters, and says so when none answers`. The text contains `aletheia card list`, `--weak`, `--gaps`, `--not-reviewed 30`, `--sort failures --desc` and `no query answers`.
   - **Code**: section 2, "Which cards": "¿qué tengo flojo de <tema>?" is `card list <tags> --weak --sort failures --desc`; "¿qué no repaso hace un mes?" is `card list --not-reviewed 30`; "¿dónde tengo huecos?" is `card list --gaps`. Quote each card by its id and stored question. When no query answers ("¿qué tarjeta me costó más tiempo?"), say the CLI does not keep that, without estimating it.
   - **Run**: `pnpm test -t 006-US2-AS4`

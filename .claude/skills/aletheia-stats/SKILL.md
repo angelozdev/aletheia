@@ -15,8 +15,8 @@ query that answers his question and say what its numbers mean.
   from earlier in the session, even when you printed the same numbers a minute ago.
 - Every number you state is one the CLI printed in that turn. Never count, add up or estimate
   numbers yourself.
-- You only read: `aletheia tag stats` and `aletheia tag list`. This skill writes nothing to the
-  deck: no card, no grade, no setting.
+- You only read: `aletheia tag stats`, `aletheia tag list` and `aletheia card list`. This skill
+  writes nothing to the deck: no card, no grade, no setting.
 - Never open, read or edit a store file, never write SQL, never choose an environment: plain
   `aletheia` is the real deck.
 - Instants come in Angelo's local time with their offset (`2026-11-11T10:00:00-05:00`). Read
@@ -83,7 +83,39 @@ still follows its parent, and a `null` retention is always last.
 
 Both combine: `aletheia tag stats messaging --sort retention`.
 
-## 2. Studying what is weak
+## 2. Which cards ("¿qué tengo flojo de mensajería?")
+
+When Angelo asks for the cards behind a number, list them:
+
+```sh
+aletheia card list <tags> --weak --sort failures --desc
+```
+
+It prints `cards`, each with `id`, `question` (as stored), `tags`, `state`, `due`,
+`lastReview` (`null` if never reviewed), `failures`, `gaps` and `weak`. Without tags it covers
+the whole deck; tags work as in `aletheia tag stats`. The filters combine, and a card must
+match all of them:
+
+- `--weak`: only weak cards.
+- `--gaps`: only cards with a gap in the last 30 days.
+- `--not-reviewed <days>`: only cards with no review in that many days, counting today;
+  a card never reviewed is included when it was saved before them.
+
+`--sort <field>` takes `id`, `state`, `due`, `lastReview`, `failures` or `gaps`, by
+`lastReview` when none is given (oldest first, never reviewed last); `--desc` reverses it.
+
+- "¿qué tengo flojo de <tema>?": `aletheia card list <tags> --weak --sort failures --desc`,
+  the tags found as in section 1.
+- "¿qué no repaso hace un mes?": `aletheia card list --not-reviewed 30`.
+- "¿dónde tengo huecos?": `aletheia card list --gaps`.
+
+Quote each card by its id and its stored question (`#k7m2: En Redis Streams, ¿cómo…?`), with
+the numbers that answer the question. `cards: []` means none matches; say so.
+
+When no query answers the question ("¿qué tarjeta me costó más tiempo?"), say that the CLI does
+not keep that, and stop. Never estimate it or answer from what you remember of the session.
+
+## 3. Studying what is weak
 
 This skill does not review. When Angelo wants to study a topic, offer "repasemos <tema>" with
 the topic in Spanish; `aletheia-review` takes it from there.
