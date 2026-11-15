@@ -48,4 +48,19 @@ describe('the az-aletheia-add skill', () => {
     ])
       expect(skill.text).toContain(text)
   })
+
+  it('008-US3-AS1 az-aletheia-add offers to drop, save or merge a draft that overlaps an active card, and merges only after Angelo approves', () => {
+    const skill = readSkill('skills/az-aletheia-add/SKILL.md')
+
+    for (const text of [
+      'merge',
+      '; reemplaza a #',
+      'aletheia card archive',
+      'reemplazada por #',
+      'his why',
+      'only after Angelo approves',
+    ])
+      expect(skill.text).toContain(text)
+    expect(skill.text).not.toContain('Replacing or merging an old card is not offered')
+  })
 })

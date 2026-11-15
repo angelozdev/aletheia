@@ -115,8 +115,8 @@ never verdicts: read every listed card and judge it against the draft.
 - Sharing a word or a tag alone is not a repeat: no flag.
 
 Two drafts of the same batch that repeat each other are merged, or one is dropped, before
-showing them. Replacing or merging an old card is not offered. If a search exits 1, read its
-`error:` line, fix the JSON and search again; never show a draft whose search did not answer.
+showing them. If a search exits 1, read its `error:` line, fix the JSON and search again;
+never show a draft whose search did not answer.
 
 ## 3. Show every draft
 
@@ -147,6 +147,14 @@ aletheia card restore k7m2
 
 It comes back with the schedule it had.
 
+A draft that overlaps an active card (`⚠ se solapa con #<id>`) offers three choices: drop the
+draft, save it as its own card, or merge both into one card. A merge is one draft that holds
+both, by the rules of step 1, shown with the old card's question. Ask his why in his words if
+he has not said it: it goes in the old card's archive reason. Save the merged draft and archive
+the old card only after Angelo approves the merged draft and gives his why. It goes in the same
+`aletheia card add` as the rest, its `source` the usual one followed by `; reemplaza a #<id>`
+(`"source": "orders; reemplaza a #9p3x"`).
+
 ## 4. Save the approved cards
 
 Send every approved card in one call, a JSON list on stdin through a quoted heredoc, so
@@ -173,6 +181,18 @@ only these seven fields.
 
 stdout gives the ids in the order sent, `ids[2]: k7m2,p3x9` (an id of digits only comes
 quoted: `"0123"`). Tell Angelo each saved card by its id written `#k7m2`.
+
+Then, for each merged draft, archive the old card it replaces, the id without `#`, the reason
+`reemplazada por #<new>: <his why>`:
+
+```sh
+aletheia card archive <<'JSON'
+{"card":"9p3x","reason":"reemplazada por #a7k2: se solapaban, mejor una con ambos ejemplos"}
+JSON
+```
+
+If it exits 1, the cards are already saved: say which old card is still active beside the new
+one, fix the JSON and archive it again; never send the drafts a second time.
 
 The list is saved whole or not at all. If the command exits 1, nothing was stored: read the
 `error:` line on stderr, for example

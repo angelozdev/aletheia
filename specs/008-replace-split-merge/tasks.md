@@ -116,7 +116,7 @@ archived by a replacement leads to the card that replaced it.
 
 **Independent Test**: quickstart §3, after the release.
 
-- [ ] T006 [P] [US3] `az-aletheia-add` offers drop, save or merge for a draft that overlaps an active card, in `skills/az-aletheia-add/SKILL.md`
+- [X] T006 [P] [US3] `az-aletheia-add` offers drop, save or merge for a draft that overlaps an active card, in `skills/az-aletheia-add/SKILL.md`
   - **Test**: `add-skill.test.ts`, `008-US3-AS1 az-aletheia-add offers to drop, save or merge a draft that overlaps an active card, and merges only after Angelo approves`: the text holds `merge`, `; reemplaza a #`, `aletheia card archive`, `reemplazada por #`, `his why`, `only after Angelo approves`; it does not hold `Replacing or merging an old card is not offered`.
   - **Code**: section 2's line "Replacing or merging an old card is not offered" goes. In section 3, a draft flagged `⚠ se solapa con #<id>`, an active card, offers drop, save, or merge: one draft combining both, shown with the old question. Only after Angelo approves and gives his why, the merged draft is saved in the same `aletheia card add` as the rest, its `source` the usual one followed by `; reemplaza a #<id>`; after it answers, `aletheia card archive` the old card with `reemplazada por #<new>: <why>`, with the failure rule of T003.
   - **Run**: `pnpm test -t 008-US3-AS1`
