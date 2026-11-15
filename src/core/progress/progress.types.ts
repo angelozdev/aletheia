@@ -74,3 +74,5 @@ export type HistoryCounts = {
 }
 
 export type ReviewHistory = { counts: HistoryCounts; reviews: HistoryEntry[] }
+
+export type HistoryFilters = { grade?: Grade; flag?: ReviewFlag }

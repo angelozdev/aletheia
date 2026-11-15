@@ -22,6 +22,7 @@ import type {
   CardSortField,
   HistoryCounts,
   HistoryEntry,
+  HistoryFilters,
   Comparator,
   ProgressCounts,
   ProgressInput,
@@ -258,10 +259,18 @@ const NEWEST_FIRST = byValue(
   () => 0,
 )
 
-export function reviewHistory(input: ProgressInput): ReviewHistory {
+function inHistory(review: Review, input: ProgressInput, filters: HistoryFilters): boolean {
+  return (
+    review.reviewedAt >= input.windowStart &&
+    (filters.grade === undefined || review.grade === filters.grade) &&
+    (filters.flag === undefined || review.flag === filters.flag)
+  )
+}
+
+export function reviewHistory(input: ProgressInput, filters: HistoryFilters = {}): ReviewHistory {
   const scope = new Set(inScope(input).map(({ id }) => id))
   const entries = input.reviews
-    .filter(({ cardId, reviewedAt }) => scope.has(cardId) && reviewedAt >= input.windowStart)
+    .filter((review) => scope.has(review.cardId) && inHistory(review, input, filters))
     .map(historyEntry)
     .toSorted(NEWEST_FIRST)
   return { counts: historyCounts(entries), reviews: entries }

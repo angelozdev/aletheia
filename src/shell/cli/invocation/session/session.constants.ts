@@ -30,6 +30,8 @@ export const OPTION_FLAGS: Record<string, string> = {
   gaps: '--gaps',
   notReviewed: '--not-reviewed',
   days: '--days',
+  grade: '--grade',
+  flag: '--flag',
 }
 
 export const WHOLE_NUMBER = /^\d+$/

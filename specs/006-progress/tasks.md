@@ -235,7 +235,7 @@ from the log.
     - `performance.test.ts`: `SC-003 review history answers in under 1 second on 1,000 cards and 20,000 reviews`.
   - **Code**: `reviewHistory` returns `{ counts, reviews }`, each entry `card`, `reviewedAt`, `grade`, `claudeGrade`, `flag`, `askedQuestion`. `review-history.ts`: group `review`, name `history`, `[tags...]` through `topicFrom` (reviews of cards in scope), `--days <n>` with `DEFAULT_HISTORY_DAYS = 7` in `review-history.constants.ts`. Registered after `reviewGradeCommand`.
   - **Run**: quickstart §4, the first command
-- [ ] T014 [US3] `review history --grade <grade> --flag <flag>` narrows the reviews and their counts, in `src/core/progress/progress.ts`
+- [X] T014 [US3] `review history --grade <grade> --flag <flag>` narrows the reviews and their counts, in `src/core/progress/progress.ts`
   - **Test**: `review-history.test.ts`: `006-US3-AS1 review history with a grade or a flag gives only those reviews, and counts over them`: `--grade again` and `--flag badly-rephrased`, each with `counts.reviews` equal to the entries. `--grade nope` → `error: invalid options: --grade: must be again, hard, good or easy`; `--flag nope` → `error: invalid options: --flag: must be missing-prerequisite, badly-written or badly-rephrased`; both broken → both messages, joined by `; `, in the contract's order.
   - **Code**: `review-history.schema.ts` validates `grade` against `GRADES` and `flag` against `REVIEW_FLAGS` with `oneOf`; filters apply before the counts.
   - **Run**: quickstart §4

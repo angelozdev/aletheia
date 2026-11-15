@@ -19,9 +19,9 @@ export const reviewHistoryCommand: CliCommand = {
   options: REVIEW_HISTORY_OPTIONS,
   run: (context, options, tags, flags) =>
     withStore(context, options, async (store) => {
-      const { days } = optionsFrom(reviewHistoryFlagsSchema, flags)
+      const { days, ...filters } = optionsFrom(reviewHistoryFlagsSchema, flags)
       const input = progressInput(store, context, tags, days ?? DEFAULT_HISTORY_DAYS)
-      const { counts, reviews } = reviewHistory(input)
+      const { counts, reviews } = reviewHistory(input, filters)
       return { counts, reviews: reviews.map((entry) => shownEntry(entry, context.timeZone)) }
     }),
 }

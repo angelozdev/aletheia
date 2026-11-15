@@ -79,6 +79,40 @@ describe('aletheia review history', () => {
     )
   })
 
+  it('006-US3-AS1 review history with a grade or a flag gives only those reviews, and counts over them', async () => {
+    const [messaging, docker] = await arrangeWeek()
+
+    const agains = await history(['--grade', 'again'])
+    const rephrased = await history(['--flag', 'badly-rephrased'])
+
+    expect(agains).toMatchObject({
+      counts: { reviews: 1, grades: { again: 1, good: 0 }, disputed: 1 },
+      reviews: [{ card: messaging, grade: 'again' }],
+    })
+    expect(agains.reviews).toHaveLength(1)
+    expect(rephrased).toMatchObject({
+      counts: { reviews: 1, flags: { 'badly-rephrased': 1 }, disputed: 0 },
+      reviews: [{ card: docker, flag: 'badly-rephrased' }],
+    })
+    expect(rephrased.reviews).toHaveLength(1)
+  })
+
+  it('006-US3-AS1 review history refuses an unknown grade or flag naming the valid ones', async () => {
+    const grade = await cli.run(['review', 'history', '--grade', 'nope'])
+    const flag = await cli.run(['review', 'history', '--flag', 'nope'])
+    const both = await cli.run(['review', 'history', '--flag', 'nope', '--grade', 'nope'])
+    const GRADE_RULE = '--grade: must be again, hard, good or easy'
+    const FLAG_RULE = '--flag: must be missing-prerequisite, badly-written or badly-rephrased'
+
+    for (const refused of [grade, flag, both])
+      expect(refused).toMatchObject({ code: 1, stdout: '' })
+    expect(grade.stderr).toMatch(new RegExp(`error: invalid options: ${GRADE_RULE}\\n$`))
+    expect(flag.stderr).toMatch(new RegExp(`error: invalid options: ${FLAG_RULE}\\n$`))
+    expect(both.stderr).toMatch(
+      new RegExp(`error: invalid options: ${GRADE_RULE}; ${FLAG_RULE}\\n$`),
+    )
+  })
+
   it('review history prints the counts and reviews as TOON', async () => {
     await arrangeWeek()
 
