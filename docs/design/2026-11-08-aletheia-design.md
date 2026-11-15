@@ -123,17 +123,19 @@ A card may carry several tags (a Redis-vs-RabbitMQ card lives under both).
 
 **Review log** (one row per graded review): card, rating, Claude's rating before
 any dispute (a dispute changed the grade when the two differ), the card's state
-before the review, timestamp, Angelo's answer, Claude's grading rationale, at
-most one flag (`missing-prerequisite` or `badly-written`), and, when the card was
-asked as a prerequisite, the card it was asked for. — _Storing the answer,
+before the review, timestamp, the question as Claude asked it (none for reviews
+before slice 5), Angelo's answer, Claude's grading rationale, at most one flag
+(`missing-prerequisite`, `badly-written` or `badly-rephrased`), and, when the card
+was asked as a prerequisite, the card it was asked for. — _Storing the answer,
 rationale and flags is my call; they power stats and pruning. Claude's rating and
 the state before were added in spec 001: neither can be rebuilt later. One flag
-and the prerequisite link are spec 004's (ADR-0017)._ The answer is
+and the prerequisite link are spec 004's (ADR-0017); the question as asked and
+`badly-rephrased` are spec 005's (ADR-0018)._ The answer is
 stored as Claude's summary of what Angelo said, not his words: every claim, right
 or wrong, and what he said he did not know, without filler, hedges or the
 questions he asked after the grade (decided after the first real review).
 
-A review flagged `badly-written` is **voided**: it is logged, but it does not
+A review flagged `badly-written` or `badly-rephrased` is **voided**: it is logged, but it does not
 update FSRS and does not count toward retention or leech detection, because it
 says nothing about Angelo's memory. — _my call_
 
