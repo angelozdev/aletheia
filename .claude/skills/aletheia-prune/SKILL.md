@@ -175,6 +175,11 @@ JSON
 The old cards keep their reviews. The new cards are new: the day's new-card limit applies to
 them, and FSRS spaces them out quickly when he grades them Easy. Say so in a line.
 
+If `aletheia card add` exits 1, nothing was saved: read the `error:` line, fix the JSON and
+send it again. If an `aletheia card archive` exits 1 after the save, say which old card is
+still active beside the new one, fix the JSON and archive it again; never send the drafts
+a second time.
+
 ## 3. What only reading finds
 
 After the CLI's candidates, read the cards themselves for what no number shows: a situation

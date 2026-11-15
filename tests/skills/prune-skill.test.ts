@@ -107,4 +107,11 @@ describe('the aletheia-prune skill', () => {
       subsection.indexOf('aletheia card archive'),
     )
   })
+
+  it('008-US1-AS2 aletheia-prune, when an archive fails after the save, says which old card is still active beside the new one and archives it again, never saving the drafts a second time', () => {
+    const skill = readSkill(PRUNE_SKILL)
+
+    for (const text of ['still active beside', 'archive it again', 'a second time'])
+      expect(skill.text).toContain(text)
+  })
 })
