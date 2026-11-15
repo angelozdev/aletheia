@@ -146,7 +146,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
     - `tests/progress/performance.test.ts`: `SC-003 tag stats answers in under 1 second on 1,000 cards and 20,000 reviews`. One `card add` of 1,000 drafts under 20 tags; one `runSql` of 20,000 `reviews` rows inside `begin`/`commit`; `performance.now()` around `tag stats`.
   - **Code**: `progress.constants.ts`: `WEAK_FAILURES = 4`. `progress.ts`: a failure is "counted, `grade = again`, and `flag ≠ missing-prerequisite`", ever; weak is "`failures ≥ WEAK_FAILURES`"; a gap is "`flag = missing-prerequisite` and `reviewedAt ≥ windowStart`".
   - **Run**: `pnpm aletheia tag stats`, and `pnpm test -t SC-003`
-- [ ] T005 [US1] The `aletheia-stats` skill answers "¿cómo voy?" from `aletheia tag stats`, in `.claude/skills/aletheia-stats/SKILL.md`
+- [X] T005 [US1] The `aletheia-stats` skill answers "¿cómo voy?" from `aletheia tag stats`, in `.claude/skills/aletheia-stats/SKILL.md`
   - **Test**: `tests/skills/stats-skill.test.ts`, `006-US1-AS6 aletheia-stats carries its Spanish triggers, answers every progress question from the installed aletheia, explains weak and gaps, and writes nothing`:
     - `name` is `aletheia-stats`. The description contains `¿cómo voy?`, `¿qué tengo flojo?`, `¿qué no repaso hace un mes?`, `¿qué fallé esta semana?` and `muéstrame mi progreso`, and none of them is in `aletheia-review`'s description.
     - The text contains `aletheia tag stats`, `aletheia tag list`, `never from memory`, `4 failures` and `missing-prerequisite`, and `repasemos` as the hand-over.
