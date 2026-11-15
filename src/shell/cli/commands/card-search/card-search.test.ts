@@ -62,6 +62,8 @@ describe('aletheia card search', () => {
       tags: ['messaging::redis-streams'],
       question: consumer,
       answer: 'Una respuesta.',
+      status: 'active',
+      archiveReason: null,
     })
   })
 
@@ -179,8 +181,32 @@ describe('aletheia card search', () => {
         '    tags[1]: "docker::commands"',
         '    question: "En Docker, ¿qué diferencia hay entre `docker ps` y `docker ps -a`?"',
         '    answer: `ps` muestra solo los contenedores en ejecución; `-a` incluye los detenidos.',
+        '    status: active',
+        '    archiveReason: null',
         '',
       ].join('\n'),
     )
+  })
+
+  it('007-US1-AS2 card search gives an archived card that matches the words, with its status and reason', async () => {
+    const reason = 'ya no uso Redis Streams'
+    await addCards([
+      draftAsking('¿Cómo confirma un consumidor un mensaje en Redis Streams?', [
+        'messaging::redis-streams',
+      ]),
+      draftAsking('¿Qué hace un consumidor de Kafka?', ['messaging::kafka']),
+      draftAsking('¿Qué guarda la PEL?', ['messaging::redis-streams']),
+    ])
+    for (const card of ['0123', '89ab'])
+      await cli.run(['card', 'archive'], JSON.stringify({ card, reason }))
+    const query = { words: 'consumidor', tags: ['messaging::redis-streams'] }
+
+    const { stdout } = await cli.run(['card', 'search', '--json'], JSON.stringify(query))
+
+    expect(JSON.parse(stdout).cards).toMatchObject([
+      { id: '0123', status: 'archived', archiveReason: reason },
+      { id: '4567', status: 'active', archiveReason: null },
+    ])
+    expect(await foundIds(query)).toEqual(['0123', '4567'])
   })
 })

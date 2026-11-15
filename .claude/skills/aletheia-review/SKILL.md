@@ -192,7 +192,8 @@ JSON
 - `tags`: the failed card's tags.
 
 Read every card listed and judge whether one covers the concept; sharing a word or a tag is
-not enough.
+not enough. A card listed with `status: archived` is not asked: Angelo retired it, and the
+CLI refuses to grade it.
 
 - **One covers it and was not shown in this session**: ask it next, before explaining
   anything. Its answer is the explanation, and its grade shows what Angelo remembers, even if

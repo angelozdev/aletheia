@@ -146,7 +146,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
 
 **Independent Test**: quickstart §2.
 
-- [ ] T007 [US1] `card search` finds archived cards too, marked with their reason, in `src/shell/db/cards/cards.ts` and `src/shell/cli/commands/card-search/card-search.ts`
+- [X] T007 [US1] `card search` finds archived cards too, marked with their reason, in `src/shell/db/cards/cards.ts` and `src/shell/cli/commands/card-search/card-search.ts`
   - **Test**: `src/shell/cli/commands/card-search/card-search.test.ts`, `007-US1-AS2 card search gives an archived card that matches the words, with its status and reason`: an archived card matching a word comes with `status: archived` and its `archiveReason`; an active one with `status: active`, `archiveReason: null`; an archived card sharing only a tag family is not given. The 002 tests stay green.
   - **Code**: `matching` drops the `status = active` condition; `similarCards` keeps `active()` for tag-family-only matches; `similarItem` gains `status` and `archiveReason`. The description says "the cards", not "the active cards".
   - **Run**: quickstart §2

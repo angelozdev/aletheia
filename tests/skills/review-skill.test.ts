@@ -79,6 +79,12 @@ describe('the aletheia-review skill', () => {
       expect(skill.text).toContain(text)
   })
 
+  it('aletheia-review never asks an archived card found while looking for a missing base concept', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    expect(skill.text).toContain('A card listed with `status: archived` is not asked')
+  })
+
   it('004-US2-AS4 aletheia-review voids a review whose wording decided the answer, right or wrong, says why, and lets Angelo dispute it', () => {
     const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
 

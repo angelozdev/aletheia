@@ -1,4 +1,4 @@
-import type { Card } from '#core/cards'
+import type { Card, CardArchive } from '#core/cards'
 import { searchTerms, similarCards } from '#core/similar'
 import { StoreCardRepository } from '#shell/db'
 import { readJson } from '../../invocation/stdin/stdin.ts'
@@ -15,26 +15,28 @@ function searchFrom(json: unknown) {
   return { words, tags }
 }
 
-function similarItem(card: Card) {
+function similarItem(card: Card, archive: CardArchive | null) {
   return {
     id: card.id,
     type: card.type,
     tags: card.tags,
     question: card.question,
     answer: card.answer,
+    status: card.status,
+    archiveReason: archive?.reason ?? null,
   }
 }
 
 export const cardSearchCommand: CliCommand = {
   group: 'card',
   name: 'search',
-  description: 'list the active cards most similar to the words and tags given as JSON on stdin',
+  description: 'list the cards most similar to the words and tags given as JSON on stdin',
   run: (context, options) =>
     withStore(context, options, async (store) => {
       const { words, tags } = searchFrom(await readJson(context))
       const repository = new StoreCardRepository(store)
       const matches = repository.matching(searchTerms(words))
       const similar = similarCards(matches, repository.active(), tags)
-      return { cards: similar.map(similarItem) }
+      return { cards: similar.map((card) => similarItem(card, repository.archiveOf(card.id))) }
     }),
 }

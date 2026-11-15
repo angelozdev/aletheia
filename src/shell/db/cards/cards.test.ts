@@ -234,7 +234,7 @@ describe('StoreCardRepository', () => {
     expect(selectAll(path, STATUS_CHANGES)).toEqual([ARCHIVED_ROW])
   })
 
-  it('matching returns the active cards holding a term as a prefix, most relevant first', async () => {
+  it('matching returns the cards holding a term as a prefix, most relevant first', async () => {
     const store = await openTestStore(path)
     const now = new Date(NOW)
     const plain = { ...SAMPLE_DRAFT, answer: 'a', keyPoints: ['k'], situation: 's' }

@@ -161,7 +161,7 @@ export class StoreCardRepository implements CardRepository {
   #matchingIds(query: string): string[] {
     return this.#db
       .all<{ id: string }>(
-        sql`select c.id from card_search s join cards c on c.id = s.card_id where card_search match ${query} and c.status = ${ACTIVE_STATUS} order by s.rank`,
+        sql`select c.id from card_search s join cards c on c.id = s.card_id where card_search match ${query} order by s.rank`,
       )
       .map(({ id }) => id)
   }
