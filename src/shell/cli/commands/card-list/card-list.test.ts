@@ -94,4 +94,68 @@ describe('aletheia card list', () => {
       /error: invalid options: --not-reviewed: must be a whole number, 1 or more\n$/,
     )
   })
+
+  it('006-US2-AS3 card list sorts by a field in either direction', async () => {
+    const [once, thrice, fresh] = await addTagged(cli, [
+      ['messaging'],
+      ['messaging'],
+      ['messaging'],
+    ])
+    reviewed(cli.db, once, '2026-11-01T15:00:00.000Z', { grade: 'again' })
+    for (const day of ['02', '04', '06'])
+      reviewed(cli.db, thrice, `2026-11-${day}T15:00:00.000Z`, { grade: 'again' })
+    studied(cli.db, once, 'review', '2026-11-20T15:00:00.000Z')
+    studied(cli.db, thrice, 'relearning', '2026-11-16T15:00:00.000Z')
+    const idsOf = ({ cards }: { cards: { id: string }[] }) => cards.map(({ id }) => id)
+
+    const byFailures = await list(['--sort', 'failures', '--desc'])
+    const byDue = await list(['--sort', 'due'])
+
+    expect(idsOf(byFailures)).toEqual([thrice, once, fresh])
+    expect(idsOf(byDue)).toEqual([fresh, thrice, once])
+  })
+
+  it('006-US2-AS3 card list refuses an unknown sort field naming the valid ones', async () => {
+    const { code, stdout, stderr } = await cli.run(['card', 'list', '--sort', 'nope'])
+
+    expect(code).toBe(1)
+    expect(stdout).toBe('')
+    expect(stderr).toMatch(
+      /error: invalid options: --sort: must be id, state, due, lastReview, failures or gaps\n$/,
+    )
+  })
+
+  it('card list prints the cards as TOON', async () => {
+    const [seen] = await addTagged(cli, [['messaging'], ['messaging::rabbitmq']])
+    studied(cli.db, seen, 'review', '2026-11-15T23:00:00.000Z')
+    reviewed(cli.db, seen, '2026-11-10T15:00:00.000Z')
+
+    const { code, stdout } = await cli.run(['card', 'list'])
+
+    expect(code).toBe(0)
+    expect(stdout).toBe(
+      [
+        'cards[2]:',
+        '  - id: "0000"',
+        `    question: "${SAMPLE_DRAFT.question}"`,
+        '    tags[1]: messaging',
+        '    state: review',
+        '    due: "2026-11-15T18:00:00-05:00"',
+        '    lastReview: "2026-11-10T10:00:00-05:00"',
+        '    failures: 0',
+        '    gaps: 0',
+        '    weak: false',
+        '  - id: "0001"',
+        `    question: "${SAMPLE_DRAFT.question}"`,
+        '    tags[1]: "messaging::rabbitmq"',
+        '    state: new',
+        '    due: "2026-11-15T15:00:00-05:00"',
+        '    lastReview: null',
+        '    failures: 0',
+        '    gaps: 0',
+        '    weak: false',
+        '',
+      ].join('\n'),
+    )
+  })
 })

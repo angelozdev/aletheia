@@ -30,10 +30,11 @@ export const cardListCommand: CliCommand = {
   options: CARD_LIST_OPTIONS,
   run: (context, options, tags, flags) =>
     withStore(context, options, async (store) => {
-      const { notReviewed, ...filters } = optionsFrom(cardListFlagsSchema, flags)
+      const { notReviewed, sort, desc, ...filters } = optionsFrom(cardListFlagsSchema, flags)
       const since = notReviewed === undefined ? undefined : windowOf(notReviewed, context)
       const input = progressInput(store, context, tags)
-      const rows = cardProgress(input, { ...filters, notReviewed: since })
+      const order = { field: sort, desc }
+      const rows = cardProgress(input, { ...filters, notReviewed: since }, order)
       return { cards: rows.map((row) => cardRow(row, context.timeZone)) }
     }),
 }

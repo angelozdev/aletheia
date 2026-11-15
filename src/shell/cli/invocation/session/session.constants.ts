@@ -14,6 +14,11 @@ export const SESSION_OPTIONS: CommandOption[] = [
   ...LIMIT_OPTIONS,
 ]
 
+export const DESC_OPTION: CommandOption = {
+  flags: '--desc',
+  description: 'sort from the highest down',
+}
+
 export const OPTION_FLAGS: Record<string, string> = {
   session: '--session',
   sessionSize: '--session-size',

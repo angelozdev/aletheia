@@ -203,7 +203,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
     - `card-list.test.ts`: `006-US2-AS1 card list --not-reviewed 30 gives the cards with no review in the last 30 days`, and `006-US2-AS2 card list --not-reviewed gives a card never reviewed when it was saved before the window` (its `created_at` set through `runSql`). `--not-reviewed 0` and `--not-reviewed x` exit 1 with `error: invalid options: --not-reviewed: must be a whole number, 1 or more`.
   - **Code**: the rule "`lastReview < windowStart(n)`, or never reviewed and `createdAt < windowStart(n)`". `card-list.schema.ts` validates `notReviewed` with `WHOLE_NUMBER` and the message of `LIMIT_RULES.sessionSize`; `tag-stats.ts` and `card-list.ts` compute windows through `startOfWindow`.
   - **Run**: quickstart §3, the first command
-- [ ] T011 [US2] `card list --sort <field> [--desc]` orders the cards, in `src/core/progress/progress.ts`
+- [X] T011 [US2] `card list --sort <field> [--desc]` orders the cards, in `src/core/progress/progress.ts`
   - **Test**:
     - `card-list.test.ts`: `006-US2-AS3 card list sorts by a field in either direction` (`--sort failures --desc`, then `--sort due`); `006-US2-AS3 card list refuses an unknown sort field naming the valid ones` → `error: invalid options: --sort: must be id, state, due, lastReview, failures or gaps`; `card list prints the cards as TOON` (decision 3).
     - `performance.test.ts`: `SC-003 card list answers in under 1 second on 1,000 cards and 20,000 reviews`, on the same arranged store.

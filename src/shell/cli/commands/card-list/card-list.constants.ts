@@ -1,3 +1,4 @@
+import { DESC_OPTION } from '../../invocation/session/session.constants.ts'
 import type { CommandOption } from '../../main/main.types.ts'
 
 export const CARD_LIST_OPTIONS: CommandOption[] = [
@@ -7,4 +8,9 @@ export const CARD_LIST_OPTIONS: CommandOption[] = [
     flags: '--not-reviewed <days>',
     description: 'only cards with no review in the last <days> days',
   },
+  {
+    flags: '--sort <field>',
+    description: 'sort by id, state, due, lastReview, failures or gaps; lastReview by default',
+  },
+  DESC_OPTION,
 ]

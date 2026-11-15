@@ -2,11 +2,18 @@ import { NEW_STATE, type Card } from '#core/cards'
 import { MISSING_PREREQUISITE, policyOf, REVIEW_STATE, type Review } from '#core/reviews'
 import { AGAIN_GRADE } from '#core/scheduling'
 import { bySegments, coveredTags, isUnder, TAG_SEPARATOR, topicCards } from '#core/tags'
-import { DEFAULT_TAG_ORDER, PERCENT, TAG_FIELD, WEAK_FAILURES } from './progress.constants.ts'
+import {
+  DEFAULT_CARD_ORDER,
+  DEFAULT_TAG_ORDER,
+  PERCENT,
+  TAG_FIELD,
+  WEAK_FAILURES,
+} from './progress.constants.ts'
 import type {
   CardFacts,
   CardFilters,
   CardProgress,
+  CardSortField,
   Comparator,
   ProgressCounts,
   ProgressInput,
@@ -169,7 +176,14 @@ const BY_ID = byValue(
   () => 0,
 )
 
-const BY_LAST_REVIEW = byValue((row: CardProgress) => row.lastReview, false, BY_ID)
+const CARD_VALUES: Record<CardSortField, (row: CardProgress) => SortValue> = {
+  id: ({ card }) => card.id,
+  state: ({ card }) => card.state,
+  due: ({ card }) => card.due,
+  lastReview: ({ lastReview }) => lastReview,
+  failures: ({ failures }) => failures,
+  gaps: ({ gaps }) => gaps,
+}
 
 function lastSeen({ lastReview, card }: CardProgress): Date {
   return lastReview ?? card.createdAt
@@ -183,7 +197,11 @@ function matches(row: CardProgress, { weak, gaps, notReviewed }: CardFilters): b
   )
 }
 
-export function cardProgress(input: ProgressInput, filters: CardFilters): CardProgress[] {
+export function cardProgress(
+  input: ProgressInput,
+  filters: CardFilters,
+  { field, desc } = DEFAULT_CARD_ORDER,
+): CardProgress[] {
   const facts = [...factsOf(input)]
   const rows = facts.map(([card, cardFacts]) => ({
     card,
@@ -192,5 +210,6 @@ export function cardProgress(input: ProgressInput, filters: CardFilters): CardPr
     weak: isWeak(cardFacts),
     lastReview: cardFacts.lastReview,
   }))
-  return rows.filter((row) => matches(row, filters)).toSorted(BY_LAST_REVIEW)
+  const compare = byValue(CARD_VALUES[field], desc, BY_ID)
+  return rows.filter((row) => matches(row, filters)).toSorted(compare)
 }
