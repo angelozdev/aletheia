@@ -1,7 +1,7 @@
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { tempDir } from '../temp-dir/temp-dir.ts'
-import { MIGRATION_FILE } from './fixture-migrations.constants.ts'
+import { MIGRATION_FILE, SHIPPED_MIGRATIONS } from './fixture-migrations.constants.ts'
 import type { FixtureMigrations } from './fixture-migrations.types.ts'
 
 export function writeMigrations(dir: string, migrations: FixtureMigrations): string {
@@ -14,4 +14,12 @@ export function writeMigrations(dir: string, migrations: FixtureMigrations): str
 
 export function noMigrations(): string {
   return tempDir('aletheia-migrations-')
+}
+
+export function migrationsUpTo(last: string): string {
+  const dir = noMigrations()
+  const names = readdirSync(SHIPPED_MIGRATIONS).filter((name) => name <= last)
+  for (const name of names)
+    cpSync(join(SHIPPED_MIGRATIONS, name), join(dir, name), { recursive: true })
+  return dir
 }

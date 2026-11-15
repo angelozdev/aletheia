@@ -1,13 +1,12 @@
-import { cpSync } from 'node:fs'
-import { basename } from 'node:path'
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { CardDraft } from '#core/cards'
 import { SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
 import { distinctIdDraw } from '../../../../../tests/support/draws/draws.ts'
-import { SHIPPED_MIGRATIONS } from '../../../../../tests/support/fixture-migrations/fixture-migrations.constants.ts'
+import { migrationsUpTo } from '../../../../../tests/support/fixture-migrations/fixture-migrations.ts'
 import { cliOnTempStore, runOnStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { CliRun, StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
-import { tempDir } from '../../../../../tests/support/temp-dir/temp-dir.ts'
+
+const LAST_BEFORE_SEARCH = '20261110005603_reviews_never_change'
 
 let cli: StoreCli
 
@@ -33,15 +32,6 @@ async function addCards(drafts: CardDraft[]): Promise<void> {
 async function foundIds(query: unknown): Promise<string[]> {
   const { stdout } = await cli.run(['card', 'search', '--json'], JSON.stringify(query))
   return JSON.parse(stdout).cards.map(({ id }: { id: string }) => id)
-}
-
-function migrationsBeforeSearch(): string {
-  const dir = tempDir('aletheia-migrations-')
-  cpSync(SHIPPED_MIGRATIONS, dir, {
-    recursive: true,
-    filter: (source) => !basename(source).endsWith('_card_search'),
-  })
-  return dir
 }
 
 function expectRefused({ code, stdout, stderr }: CliRun, message: string): void {
@@ -156,7 +146,7 @@ describe('aletheia card search', () => {
   )
 
   it('002-US1-AS6 card search finds cards saved before the search migration', async () => {
-    const migrationsDir = migrationsBeforeSearch()
+    const migrationsDir = migrationsUpTo(LAST_BEFORE_SEARCH)
     await runOnStore(cli.db, ['card', 'add'], JSON.stringify([SAMPLE_DRAFT]), { migrationsDir })
 
     const { stdout, stderr } = await runOnStore(
