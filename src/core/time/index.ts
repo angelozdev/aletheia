@@ -4,5 +4,6 @@ export {
   shownInstant,
   startOfToday,
   startOfTomorrow,
+  startOfWindow,
   storedInstant,
 } from './time.ts'

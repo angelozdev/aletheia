@@ -104,7 +104,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
 
 **Independent Test**: quickstart §1.
 
-- [ ] T002 [US1] `tag stats` gives each tag and the deck their cards, new cards and cards due today, in `src/core/progress/progress.ts` and `src/shell/cli/commands/tag-stats/tag-stats.ts`
+- [X] T002 [US1] `tag stats` gives each tag and the deck their cards, new cards and cards due today, in `src/core/progress/progress.ts` and `src/shell/cli/commands/tag-stats/tag-stats.ts`
   - **Test**:
     - `src/core/time/time.test.ts`: `startOfWindow` of 1 day is `startOfToday`; of 30 days at `NOW` in `America/Bogota` is `2026-10-17T05:00:00.000Z`.
     - `src/core/progress/progress.test.ts`, through `tagProgress(input)`:

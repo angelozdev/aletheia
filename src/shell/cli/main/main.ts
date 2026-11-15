@@ -10,6 +10,7 @@ import { reviewTopicCommand } from '../commands/review-topic/review-topic.ts'
 import { settingsSetCommand } from '../commands/settings-set/settings-set.ts'
 import { settingsShowCommand } from '../commands/settings-show/settings-show.ts'
 import { tagListCommand } from '../commands/tag-list/tag-list.ts'
+import { tagStatsCommand } from '../commands/tag-stats/tag-stats.ts'
 import { COMMAND_GROUPS, ExitCode } from './main.constants.ts'
 import type { CliCommand, CliContext, Flags } from './main.types.ts'
 
@@ -20,6 +21,7 @@ const COMMANDS = [
   cardEditCommand,
   cardSearchCommand,
   tagListCommand,
+  tagStatsCommand,
   reviewDueCommand,
   reviewTopicCommand,
   reviewGradeCommand,

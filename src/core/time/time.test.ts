@@ -5,6 +5,7 @@ import {
   shownInstant,
   startOfToday,
   startOfTomorrow,
+  startOfWindow,
   storedInstant,
 } from './time.ts'
 
@@ -41,6 +42,18 @@ describe('time', () => {
     expect(
       startOfTomorrow(new Date('2026-03-29T00:30:00.000Z'), 'Europe/Madrid').toISOString(),
     ).toBe('2026-03-29T22:00:00.000Z')
+  })
+
+  it('startOfWindow of 1 day is the start of today', () => {
+    const now = new Date('2026-11-15T20:00:00.000Z')
+
+    expect(startOfWindow(now, 1, 'America/Bogota')).toEqual(startOfToday(now, 'America/Bogota'))
+  })
+
+  it('startOfWindow of 30 days is the start of the local day 29 days before today', () => {
+    const now = new Date('2026-11-15T20:00:00.000Z')
+
+    expect(startOfWindow(now, 30, 'America/Bogota').toISOString()).toBe('2026-10-17T05:00:00.000Z')
   })
 
   it('minutesAfter adds minutes to an instant', () => {
