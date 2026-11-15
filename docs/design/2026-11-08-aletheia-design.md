@@ -351,9 +351,11 @@ _Thresholds ("failed repeatedly", six months) are settings Angelo can change
 - If the key points change meaning, it is a new card with fresh FSRS state, and
   the old one is archived with reason "replaced by #id".
 - Split and merge produce new cards with fresh state. Angelo may have to relearn
-  them, but FSRS spaces them out quickly when he grades Easy. They are exempt
-  from the new-card cap, and first come up the next day: he has just read the
-  old cards. — _Angelo's call, 2026-11-15, spec 008._
+  them, but FSRS spaces them out quickly when he grades Easy.
+- A replacement, split or merge is `card add` for the new cards, then
+  `card archive` for each old one with "reemplazada por #id: <his why>"; the new
+  card's source names the old ones. They are ordinary new cards: no exemption
+  from the new-card cap, no stored link. — _Angelo's call, 2026-11-15, spec 008._
 
 ## 9. Architecture
 
