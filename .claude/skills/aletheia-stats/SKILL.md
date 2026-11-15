@@ -1,6 +1,6 @@
 ---
 name: aletheia-stats
-description: Use when Angelo asks how his Aletheia deck is going, in this repo. Triggers on "¿cómo voy?", "¿qué tengo flojo?", "¿qué no repaso hace un mes?", "¿qué fallé esta semana?", "muéstrame mi progreso". Answers every progress question from what the installed aletheia CLI prints in that turn, says what the numbers mean, and writes nothing.
+description: Use when Angelo asks how his Aletheia deck is going, in this repo. Triggers on "¿cómo voy?", "¿qué tengo flojo?", "¿qué no repaso hace un mes?", "¿qué fallé esta semana?", "muéstrame mi progreso", "¿cuál va peor?". Answers every progress question from what the installed aletheia CLI prints in that turn, says what the numbers mean, and writes nothing.
 ---
 
 # aletheia-stats
@@ -50,6 +50,38 @@ The first time `weak` or `gaps` appear in the conversation, say in a line what t
   base concept it lacked. A topic with gaps lacks a base, which is not the same as a weak topic.
 
 `aletheia tag list` prints only the tags in use and their cards, when that is all he asks.
+
+### A topic ("¿y de mensajería?")
+
+For a topic named in Spanish, list the tags in use first:
+
+```sh
+aletheia tag list
+```
+
+Pick every tag that covers the topic; a topic can span branches ("redis" →
+`messaging::redis-streams` and `databases::redis`). Then narrow the tree to them, descendants
+included:
+
+```sh
+aletheia tag stats <tags>
+aletheia tag stats messaging::redis-streams databases::redis
+```
+
+`deck` then covers only the cards under those tags. When no tag covers the topic, say so and
+name the top-level tags (those without `::`) from the list. Never guess a tag.
+
+### A sort ("¿cuál va peor?")
+
+`--sort <field>` orders siblings under their parent by a field as printed (`tag`, `cards`,
+`new`, `due`, `retention`, `weak` or `gaps`), lowest first; `--desc` reverses it. Each row
+still follows its parent, and a `null` retention is always last.
+
+- "¿cuál va peor?": `aletheia tag stats --sort retention`, worst first.
+- "¿dónde tengo más flojas?": `aletheia tag stats --sort weak --desc`.
+- "¿dónde tengo más pendientes?": `aletheia tag stats --sort due --desc`.
+
+Both combine: `aletheia tag stats messaging --sort retention`.
 
 ## 2. Studying what is weak
 

@@ -176,7 +176,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
     - `tag-stats.test.ts`: `006-US1-AS5 tag stats sorts siblings by a field in either direction` (`--sort retention`, then with `--desc`), and `006-US1-AS5 tag stats refuses an unknown sort field naming the valid ones`: `--sort nope` exits 1 with `error: invalid options: --sort: must be tag, cards, new, due, retention, weak or gaps`.
   - **Code**: decision 6. `progress.constants.ts`: `TAG_SORT_FIELDS = ['tag', 'cards', 'new', 'due', 'retention', 'weak', 'gaps'] as const`. `tagProgress(input, order)` with `order = { field, desc }`, default `{ field: 'tag', desc: false }`: siblings sorted under their parent, depth first; `null` last; ties by `bySegments`. `src/shell/cli/commands/tag-stats/tag-stats.schema.ts` validates `sort` (one of the fields, message built with `oneOf` from `src/shell/cli/invocation/input`) and `desc` (boolean). Options `--sort <field>` and `--desc`.
   - **Run**: quickstart §2
-- [ ] T008 [US1] `aletheia-stats` narrows the tree to a topic and sorts it, in `.claude/skills/aletheia-stats/SKILL.md`
+- [X] T008 [US1] `aletheia-stats` narrows the tree to a topic and sorts it, in `.claude/skills/aletheia-stats/SKILL.md`
   - **Test**: `stats-skill.test.ts`: `006-US1-AS6 aletheia-stats finds a Spanish topic's tags in aletheia tag list and passes them, and a sort, to aletheia tag stats`. The text contains `aletheia tag stats <tags>`, `--sort retention`, `--desc` and `¿cuál va peor?`.
   - **Code**: a topic named in Spanish ("¿y de mensajería?") maps to tags from `aletheia tag list`, as in `aletheia-review` section 1. "¿cuál va peor?" is `--sort retention`; "¿dónde tengo más flojas?" is `--sort weak --desc`.
   - **Run**: `pnpm test -t 006-US1-AS6`

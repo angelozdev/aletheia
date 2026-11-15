@@ -42,4 +42,16 @@ describe('the aletheia-stats skill', () => {
     for (const forbidden of [...DEVELOPMENT_ONLY, ...WRITES])
       expect(skill.text).not.toContain(forbidden)
   })
+
+  it("006-US1-AS6 aletheia-stats finds a Spanish topic's tags in aletheia tag list and passes them, and a sort, to aletheia tag stats", () => {
+    const skill = readSkill(STATS_SKILL)
+
+    for (const text of [
+      'aletheia tag stats <tags>',
+      '--sort retention',
+      '--desc',
+      '¿cuál va peor?',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })
