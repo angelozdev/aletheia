@@ -5,7 +5,7 @@ Decisions in [research.md](./research.md); the store shape in
 
 ## Store
 
-### `status_changes`, new
+### `card_status_history`, new
 
 | Column | Type | Rule |
 |---|---|---|
@@ -33,10 +33,10 @@ archive reason and instant are those of its latest row.
 - `reviews.flag`: `CHECK` gains `not-useful`. The generated migration rebuilds the table; the
   custom one after it restores `reviews_never_deleted` and `reviews_never_changed`.
 - `settings`: `leech_failures` and `keep_months`, integer, nullable, each `>= 1`.
-- Triggers, custom migration: `status_changes_never_deleted`, `status_changes_never_changed`,
+- Triggers, custom migration: `card_status_history_never_deleted`, `card_status_history_never_changed`,
   `keeps_never_deleted`, `keeps_never_changed` (INV-03).
 
-Migrations, in order: `status_changes` and its triggers (step 1), `not_useful` and the
+Migrations, in order: `card_status_history` and its triggers (step 1), `not_useful` and the
 reviews triggers (step 4), `keeps` and its triggers (step 5), `prune_settings` (step 7).
 
 ## Rules in the core

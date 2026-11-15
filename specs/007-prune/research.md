@@ -1,8 +1,9 @@
 # Research: Prune
 
 Decisions marked **Angelo** were his, in the spec's Clarifications. The commands and options
-(R1) are public interface and the store shape (R2, ADR-0019) is hard to reverse: both wait for
-Angelo's acceptance before step 1. No new dependency.
+(R1) are public interface and the store shape (R2, ADR-0019) is hard to reverse: Angelo
+accepted both on 2026-11-15, the archive reason as JSON on stdin and the history table under
+the name `card_status_history`. No new dependency.
 
 ## R1. Four card commands, three flags and four outputs that grow
 
@@ -34,14 +35,16 @@ Angelo's acceptance before step 1. No new dependency.
 
 - **Decision**: `cards.status` stays the card's current status, the one every list filters on.
   Two new tables, each refused a delete or an update by trigger (INV-03):
-  - `status_changes(id, card_id, status, reason, changed_at)`: one row per archive or restore;
+  - `card_status_history(id, card_id, status, reason, changed_at)`: one row per archive or restore;
     `reason` is not blank for `archived` and `null` for `active`. The repository writes the row
     and `cards.status` in one transaction.
   - `keeps(id, card_id, reason, overlaps, kept_at)`: `reason` one of the four; `overlaps` a card
     other than `card_id`, present exactly when the reason is `overlapping`.
 - **Rationale**: the spec records every archive, restore and keep and overwrites none
   (Assumptions); a restore keeps the reason the card was archived for. The lists read one
-  column, as today.
+  column, as today. It is the usual current state plus status history, the same pairing as
+  `cards`' schedule and `reviews`; `cards.status` is deliberately denormalized, since every
+  list reads it and only archive and restore write it.
 - **Alternatives**: `archived_at` and `archive_reason` columns on `cards` (a restore erases
   them); one `card_decisions` log for all three (every `CHECK` conditional on a kind column);
   `cards.status` derived from the log (every list joins it).

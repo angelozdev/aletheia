@@ -11,8 +11,7 @@ Angelo retires a card with `card archive` and his reason, and gets it back with
 history and the duplicate search. `card candidates` gives the leeches (3 failures, a setting)
 and the cards he called useless in a review (a new `not-useful` flag), less what he kept with
 `card keep`, which holds until a later failure or the keep's months (6, a setting). The store
-records archive, restore and keep in two append-only logs beside `cards.status` (ADR-0019,
-proposed). A new local skill, `aletheia-prune`, lists the candidates one at a time, reads the
+records archive, restore and keep in two append-only logs beside `cards.status` (ADR-0019). A new local skill, `aletheia-prune`, lists the candidates one at a time, reads the
 deck topic by topic for outdated situations and overlaps, and writes only on Angelo's choice;
 the review, stats and add skills learn their part. Decisions are in
 [research.md](./research.md).
@@ -25,7 +24,7 @@ Rolldown bundle (unchanged)
 **Primary Dependencies**: none added. `zod` 4.6.7 at the edge, `@toon-format/toon` 4.4.0,
 `date-fns` and `@date-fns/tz` behind `#core/time` (unchanged)
 
-**Storage**: SQLite through `node:sqlite` and Drizzle. New tables `status_changes` and
+**Storage**: SQLite through `node:sqlite` and Drizzle. New tables `card_status_history` and
 `keeps`, two columns on `settings`, a `CHECK` change on `reviews.flag` (rebuild and triggers
 restored), triggers for INV-03; four generated or custom migrations (data-model.md)
 
@@ -64,7 +63,7 @@ _Gate before Phase 0, re-checked after Phase 1. Constitution 1.6.0._
 | VIII. Conversation, not commands | Pass. Every trigger is Spanish; the skills run `aletheia` for every fact. |
 | IX. Quality over volume | Pass. This slice is the quality loop: nothing leaves the deck without Angelo's choice and reason. |
 | Technology Constraints | Pass. Input validated with `zod`; output TOON, JSON with `--json`. |
-| ADRs | 0002–0018 `accepted` and respected; ADR-0017's rebuild trap handled as in slice 5; **ADR-0019 proposed**, accepted by Angelo before step 1. |
+| ADRs | 0002–0018 `accepted` and respected; ADR-0017's rebuild trap handled as in slice 5; ADR-0019 accepted by Angelo on 2026-11-15. |
 
 Re-check after Phase 1: unchanged. The data model adds two logs and two settings and changes
 one `CHECK`; the contract adds four commands and grows seven outputs, none removed.
@@ -100,7 +99,7 @@ src/
 │   └── time/           monthsBefore
 └── shell/
     ├── db/
-    │   ├── cards/      status_changes schema; archive, restore, all(); search over archived
+    │   ├── cards/      card_status_history schema; archive, restore, all(); search over archived
     │   ├── keeps/      new: keeps schema, StoreKeepRepository
     │   ├── reviews/    flag CHECK
     │   └── settings/   two columns
@@ -122,11 +121,11 @@ concept folders (ADR-0004), one folder per module (ADR-0007), the store opaque o
 
 ## Delivery order (vertical slices for `/speckit-tasks`)
 
-Before step 1, in their own commits: Angelo accepts the commands and options (R1) and
-ADR-0019 (R2). The design caught up on 2026-11-15 (`4a79fa9`).
+Angelo accepted the commands and options (R1) and ADR-0019 (R2) on 2026-11-15. The design
+caught up the same day (`4a79fa9`).
 
-1. **Archive a card and get it back** (007-US1-AS2 to AS4, INV-03 for `status_changes`).
-   `status_changes` and its triggers, `card archive`, `card restore`, `card show`'s two fields,
+1. **Archive a card and get it back** (007-US1-AS2 to AS4, INV-03 for `card_status_history`).
+   `card_status_history` and its triggers, `card archive`, `card restore`, `card show`'s two fields,
    `activeCardById` in grade and edit, `review history` over every card. The prune skill is
    born with its triggers and the archive and restore Angelo asks for by id (part of
    007-US1-AS6). Run: quickstart §1.
