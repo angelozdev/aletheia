@@ -64,4 +64,24 @@ describe('the aletheia-prune skill', () => {
     ])
       expect(skill.text).toContain(text)
   })
+
+  it('007-US3-AS2 aletheia-prune reads PROFILE.md and each topic through aletheia card list --content, proposes outdated situations and overlaps as its judgment, skips what kept names, and for an overlap offers keep, archive one or leave for the merge', () => {
+    const skill = readSkill(PRUNE_SKILL)
+
+    for (const text of [
+      '~/me/aletheia/PROFILE.md',
+      'never edited',
+      'aletheia card list <tags> --content',
+      'aletheia card search',
+      '--reason outdated-situation',
+      '--reason overlapping --overlaps',
+      'kept',
+      'six months',
+      'my judgment',
+      'slice 8',
+      'go on',
+    ])
+      expect(skill.text).toContain(text)
+    expect(skill.text.indexOf('## 3.')).toBeGreaterThan(skill.text.indexOf('## 2.'))
+  })
 })

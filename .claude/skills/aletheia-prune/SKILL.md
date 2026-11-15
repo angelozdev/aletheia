@@ -133,3 +133,45 @@ Offer what can be done with it, and wait for Angelo to choose before the next on
 - **Leave it**: nothing is recorded, and the CLI lists it again next time.
 
 Never choose for him, and never act on two cards at once.
+
+## 3. What only reading finds
+
+After the CLI's candidates, read the cards themselves for what no number shows: a situation
+that no longer applies to Angelo, and two cards that ask nearly the same. These are your
+judgment, not the CLI's: say so for each one ("es mi juicio, no un dato": my judgment, not a
+fact).
+
+First read Angelo's profile, `~/me/aletheia/PROFILE.md`: his level by area and what he works
+with now. It is read, never edited here. If it cannot be read, say so in a line and propose no
+outdated situation.
+
+Then go topic by topic: the topic Angelo named, or each top-level tag of `aletheia tag list`
+in turn (those without `::`). For each topic:
+
+```sh
+aletheia card list <tags> --content
+```
+
+It prints each card with `id`, `question`, `keyPoints`, `situation` and its progress. Read
+every card of the topic, and skip a card that the `kept` list of `aletheia card candidates`
+names for the same reason: Angelo kept it in the last six months, or the months he set.
+
+- **An outdated situation**: the card's situation is about work Angelo no longer does, by his
+  profile. Quote the situation and the line of the profile it contradicts. Offer: archive it,
+  rewrite the situation in place (section 2, same knowledge only), keep it
+  (`aletheia card keep <id> --reason outdated-situation`), or leave it.
+- **An overlap**: two cards ask nearly the same. Quote both questions. Search the deck for its
+  overlaps in other topics too:
+
+  ```sh
+  aletheia card search <<'JSON'
+  {"words":"consumer group reparte mensajes XREADGROUP","tags":["messaging::redis-streams"]}
+  JSON
+  ```
+
+  Offer no rewrite: merging two cards arrives with slice 8. Offer: keep both, recorded on one
+  of them (`aletheia card keep 9p3x --reason overlapping --overlaps w2ab`); archive one of
+  them, with his reason; or leave them for the merge, which records nothing.
+
+One card or pair at a time, waiting for Angelo after each. When a topic is done, ask whether
+to go on with the next one, and stop when he says so.

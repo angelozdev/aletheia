@@ -262,7 +262,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
   - **Test**: `card-list.test.ts`, `007-US3-AS1 card list --content gives each card under a tag with its id, question, key points and situation`; without `--content` the rows are as before.
   - **Code**: `CARD_LIST_OPTIONS` gains `--content` (no value), `card-list.schema.ts` a boolean; the rows gain `keyPoints` and `situation` when it is set.
   - **Run**: quickstart §6
-- [ ] T021 [US3] `aletheia-prune` reads `PROFILE.md` and each topic, proposes outdated situations and overlaps, and offers no rewrite for an overlap, in `.claude/skills/aletheia-prune/SKILL.md`
+- [X] T021 [US3] `aletheia-prune` reads `PROFILE.md` and each topic, proposes outdated situations and overlaps, and offers no rewrite for an overlap, in `.claude/skills/aletheia-prune/SKILL.md`
   - **Test**: `prune-skill.test.ts`, `007-US3-AS2 aletheia-prune reads PROFILE.md and each topic through aletheia card list --content, proposes outdated situations and overlaps as its judgment, skips what kept names, and for an overlap offers keep, archive one or leave for the merge`: the text holds `PROFILE.md`, `aletheia card list`, `--content`, `aletheia card search`, `outdated-situation`, `overlapping`, `--overlaps`, `kept`, `six months`, `my judgment`, `slice 8`, `go on`.
   - **Code**: section 3: after the CLI's candidates, the named topic or each topic in turn (from `aletheia tag list`), asking after each whether to go on; quote the situation against `PROFILE.md`, quote both questions of an overlap; skip a card `kept` names for that reason; for an overlap only keep the pair, archive one, or leave it, which records nothing. `PROFILE.md` is read, never edited here.
   - **Run**: `pnpm test -t 007-US3-AS2`
