@@ -44,6 +44,7 @@ export interface CardRepository {
   saveAll(cards: Card[]): void
   find(id: string): Card | null
   active(): Card[]
+  all(): Card[]
   matching(terms: string[]): Card[]
   update(card: Card): void
   archive(id: string, reason: string, at: Date): void

@@ -96,7 +96,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
 
 **Independent Test**: quickstart §1.
 
-- [ ] T002 [US1] `card archive` archives an active card with a reason, kept in `card_status_history`, in `src/shell/db/cards/` and `src/shell/cli/commands/card-archive/`
+- [X] T002 [US1] `card archive` archives an active card with a reason, kept in `card_status_history`, in `src/shell/db/cards/` and `src/shell/cli/commands/card-archive/`
   - **Test**:
     - `src/shell/db/cards/cards.test.ts`:
       - `archive` sets `cards.status` to `archived` and adds one `card_status_history` row (`status: archived`, the reason, the instant), together; `archiveOf` returns `{ reason, at }`.

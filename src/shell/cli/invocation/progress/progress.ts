@@ -11,8 +11,13 @@ export function progressInput(
   days = PROGRESS_WINDOW_DAYS,
 ): ProgressInput {
   const now = context.clock()
+  const { active = [], archived = [] } = Object.groupBy(
+    new StoreCardRepository(store).all(),
+    ({ status }) => status,
+  )
   return {
-    cards: new StoreCardRepository(store).active(),
+    cards: active,
+    archived,
     topic: topicFrom(tags),
     reviews: new StoreReviewRepository(store).since(EVER),
     today: startOfToday(now, context.timeZone),

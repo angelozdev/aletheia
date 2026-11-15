@@ -17,7 +17,7 @@ function cardOf(id: string, tags: string[], state: CardState = 'review', due = D
 }
 
 function inputOf(cards: Card[], reviews: Review[]): ProgressInput {
-  return { cards, topic: [], reviews, today, tomorrow, windowStart }
+  return { cards, archived: [], topic: [], reviews, today, tomorrow, windowStart }
 }
 
 function progressOf(cards: Card[], reviews: Review[] = [], order?: TagOrder): ProgressTree {

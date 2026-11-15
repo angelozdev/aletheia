@@ -19,6 +19,11 @@ async function json(argv: string[]) {
   return JSON.parse(stdout)
 }
 
+async function listedIds(argv: string[]): Promise<string[]> {
+  const listed: { cards: { id: string }[] } = await json(argv)
+  return listed.cards.map(({ id }) => id)
+}
+
 function archive(fields: Record<string, unknown>) {
   return cli.run(['card', 'archive', '--json'], JSON.stringify(fields))
 }
@@ -69,5 +74,24 @@ describe('aletheia card archive', () => {
       expect(stderr).toMatch(new RegExp(`\\nerror: ${RegExp.escape(error)}\\n$`))
     }
     expect(stored(active)).toEqual(before)
+  })
+
+  it('007-US1-AS2 an archived card leaves review due, review topic, card list, tag list and tag stats, and its reviews stay in review history', async () => {
+    const [kept, archived] = await addTagged(cli, [['docker'], ['docker::commands']])
+    reviewed(cli.db, archived, '2026-11-14T15:00:00.000Z')
+
+    await archive({ card: archived, reason: REASON })
+
+    expect(await listedIds(['review', 'due'])).toEqual([kept])
+    expect(await listedIds(['review', 'topic', 'docker'])).toEqual([kept])
+    expect(await listedIds(['card', 'list'])).toEqual([kept])
+    expect(await json(['tag', 'list'])).toEqual({ tags: [{ tag: 'docker', cards: 1 }] })
+    expect(await json(['tag', 'stats'])).toMatchObject({ deck: { cards: 1 } })
+    expect((await json(['review', 'history', '--days', '7'])).reviews).toMatchObject([
+      { card: archived },
+    ])
+    expect((await json(['review', 'history', 'docker'])).reviews).toMatchObject([
+      { card: archived },
+    ])
   })
 })

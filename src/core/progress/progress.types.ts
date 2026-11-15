@@ -5,6 +5,7 @@ import type { CARD_SORT_FIELDS, TAG_SORT_FIELDS } from './progress.constants.ts'
 
 export type ProgressInput = {
   cards: Card[]
+  archived: Card[]
   topic: string[]
   reviews: Review[]
   today: Date

@@ -142,6 +142,10 @@ export class StoreCardRepository implements CardRepository {
     return this.#cardsWhere(eq(cards.status, ACTIVE_STATUS))
   }
 
+  all(): Card[] {
+    return this.#cardsWhere(sql`true`)
+  }
+
   matching(terms: string[]): Card[] {
     if (terms.length === 0) return []
     const ids = this.#matchingIds(searchQuery(terms))
