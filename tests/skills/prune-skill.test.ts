@@ -35,4 +35,20 @@ describe('the aletheia-prune skill', () => {
       expect(skill.text).toContain(text)
     for (const forbidden of DEVELOPMENT_ONLY) expect(skill.text).not.toContain(forbidden)
   })
+
+  it('007-US1-AS6 aletheia-prune lists the candidates from aletheia card candidates one at a time, with reason and evidence, and offers archive or rewrite in place', () => {
+    const skill = readSkill(PRUNE_SKILL)
+
+    for (const text of [
+      'aletheia card candidates',
+      'aletheia tag list',
+      'one at a time',
+      'wait for Angelo',
+      'lastFailure',
+      'aletheia card edit',
+      'same knowledge',
+      'slice 8',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })

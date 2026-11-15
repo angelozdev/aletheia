@@ -57,3 +57,64 @@ aletheia card restore q3rt
 
 It comes back active with the schedule it had: if it was overdue, it is due now. If the CLI
 answers `card "q3rt" is not archived`, it is already active; say so.
+
+## 2. The CLI's candidates ("podemos el mazo", "podemos mensajería")
+
+For the whole deck:
+
+```sh
+aletheia card candidates
+```
+
+For a topic named in Spanish, list the tags in use first:
+
+```sh
+aletheia tag list
+```
+
+Pick every tag that covers the topic; a topic can span branches ("redis" →
+`messaging::redis-streams` and `databases::redis`). Then narrow the candidates to them,
+descendants included:
+
+```sh
+aletheia card candidates messaging::redis-streams databases::redis
+```
+
+It prints `candidates`, each with `id`, `question` (as stored), `tags`, `reasons` and the
+evidence for each reason:
+
+- `leech`: the card failed `failures` times, ever, its last failure at `lastFailure`. A
+  failure is an Again on a card already learned, not voided and not flagged
+  `missing-prerequisite`. A leech is usually badly written, holds two ideas, or is something
+  Angelo no longer needs.
+
+`candidates: []` means the CLI finds nothing to prune there; say so.
+
+Go through them one at a time, in the order printed. For each, quote its id, its stored
+question and its reasons with their evidence, in Spanish:
+
+```
+#k7m2 · messaging::redis-streams
+  En Redis Streams, ¿cómo reparte un consumer group los mensajes entre sus consumidores?
+  Leech: 5 fallos, el último el 20 de noviembre.
+```
+
+Offer what can be done with it, and wait for Angelo to choose before the next one:
+
+- **Archive it**: as in section 1, with his reason in his words.
+- **Rewrite it in place**: only when the card still asks for the same knowledge, a clearer
+  question, a tidier answer or key points of the same meaning. Show the exact before and after
+  of every field that changes, as the `aletheia-review` skill does, and run `aletheia card edit`
+  only after he approves:
+
+  ```sh
+  aletheia card edit <<'JSON'
+  {"card":"k7m2","question":"En Redis Streams, ¿cómo reparte un consumer group los mensajes de un stream entre sus consumidores?"}
+  JSON
+  ```
+
+  When the fix would change what the key points mean, the card needs replacing, which arrives
+  with slice 8: say so in a line and offer the other choices.
+- **Leave it**: nothing is recorded, and the CLI lists it again next time.
+
+Never choose for him, and never act on two cards at once.

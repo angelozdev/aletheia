@@ -83,4 +83,11 @@ describe('the aletheia-stats skill', () => {
     ])
       expect(skill.text).toContain(text)
   })
+
+  it('007-US1-AS6 aletheia-stats mentions the candidates count of tag stats and offers to prune them', () => {
+    const skill = readSkill(STATS_SKILL)
+
+    for (const text of ['candidates', 'para podar', 'podemos el mazo'])
+      expect(skill.text).toContain(text)
+  })
 })
