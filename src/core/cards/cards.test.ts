@@ -22,6 +22,7 @@ function refusingRepository(refusals: number): CardRepository & { saved: Card[][
     matching: () => [],
     update: () => {},
     archive: () => {},
+    restore: () => {},
     archiveOf: () => null,
   }
 }

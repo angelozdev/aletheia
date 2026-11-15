@@ -114,7 +114,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
     - `src/shell/cli/commands/card-archive/`: group `card`, name `archive`; `card-archive.schema.ts` (`card`, `reason` not blank, strict); `card-archive.errors.ts` (`InvalidArchiveError`); prints `shownCard`. Registered after `cardEditCommand`.
     - `src/shell/cli/commands/card-show/card-show.ts`: `shownCard` gains `archivedAt` and `archiveReason` from `archiveOf`.
   - **Run**: quickstart §1, the first command
-- [ ] T003 [US1] An archived card leaves every list and progress, and its reviews stay in the history, in `src/shell/db/cards/cards.ts` and `src/shell/cli/invocation/progress/progress.ts`
+- [X] T003 [US1] An archived card leaves every list and progress, and its reviews stay in the history, in `src/shell/db/cards/cards.ts` and `src/shell/cli/invocation/progress/progress.ts`
   - **Test**: `card-archive.test.ts`, `007-US1-AS2 an archived card leaves review due, review topic, card list, tag list and tag stats, and its reviews stay in review history`: two cards under one tag, one reviewed and then archived; it is absent from `review due`, `review topic <tag>`, `card list`, `tag list` and `tag stats` (`deck.cards: 1`), and `review history --days 7` still gives its review.
   - **Code**: `CardRepository.all()`; `review history` reads reviews over `all()`, its tags still checked against the active cards (research R8). The other lists already read `active()`.
   - **Run**: quickstart §1

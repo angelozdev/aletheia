@@ -10,7 +10,15 @@ export {
   TAG_PATTERN,
 } from './cards.constants.ts'
 export { CardIdTakenError } from './cards.errors.ts'
-export { addCards, archiveCard, bySaved, cardById, editCard, newCard } from './cards.ts'
+export {
+  addCards,
+  archiveCard,
+  bySaved,
+  cardById,
+  editCard,
+  newCard,
+  restoreCard,
+} from './cards.ts'
 export type {
   ArchiveDraft,
   Card,

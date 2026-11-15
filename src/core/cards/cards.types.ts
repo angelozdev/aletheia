@@ -48,6 +48,7 @@ export interface CardRepository {
   matching(terms: string[]): Card[]
   update(card: Card): void
   archive(id: string, reason: string, at: Date): void
+  restore(id: string, at: Date): void
   archiveOf(id: string): CardArchive | null
 }
 

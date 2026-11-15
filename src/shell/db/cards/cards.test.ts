@@ -15,6 +15,12 @@ import { StoreCardRepository } from './cards.ts'
 const NOW = '2026-11-09T15:00:00.000Z'
 const LATER = '2026-11-10T15:00:00.000Z'
 const STATUS_CHANGES = 'select card_id, status, reason, changed_at from card_status_history'
+const ARCHIVED_ROW = {
+  card_id: 'k7m2',
+  status: 'archived',
+  reason: 'ya no lo uso',
+  changed_at: LATER,
+}
 
 const VALID_CARD: Record<string, string> = {
   id: 'k7m2',
@@ -39,6 +45,17 @@ function insertCard(overrides: Record<string, string> = {}): string {
 
 function insertTag(tag: string, cardId = VALID_CARD.id): string {
   return insertSql('card_tags', { card_id: cardId, tag })
+}
+
+async function withSavedCard(action: (repository: StoreCardRepository) => void): Promise<void> {
+  const store = await openTestStore(path)
+  try {
+    const repository = new StoreCardRepository(store)
+    repository.saveAll([newCard(SAMPLE_DRAFT, 'k7m2', new Date(NOW))])
+    action(repository)
+  } finally {
+    closeStore(store)
+  }
 }
 
 beforeEach(async () => {
@@ -165,49 +182,48 @@ describe('StoreCardRepository', () => {
   })
 
   it('archive sets the card archived and records the reason and the instant, together', async () => {
-    const store = await openTestStore(path)
-    const repository = new StoreCardRepository(store)
-    repository.saveAll([newCard(SAMPLE_DRAFT, 'k7m2', new Date(NOW))])
     const at = new Date(LATER)
 
-    try {
+    await withSavedCard((repository) => {
       repository.archive('k7m2', 'ya no lo uso', at)
 
       expect(repository.find('k7m2')).toMatchObject({ status: 'archived' })
       expect(repository.archiveOf('k7m2')).toEqual({ reason: 'ya no lo uso', at })
       expect(repository.active()).toEqual([])
-    } finally {
-      closeStore(store)
-    }
+    })
 
-    expect(selectAll(path, STATUS_CHANGES)).toEqual([
-      { card_id: 'k7m2', status: 'archived', reason: 'ya no lo uso', changed_at: LATER },
-    ])
+    expect(selectAll(path, STATUS_CHANGES)).toEqual([ARCHIVED_ROW])
   })
 
   it('archive with a blank reason leaves the card active and records nothing', async () => {
-    const store = await openTestStore(path)
-    const repository = new StoreCardRepository(store)
-    repository.saveAll([newCard(SAMPLE_DRAFT, 'k7m2', new Date(NOW))])
-
-    try {
+    await withSavedCard((repository) => {
       expect(() => repository.archive('k7m2', '  ', new Date(LATER))).toThrow()
       expect(repository.find('k7m2')).toMatchObject({ status: 'active' })
       expect(repository.archiveOf('k7m2')).toBeNull()
-    } finally {
-      closeStore(store)
-    }
+    })
 
     expect(selectAll(path, STATUS_CHANGES)).toEqual([])
   })
 
+  it('restore sets the card active and records the instant without a reason', async () => {
+    const restoredAt = '2026-11-11T15:00:00.000Z'
+
+    await withSavedCard((repository) => {
+      repository.archive('k7m2', 'ya no lo uso', new Date(LATER))
+      repository.restore('k7m2', new Date(restoredAt))
+
+      expect(repository.find('k7m2')).toMatchObject({ status: 'active' })
+      expect(repository.archiveOf('k7m2')).toBeNull()
+    })
+
+    expect(selectAll(path, STATUS_CHANGES)).toEqual([
+      ARCHIVED_ROW,
+      { card_id: 'k7m2', status: 'active', reason: null, changed_at: restoredAt },
+    ])
+  })
+
   it('INV-03 the store refuses to delete or change a card status change', async () => {
-    const store = await openTestStore(path)
-    const repository = new StoreCardRepository(store)
-    repository.saveAll([newCard(SAMPLE_DRAFT, 'k7m2', new Date(NOW))])
-    repository.archive('k7m2', 'ya no lo uso', new Date(LATER))
-    closeStore(store)
-    const before = selectAll(path, STATUS_CHANGES)
+    await withSavedCard((repository) => repository.archive('k7m2', 'ya no lo uso', new Date(LATER)))
 
     expect(() => runSql(path, 'delete from card_status_history')).toThrow(
       'card status changes are never deleted',
@@ -215,7 +231,7 @@ describe('StoreCardRepository', () => {
     expect(() => runSql(path, "update card_status_history set reason = 'x'")).toThrow(
       'card status changes are never changed',
     )
-    expect(selectAll(path, STATUS_CHANGES)).toEqual(before)
+    expect(selectAll(path, STATUS_CHANGES)).toEqual([ARCHIVED_ROW])
   })
 
   it('matching returns the active cards holding a term as a prefix, most relevant first', async () => {

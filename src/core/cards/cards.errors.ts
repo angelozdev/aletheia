@@ -34,3 +34,13 @@ export class CardArchivedError extends Error {
     this.id = id
   }
 }
+
+export class CardNotArchivedError extends Error {
+  readonly id: string
+
+  constructor(id: string) {
+    super(`card "${id}" is not archived`)
+    this.name = new.target.name
+    this.id = id
+  }
+}

@@ -112,6 +112,10 @@ export class StoreCardRepository implements CardRepository {
     this.#changeStatus(id, ARCHIVED_STATUS, reason, at)
   }
 
+  restore(id: string, at: Date): void {
+    this.#changeStatus(id, ACTIVE_STATUS, null, at)
+  }
+
   #changeStatus(id: string, status: CardStatus, reason: string | null, at: Date): void {
     this.#db.transaction((tx) => {
       tx.update(cards).set({ status }).where(eq(cards.id, id)).run()

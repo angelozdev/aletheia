@@ -9,6 +9,7 @@ import {
 import {
   CardArchivedError,
   CardIdTakenError,
+  CardNotArchivedError,
   CardNotFoundError,
   NoFreeCardIdError,
 } from './cards.errors.ts'
@@ -89,6 +90,13 @@ export function archiveCard(
   const found = activeCardById(repository, card)
   repository.archive(found.id, reason, now)
   return { ...found, status: ARCHIVED_STATUS }
+}
+
+export function restoreCard(id: string, { repository, now }: EditCardDeps): Card {
+  const found = cardById(repository, id)
+  if (found.status !== ARCHIVED_STATUS) throw new CardNotArchivedError(id)
+  repository.restore(id, now)
+  return { ...found, status: ACTIVE_STATUS }
 }
 
 export function editCard({ card, ...changes }: CardEdit, { repository, now }: EditCardDeps): Card {
