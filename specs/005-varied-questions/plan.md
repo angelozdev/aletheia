@@ -14,7 +14,7 @@ policy (spec 004 R11), so voiding, hiding until tomorrow and both caps work as t
 The review skill rephrases every question, records the wording asked, and tells a bad
 rephrasing from a badly written card. No new dependency. Decisions are in
 [research.md](./research.md); [ADR-0018](../../docs/adr/0018-a-review-keeps-the-question-as-asked.md)
-is proposed.
+is accepted.
 
 ## Technical Context
 
@@ -62,7 +62,7 @@ _Gate before Phase 0, re-checked after Phase 1. Constitution 1.6.0._
 | VIII. Conversation, not commands | Pass. Rephrasing happens with no command; "pregúntamela como está" and "esa pregunta la reformulaste mal" are plain Spanish. |
 | IX. Quality over volume | Pass. A bad rephrasing never rewrites the card; a rewrite still needs Angelo's approval (spec 004). |
 | Technology Constraints | Pass. The field is validated with `zod`; the custom migrations hold only triggers. |
-| ADRs | 0002–0017 `accepted` and respected; 0017's warning about lost triggers is handled by R4. 0018 is `proposed`, to be accepted before step 1. |
+| ADRs | 0002–0017 `accepted` and respected; 0017's warning about lost triggers is handled by R4. 0018 is `accepted`. |
 
 Re-check after Phase 1: unchanged. The data model adds one column and one flag value with
 `CHECK`s; the contract adds one required field and one enum value, and changes no output.

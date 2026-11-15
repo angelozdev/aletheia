@@ -1,6 +1,6 @@
 # 0018. A review keeps the question as asked
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-14
 - **Deciders:** Angelo
 - **Supersedes:** —

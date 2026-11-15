@@ -50,8 +50,8 @@ Shared by the tests of this slice:
 
 ## Decisions taken while cutting tasks (Angelo may veto)
 
-1. **The gate is open (T001).** ADR-0018 is `proposed`. Angelo accepts it and the names of
-   research R1 and R2 (`askedQuestion`, `asked_question`, `badly-rephrased`) before T002.
+1. **The gate is closed (T001).** Angelo accepted ADR-0018 and the names of research R1 and R2
+   (`askedQuestion`, `asked_question`, `badly-rephrased`) on 2026-11-14; design §5 caught up.
 2. **The traceability test stays red until T006.** A task closes with every check green except
    `tests/traceability`, and its list of missing ids shrinks by exactly the ids the task names.
 3. **The migrated-store test is a guard (T002).** It is green before the first rebuild, and must
@@ -76,7 +76,7 @@ Shared by the tests of this slice:
 
 ## Phase 1: Setup (gate)
 
-- [ ] T001 Gate: Angelo accepts ADR-0018
+- [X] T001 Gate: Angelo accepts ADR-0018
   - Mark it `accepted` in `docs/adr/0018-a-review-keeps-the-question-as-asked.md` and `docs/adr/README.md`, with the names of `specs/005-varied-questions/research.md` R1 and R2.
   - Update design §5 in `docs/design/2026-11-08-aletheia-design.md` (research R8):
     - The review log also keeps "the question as Claude asked it (none for reviews before slice 5)".

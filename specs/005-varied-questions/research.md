@@ -1,7 +1,7 @@
 # Research: Varied Questions
 
-Decisions marked **Angelo** were his, in the spec's Clarifications. R1 and R2 wait on his
-approval with ADR-0018. Nothing here needs a new dependency.
+Decisions marked **Angelo** were his, in the spec's Clarifications; he approved the rest
+with ADR-0018 on 2026-11-14. Nothing here needs a new dependency.
 
 ## R1. One required field on `review grade`: `askedQuestion`
 

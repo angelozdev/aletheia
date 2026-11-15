@@ -27,4 +27,4 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 | 0015 | The profile is an untracked file, read and edited in place | accepted | 2026-11-09 |
 | 0016 | Review settings in one row, with a nullable column each | accepted | 2026-11-10 |
 | 0017 | A review carries one flag and the card it was a prerequisite of | accepted | 2026-11-10 |
-| 0018 | A review keeps the question as asked | proposed | 2026-11-14 |
+| 0018 | A review keeps the question as asked | accepted | 2026-11-14 |
