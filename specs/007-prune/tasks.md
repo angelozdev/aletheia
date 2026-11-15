@@ -258,7 +258,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
 
 **Independent Test**: quickstart §6.
 
-- [ ] T020 [US3] `card list --content` adds key points and situation, in `src/shell/cli/commands/card-list/`
+- [X] T020 [US3] `card list --content` adds key points and situation, in `src/shell/cli/commands/card-list/`
   - **Test**: `card-list.test.ts`, `007-US3-AS1 card list --content gives each card under a tag with its id, question, key points and situation`; without `--content` the rows are as before.
   - **Code**: `CARD_LIST_OPTIONS` gains `--content` (no value), `card-list.schema.ts` a boolean; the rows gain `keyPoints` and `situation` when it is set.
   - **Run**: quickstart §6

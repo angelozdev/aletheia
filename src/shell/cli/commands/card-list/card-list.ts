@@ -7,6 +7,10 @@ import type { CliCommand } from '../../main/main.types.ts'
 import { CARD_LIST_OPTIONS } from './card-list.constants.ts'
 import { cardListFlagsSchema } from './card-list.schema.ts'
 
+function contentOf({ card }: CardProgress) {
+  return { keyPoints: card.keyPoints, situation: card.situation }
+}
+
 function cardRow({ card, lastReview, failures, gaps, weak }: CardProgress, timeZone: string) {
   return {
     id: card.id,
@@ -30,11 +34,18 @@ export const cardListCommand: CliCommand = {
   options: CARD_LIST_OPTIONS,
   run: (context, options, tags, flags) =>
     withStore(context, options, async (store) => {
-      const { notReviewed, sort, desc, ...filters } = optionsFrom(cardListFlagsSchema, flags)
+      const { notReviewed, sort, desc, content, ...filters } = optionsFrom(
+        cardListFlagsSchema,
+        flags,
+      )
       const since = notReviewed === undefined ? undefined : windowOf(notReviewed, context)
       const input = progressInput(store, context, tags)
       const order = { field: sort, desc }
       const rows = cardProgress(input, { ...filters, notReviewed: since }, order)
-      return { cards: rows.map((row) => cardRow(row, context.timeZone)) }
+      const shown = (row: CardProgress) => ({
+        ...cardRow(row, context.timeZone),
+        ...(content === true ? contentOf(row) : {}),
+      })
+      return { cards: rows.map(shown) }
     }),
 }

@@ -10,4 +10,5 @@ export const cardListFlagsSchema = z.object({
   notReviewed: limit(LIMIT_RULES.sessionSize),
   sort: oneOf(CARD_SORT_FIELDS).default(DEFAULT_CARD_ORDER.field),
   desc: z.boolean().default(DEFAULT_CARD_ORDER.desc),
+  content: z.boolean().optional(),
 })

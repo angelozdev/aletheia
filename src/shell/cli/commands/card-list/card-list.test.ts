@@ -158,4 +158,21 @@ describe('aletheia card list', () => {
       ].join('\n'),
     )
   })
+
+  it('007-US3-AS1 card list --content gives each card under a tag with its id, question, key points and situation', async () => {
+    const [messaging] = await addTagged(cli, [['messaging::rabbitmq'], ['docker']])
+
+    const withContent = await list(['messaging', '--content'])
+    const plain = await list(['messaging'])
+
+    expect(withContent.cards).toEqual([
+      {
+        ...plain.cards[0],
+        keyPoints: SAMPLE_DRAFT.keyPoints,
+        situation: SAMPLE_DRAFT.situation,
+      },
+    ])
+    expect(plain.cards).toMatchObject([{ id: messaging, question: SAMPLE_DRAFT.question }])
+    expect(plain.cards[0]).not.toHaveProperty('keyPoints')
+  })
 })
