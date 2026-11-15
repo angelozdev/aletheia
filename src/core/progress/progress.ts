@@ -254,10 +254,7 @@ function inHistory(review: Review, input: ProgressInput, filters: HistoryFilters
 }
 
 function historyScope(input: ProgressInput): Card[] {
-  const archived = input.archived.filter((card) =>
-    card.tags.some((tag) => inTopic(tag, input.topic)),
-  )
-  return [...inScope(input), ...archived]
+  return inScope({ ...input, cards: [...input.cards, ...input.archived] })
 }
 
 export function reviewHistory(input: ProgressInput, filters: HistoryFilters = {}): ReviewHistory {

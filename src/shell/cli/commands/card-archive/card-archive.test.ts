@@ -80,4 +80,17 @@ describe('aletheia card archive', () => {
     expect(week.reviews).toMatchObject([{ card: archived }])
     expect(underTag.reviews).toMatchObject([{ card: archived }])
   })
+
+  it('007-US1-AS2 review history under a tag whose cards are all archived still gives their reviews', async () => {
+    const [archived] = await addTagged(cli, [['docker'], ['kafka']])
+    reviewed(cli.db, archived, '2026-11-14T15:00:00.000Z')
+
+    await archiveCard(cli, { card: archived })
+    const underTag = await jsonOf(cli, ['review', 'history', 'docker'])
+    const unknown = await cli.run(['review', 'history', 'redis'])
+
+    expect(underTag.reviews).toMatchObject([{ card: archived }])
+    expect(unknown.code).toBe(1)
+    expect(unknown.stderr).toMatch(/error: no active card under redis\n$/)
+  })
 })
