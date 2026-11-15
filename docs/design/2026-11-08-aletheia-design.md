@@ -291,7 +291,7 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
 - "Weak" = cards failed repeatedly (leeches). "Gaps" = reviews flagged
   `missing-prerequisite`. A topic with gaps is different from a weak topic.
 - Shows how many prune candidates exist among the ones the core can detect on
-  its own (mastered and leech, §8.4). This count arrives with prune (slice 7).
+  its own (leech and said to be useless, §8.4). This count arrives with prune (slice 7).
 - Free-form questions ("¿qué tengo flojo de mensajería?", "¿qué no repaso hace
   un mes?") are answered by Claude using the CLI's filterable queries. Views
   asked for often become commands later.
@@ -312,16 +312,21 @@ docker::commands         25        93%      2    0
 
 Run on demand. Claude lists candidates, each with its reason:
 
-1. **Mastered:** FSRS predicts recall beyond about a year and recent reviews were Easy.
-2. **No current situation:** the stored situation no longer applies to the profile.
-3. **Problematic (leech):** failed repeatedly. Usually badly written or two ideas
+1. **No current situation:** the stored situation no longer applies to the profile.
+2. **Problematic (leech):** failed repeatedly. Usually badly written or two ideas
    in one; the remedy is rewrite or split, not archive.
-4. **Overlapping:** two cards asking nearly the same thing.
-5. **Said to be useless:** during a review Angelo said the card adds nothing ("esto
+3. **Overlapping:** two cards asking nearly the same thing. Angelo prefers one card
+   with the concept stated agnostically and examples in both technologies, a merge.
+   — _Angelo's call, 2026-11-15, spec 007._
+4. **Said to be useless:** during a review Angelo said the card adds nothing ("esto
    no me sirve", "esto lo sé de memoria"). The review is flagged `not-useful`; its
    grade stays real, and his words are the evidence. — _Raised 2026-11-10, spec 004._
 
-**Who detects what — my call:** mastered and leech are deterministic and
+A card he recalls easily is not a candidate: FSRS already spaces it a year or more,
+and Angelo would rather review it once a year than forget it. — _Angelo's call,
+2026-11-15, spec 007, which drops "mastered" from this list._
+
+**Who detects what — my call:** leech and said to be useless are deterministic and
 computed by the core. No-current-situation and overlapping need judgment, so
 Claude finds them in the skill, reading the deck tag by tag through the CLI.
 
@@ -333,8 +338,8 @@ be restored. Prune never acts on its own.
 reason until there is new evidence. For a leech, that means new lapses after the
 keep; for the other reasons, six months after the keep.
 
-_Thresholds ("about a year", "failed repeatedly", six months) are my call and
-should be configurable._
+_Thresholds ("failed repeatedly", six months) are settings Angelo can change
+(spec 007)._
 
 **Rewrites — my call:**
 
@@ -356,7 +361,7 @@ skills (Claude)  ──►  CLI (commander)  ──►  core (domain, FSRS, stat
 ```
 
 - **Core:** cards, tags, review log, scheduling (`ts-fsrs`), session and
-  new-card caps, stats, and deterministic prune candidates (mastered, leech). All logic lives here, not in skills, so a future TUI/UI
+  new-card caps, stats, and deterministic prune candidates (leech, said to be useless). All logic lives here, not in skills, so a future TUI/UI
   reuses it.
 - **Repositories:** interfaces owned by the core; one SQLite adapter in v1.
   A Postgres adapter is a later addition. Drizzle schemas are dialect-specific,
@@ -439,10 +444,12 @@ can use.
 | 4   | Gaps and badly written cards in review: prerequisite card, voided review, rewrite                               | "no recuerdo qué es X"                                       |
 | 5   | Varied questions: Claude rephrases each question per review, key points fixed, the question as asked logged    | a card seen before comes back worded differently             |
 | 6   | Progress: tag tree, retention, weak, gaps, sorting, free-form queries                                           | "¿qué tengo flojo?"                                          |
-| 7   | Prune: candidates, archive with reason, restore, keep, replace, split, merge                                    | run the prune skill                                          |
+| 7   | Prune: candidates, archive with reason, restore, keep                                                           | run the prune skill                                          |
+| 8   | Replace, split and merge: new cards with fresh state in place of archived ones                                  | merge two overlapping cards into one                         |
 
 Renumbered 2026-11-10, when varied questions became slice 5: progress moved from 5
 to 6 and prune from 6 to 7. Specs 000–003 and ADRs up to 0016 use the old numbers.
+Split 2026-11-15 (spec 007): replace, split and merge left prune for slice 8.
 
 ## 14. Future, not v1
 
