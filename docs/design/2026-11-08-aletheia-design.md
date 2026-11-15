@@ -217,7 +217,9 @@ Triggered from any repo when Angelo says "guarda esto" or similar, or invokes it
    situation. Dubious drafts are flagged with the reason ("trivia", "ya lo sabes
    por tu perfil", "duplica a #id", "se solapa con #id", "sin situación creíble")
    and shown with the rest, never dropped silently.
-4. Angelo approves, edits or rejects each card.
+4. Angelo approves, edits or rejects each card. A draft that overlaps an active
+   card can also be merged with it into one card (§8.4). — _Angelo's call,
+   2026-11-15, spec 008._
 5. Approved cards are saved through the CLI. Rejected drafts are not stored.
 
 ### 8.2 Review — local skill
@@ -350,7 +352,8 @@ _Thresholds ("failed repeatedly", six months) are settings Angelo can change
   the old one is archived with reason "replaced by #id".
 - Split and merge produce new cards with fresh state. Angelo may have to relearn
   them, but FSRS spaces them out quickly when he grades Easy. They are exempt
-  from the new-card cap.
+  from the new-card cap, and first come up the next day: he has just read the
+  old cards. — _Angelo's call, 2026-11-15, spec 008._
 
 ## 9. Architecture
 
