@@ -131,7 +131,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
   - **Test**: `007-US1-AS4 review grade and card edit refuse an archived card, and review grade an archived prerequisiteOf`, in `src/shell/cli/commands/review-grade/review-grade.test.ts` and `card-edit/card-edit.test.ts`: each exits 1 with `card <id> is archived`; `rowCounts` unchanged.
   - **Code**: `gradeCard` uses `activeCardById` for `draft.card` and `draft.prerequisiteOf`; `editCard` for its card.
   - **Run**: quickstart §1, the grading point
-- [ ] T006 [US1] `aletheia-prune` is born: its triggers, and the archive and restore Angelo asks for by id, in `.claude/skills/aletheia-prune/SKILL.md`
+- [X] T006 [US1] `aletheia-prune` is born: its triggers, and the archive and restore Angelo asks for by id, in `.claude/skills/aletheia-prune/SKILL.md`
   - **Test**: `tests/skills/prune-skill.test.ts`, `007-US1-AS6 aletheia-prune carries its Spanish triggers, archives only on Angelo's choice with his reason, and restores a card he names`: the description holds `podemos el mazo`, `podemos <tema>`, `limpiemos el mazo`, `archiva #`, `devuélveme #`; the body holds `aletheia card archive`, `<<'JSON'`, `aletheia card restore`, `in his words`, `never on its own`, and no `pnpm aletheia`.
   - **Code**: the skill's frontmatter and a first section: confirm the card (`aletheia card show`), ask for the reason if Angelo gave none, archive with his words through a quoted heredoc, and restore by id. Spanish to Angelo, the installed `aletheia` only.
   - **Run**: `pnpm test -t 007-US1-AS6`
