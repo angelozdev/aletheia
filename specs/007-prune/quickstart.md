@@ -89,7 +89,7 @@ In a new Claude Code session in this repo, without a command or a `/`:
 - "podemos el mazo": Claude lists the leeches and the cards said to be useless, one at a time,
   with their evidence, and waits for Angelo's choice on each; then offers to read topic by
   topic (SC-001).
-- "podemos mensajería": the same, under `messaging` only, and the reading of that topic.
+- "poda mensajería": the same, under `messaging` only, and the reading of that topic.
 - "devuélveme #<id>": the card is active again.
 - Reviewing, "esto no me sirve": the review is graded and flagged; the next prune lists it.
 - From another repo, a draft on something archived: `az-aletheia-add` quotes the archived card

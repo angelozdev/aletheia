@@ -132,7 +132,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
   - **Code**: `gradeCard` uses `activeCardById` for `draft.card` and `draft.prerequisiteOf`; `editCard` for its card.
   - **Run**: quickstart §1, the grading point
 - [X] T006 [US1] `aletheia-prune` is born: its triggers, and the archive and restore Angelo asks for by id, in `.claude/skills/aletheia-prune/SKILL.md`
-  - **Test**: `tests/skills/prune-skill.test.ts`, `007-US1-AS6 aletheia-prune carries its Spanish triggers, archives only on Angelo's choice with his reason, and restores a card he names`: the description holds `podemos el mazo`, `podemos <tema>`, `limpiemos el mazo`, `archiva #`, `devuélveme #`; the body holds `aletheia card archive`, `<<'JSON'`, `aletheia card restore`, `in his words`, `never on its own`, and no `pnpm aletheia`.
+  - **Test**: `tests/skills/prune-skill.test.ts`, `007-US1-AS6 aletheia-prune carries its Spanish triggers, archives only on Angelo's choice with his reason, and restores a card he names`: the description holds `podemos el mazo`, `poda <tema>`, `limpiemos el mazo`, `archiva #`, `devuélveme #`; the body holds `aletheia card archive`, `<<'JSON'`, `aletheia card restore`, `in his words`, `never on its own`, and no `pnpm aletheia`.
   - **Code**: the skill's frontmatter and a first section: confirm the card (`aletheia card show`), ask for the reason if Angelo gave none, archive with his words through a quoted heredoc, and restore by id. Spanish to Angelo, the installed `aletheia` only.
   - **Run**: `pnpm test -t 007-US1-AS6`
 
@@ -254,7 +254,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
 
 ## Phase 8: Step 6 — What Claude finds by reading (US3)
 
-**Goal**: "podemos mensajería" also reads the topic for outdated situations and overlaps.
+**Goal**: "poda mensajería" also reads the topic for outdated situations and overlaps.
 
 **Independent Test**: quickstart §6.
 

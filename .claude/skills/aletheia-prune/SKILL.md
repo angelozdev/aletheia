@@ -1,6 +1,6 @@
 ---
 name: aletheia-prune
-description: Use when Angelo wants to prune his Aletheia deck in this repo, or to archive or bring back a card. Triggers on "podemos el mazo", "podemos <tema>", "limpiemos el mazo", "archiva #<id>", "devuélveme #<id>". Proposes cards to prune one at a time with their reason, and archives, restores or changes a card only after Angelo chooses, through the installed aletheia CLI.
+description: Use when Angelo wants to prune his Aletheia deck in this repo, or to archive or bring back a card. Triggers on "podemos el mazo", "poda <tema>", "limpiemos el mazo", "archiva #<id>", "devuélveme #<id>". Proposes cards to prune one at a time with their reason, and archives, restores or changes a card only after Angelo chooses, through the installed aletheia CLI.
 ---
 
 # aletheia-prune
@@ -58,7 +58,7 @@ aletheia card restore q3rt
 It comes back active with the schedule it had: if it was overdue, it is due now. If the CLI
 answers `card "q3rt" is not archived`, it is already active; say so.
 
-## 2. The CLI's candidates ("podemos el mazo", "podemos mensajería")
+## 2. The CLI's candidates ("podemos el mazo", "poda mensajería")
 
 For the whole deck:
 

@@ -6,7 +6,7 @@ const PRUNE_SKILL = '.claude/skills/aletheia-prune/SKILL.md'
 
 const TRIGGERS = [
   'podemos el mazo',
-  'podemos <tema>',
+  'poda <tema>',
   'limpiemos el mazo',
   'archiva #',
   'devuélveme #',

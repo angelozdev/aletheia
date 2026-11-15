@@ -114,7 +114,7 @@ the name `card_status_history`. No new dependency.
 ## R9. Skills
 
 - **Decision**: a new local `aletheia-prune` (`.claude/skills/aletheia-prune/`): Spanish
-  triggers ("podemos", "podemos <tema>", "limpiemos el mazo", "archiva #…", "devuélveme #…");
+  triggers ("podemos el mazo", "poda <tema>", "limpiemos el mazo", "archiva #…", "devuélveme #…");
   the CLI's candidates first, one at a time, waiting for Angelo after each; then the reading,
   topic by topic, with `PROFILE.md` read-only; every write through the installed `aletheia`
   only after his choice. `aletheia-review` gains the `not-useful` flag, `aletheia-stats` the
