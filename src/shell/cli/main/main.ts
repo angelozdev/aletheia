@@ -4,6 +4,7 @@ import { cardAddCommand } from '../commands/card-add/card-add.ts'
 import { cardArchiveCommand } from '../commands/card-archive/card-archive.ts'
 import { cardCandidatesCommand } from '../commands/card-candidates/card-candidates.ts'
 import { cardEditCommand } from '../commands/card-edit/card-edit.ts'
+import { cardKeepCommand } from '../commands/card-keep/card-keep.ts'
 import { cardListCommand } from '../commands/card-list/card-list.ts'
 import { cardRestoreCommand } from '../commands/card-restore/card-restore.ts'
 import { cardSearchCommand } from '../commands/card-search/card-search.ts'
@@ -29,6 +30,7 @@ const COMMANDS = [
   cardSearchCommand,
   cardListCommand,
   cardCandidatesCommand,
+  cardKeepCommand,
   tagListCommand,
   tagStatsCommand,
   reviewDueCommand,

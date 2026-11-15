@@ -32,6 +32,8 @@ export const OPTION_FLAGS: Record<string, string> = {
   days: '--days',
   grade: '--grade',
   flag: '--flag',
+  reason: '--reason',
+  overlaps: '--overlaps',
 }
 
 export const WHOLE_NUMBER = /^\d+$/

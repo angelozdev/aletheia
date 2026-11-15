@@ -1,8 +1,15 @@
-import { bySaved, type Card } from '#core/cards'
+import { activeCardById, bySaved, type Card } from '#core/cards'
 import { isFailure, NOT_USEFUL, type Review } from '#core/reviews'
 import { topicCards } from '#core/tags'
 import { LEECH } from './prune.constants.ts'
-import type { Candidate, CandidateReason, PruneInput } from './prune.types.ts'
+import type {
+  Candidate,
+  CandidateReason,
+  Keep,
+  KeepCardDeps,
+  KeepDraft,
+  PruneInput,
+} from './prune.types.ts'
 
 function inScope({ cards, topic }: PruneInput): Card[] {
   return topic.length === 0 ? cards : topicCards(cards, topic)
@@ -37,4 +44,12 @@ export function candidates(input: PruneInput): Candidate[] {
     .toSorted(bySaved)
     .map((card) => candidateOf(card, byCard.get(card.id) ?? [], input))
     .filter(({ reasons }) => reasons.length > 0)
+}
+
+export function keepCard(draft: KeepDraft, { cards, keeps, now }: KeepCardDeps): Keep {
+  activeCardById(cards, draft.card)
+  if (draft.overlaps !== null) activeCardById(cards, draft.overlaps)
+  const keep = { ...draft, keptAt: now }
+  keeps.save(keep)
+  return keep
 }

@@ -226,7 +226,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
 
 **Independent Test**: quickstart §5.
 
-- [ ] T017 [US4] `card keep <id> --reason <reason> [--overlaps <id>]` records a keep, in `src/core/prune/` and `src/shell/db/keeps/`
+- [X] T017 [US4] `card keep <id> --reason <reason> [--overlaps <id>]` records a keep, in `src/core/prune/` and `src/shell/db/keeps/`
   - **Test**:
     - `src/shell/db/keeps/keeps.test.ts`: `INV-03 the store refuses to delete or change a keep`; the store refuses an unknown reason, `overlapping` without `overlaps`, another reason with it, and `overlaps = card_id` (`CHECK`).
     - `src/shell/cli/commands/card-keep/card-keep.test.ts`:
