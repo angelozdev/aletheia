@@ -182,4 +182,13 @@ describe('aletheia tag stats', () => {
     expect((await stats(['messaging'])).deck).toMatchObject({ candidates: 1 })
     expect((await stats(['docker'])).deck).toMatchObject({ candidates: 0 })
   })
+
+  it('007-US4-AS2 a kept leech leaves the deck count of candidates', async () => {
+    const [leech] = await addTagged(cli, [['messaging']])
+    failed(cli, leech)
+
+    await cli.run(['card', 'keep', leech, '--reason', 'leech'])
+
+    expect((await stats()).deck).toMatchObject({ weak: 1, candidates: 0 })
+  })
 })

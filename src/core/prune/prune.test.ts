@@ -3,8 +3,8 @@ import { newCard, type Card } from '#core/cards'
 import type { Review } from '#core/reviews'
 import { SAMPLE_DRAFT } from '../../../tests/support/cards/cards.constants.ts'
 import { reviewOf } from '../../../tests/support/reviews/reviews.ts'
-import { candidates } from './prune.ts'
-import type { PruneInput } from './prune.types.ts'
+import { candidates, kept } from './prune.ts'
+import type { Keep, KeepReason, PruneInput } from './prune.types.ts'
 
 const AGAIN = { grade: 'again' } as const
 const NOT_USEFUL = { flag: 'not-useful' } as const
@@ -20,8 +20,24 @@ function failed(cardId: string, times: number, fields: Partial<Review> = {}): Re
   )
 }
 
-function inputOf(cards: Card[], reviews: Review[], topic: string[] = []): PruneInput {
-  return { cards, topic, reviews, leechFailures: LEECH_FAILURES }
+const KEEP_START = new Date('2026-05-15T20:00:00.000Z')
+
+function inputOf(
+  cards: Card[],
+  reviews: Review[],
+  topic: string[] = [],
+  keeps: Keep[] = [],
+): PruneInput {
+  return { cards, topic, reviews, leechFailures: LEECH_FAILURES, keeps, keepStart: KEEP_START }
+}
+
+function keptAt(card: string, reason: KeepReason, at: string, overlaps: string | null = null) {
+  return { card, reason, overlaps, keptAt: new Date(at) }
+}
+
+function idsOf(cards: Card[], reviews: Review[], keeps: Keep[]): string[] {
+  const found = candidates(inputOf(cards, reviews, [], keeps))
+  return found.map(({ card }) => card.id)
 }
 
 describe('prune candidates', () => {
@@ -98,5 +114,51 @@ describe('prune candidates', () => {
     expect(() => candidates(inputOf([later, earlier], reviews, ['c']))).toThrow(
       'no active card under c',
     )
+  })
+
+  it('a leech kept after its last failure is left out, and back after a failure later than the keep', () => {
+    const card = cardOf('aaaa')
+    const keeps = [keptAt('aaaa', 'leech', '2026-11-05T15:00:00.000Z')]
+    const failures = failed('aaaa', 3)
+    const later = reviewOf('aaaa', '2026-11-06T15:00:00.000Z', AGAIN)
+
+    expect(idsOf([card], failures, keeps)).toEqual([])
+    expect(idsOf([card], [...failures, later], keeps)).toEqual(['aaaa'])
+  })
+
+  it('a not-useful kept within the keep months is left out, and one kept before them is back', () => {
+    const card = cardOf('aaaa')
+    const reviews = [reviewOf('aaaa', '2026-04-01T15:00:00.000Z', NOT_USEFUL)]
+    const recent = [keptAt('aaaa', 'not-useful', '2026-06-01T15:00:00.000Z')]
+    const old = [keptAt('aaaa', 'not-useful', '2026-05-01T15:00:00.000Z')]
+
+    expect(idsOf([card], reviews, recent)).toEqual([])
+    expect(idsOf([card], reviews, old)).toEqual(['aaaa'])
+  })
+
+  it('a leech said to be useless and kept only as not-useful stays a leech', () => {
+    const reviews = [...failed('aaaa', 3), ...failed('aaaa', 1, NOT_USEFUL)]
+    const keeps = [keptAt('aaaa', 'not-useful', '2026-11-10T15:00:00.000Z')]
+
+    const found = candidates(inputOf([cardOf('aaaa')], reviews, [], keeps))
+
+    expect(found).toMatchObject([{ reasons: ['leech'] }])
+  })
+
+  it('kept gives the keeps of the cards in scope from the keep start on, newest first', () => {
+    const cards = [cardOf('aaaa', ['a']), cardOf('bbbb', ['b']), cardOf('cccc', ['a'])]
+    const keeps = [
+      keptAt('aaaa', 'leech', '2026-05-15T19:59:59.000Z'),
+      keptAt('aaaa', 'outdated-situation', '2026-05-15T20:00:00.000Z'),
+      keptAt('bbbb', 'leech', '2026-11-01T15:00:00.000Z'),
+      keptAt('aaaa', 'overlapping', '2026-11-02T15:00:00.000Z', 'cccc'),
+      keptAt('zzzz', 'leech', '2026-11-03T15:00:00.000Z'),
+    ]
+
+    const underA = kept(inputOf(cards, [], ['a'], keeps))
+    const deck = kept(inputOf(cards, [], [], keeps))
+
+    expect(underA).toEqual([keeps[3], keeps[1]])
+    expect(deck).toEqual([keeps[3], keeps[2], keeps[1]])
   })
 })

@@ -72,4 +72,69 @@ describe('aletheia card candidates', () => {
       },
     ])
   })
+
+  it('007-US4-AS2 card candidates leaves a kept leech out until a later failure, a kept not-useful for the keep months, and lists the recent keeps', async () => {
+    const [leech, useless, other] = await addTagged(cli, [['docker'], ['docker'], ['docker']])
+    failed(cli, leech)
+    reviewed(cli.db, useless, '2026-11-09T15:00:00.000Z', { flag: 'not-useful' })
+    await cli.run(['card', 'keep', leech, '--reason', 'leech'])
+    await cli.run(['card', 'keep', useless, '--reason', 'not-useful'])
+    await cli.run(['card', 'keep', other, '--reason', 'overlapping', '--overlaps', leech])
+
+    const whileKept = await jsonOf(cli, ['card', 'candidates'])
+    reviewed(cli.db, leech, '2026-11-15T21:00:00.000Z', { grade: 'again' })
+    const afterFailure = await jsonOf(cli, ['card', 'candidates'])
+
+    const keptAt = '2026-11-15T15:00:00-05:00'
+    expect(whileKept).toEqual({
+      candidates: [],
+      kept: [
+        { card: other, reason: 'overlapping', overlaps: leech, keptAt },
+        { card: useless, reason: 'not-useful', overlaps: null, keptAt },
+        { card: leech, reason: 'leech', overlaps: null, keptAt },
+      ],
+    })
+    expect(afterFailure.candidates).toMatchObject([{ id: leech, reasons: ['leech'], failures: 4 }])
+  })
+
+  it('card candidates prints the candidates and the keeps as TOON', async () => {
+    const [leech, useless, other] = await addTagged(cli, [
+      ['messaging::redis-streams'],
+      ['docker'],
+      ['docker'],
+    ])
+    failed(cli, leech)
+    reviewed(cli.db, useless, '2026-11-09T15:00:00.000Z', {
+      flag: 'not-useful',
+      rationale: 'Dijo: "esto no me sirve". Cubre los dos puntos.',
+    })
+    await cli.run(['card', 'keep', other, '--reason', 'overlapping', '--overlaps', useless])
+
+    const { stdout } = await cli.run(['card', 'candidates'])
+
+    expect(stdout).toBe(
+      [
+        'candidates[2]:',
+        `  - id: "${leech}"`,
+        `    question: "${SAMPLE_DRAFT.question}"`,
+        '    tags[1]: "messaging::redis-streams"',
+        '    reasons[1]: leech',
+        '    failures: 3',
+        `    lastFailure: "${LAST_OF_THREE_FAILURES}"`,
+        '    notUseful: null',
+        `  - id: "${useless}"`,
+        `    question: "${SAMPLE_DRAFT.question}"`,
+        '    tags[1]: docker',
+        '    reasons[1]: not-useful',
+        '    failures: 0',
+        '    lastFailure: null',
+        '    notUseful:',
+        '      at: "2026-11-09T10:00:00-05:00"',
+        '      rationale: "Dijo: \\"esto no me sirve\\". Cubre los dos puntos."',
+        'kept[1]{card,reason,overlaps,keptAt}:',
+        `  "${other}",overlapping,"${useless}","2026-11-15T15:00:00-05:00"`,
+        '',
+      ].join('\n'),
+    )
+  })
 })

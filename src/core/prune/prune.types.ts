@@ -11,6 +11,8 @@ export type PruneInput = {
   topic: string[]
   reviews: Review[]
   leechFailures: number
+  keeps: Keep[]
+  keepStart: Date
 }
 
 export type Candidate = {
@@ -29,6 +31,7 @@ export type KeepDraft = Omit<Keep, 'keptAt'>
 
 export interface KeepRepository {
   save(keep: Keep): void
+  all(): Keep[]
 }
 
 export type KeepCardDeps = { cards: CardRepository; keeps: KeepRepository; now: Date }

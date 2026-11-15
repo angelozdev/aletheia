@@ -235,11 +235,12 @@ Intentionally empty. Every table, type and field lands with the first task that 
       - `card keep prints the keep as TOON` (decision 3).
   - **Code**: `src/core/prune/`: `KEEP_REASONS = ['leech', 'not-useful', 'outdated-situation', 'overlapping'] as const`, `KeepRepository` (`save`, `all`), `keepCard` (`activeCardById` for both cards). `src/shell/db/keeps/`: `keeps.schema.ts` — "`reason` `leech`, `not-useful`, `outdated-situation` or `overlapping`"; "`overlaps` references `cards(id)`; not null exactly when `reason = overlapping`; `<> card_id`" — and `StoreKeepRepository`; `pnpm db:generate --name keeps`, then a custom `keeps_never_change`. The command: group `card`, name `keep`, argument `<id>`, options `--reason`, `--overlaps`, in `OPTION_FLAGS`.
   - **Run**: quickstart §5, the first command
-- [ ] T018 [US4] `card candidates` leaves a kept reason out until new evidence or six months, and lists the recent keeps, in `src/core/prune/prune.ts` and `src/core/time/time.ts`
+- [X] T018 [US4] `card candidates` leaves a kept reason out until new evidence or six months, and lists the recent keeps, in `src/core/prune/prune.ts` and `src/core/time/time.ts`
   - **Test**:
     - `src/core/time/time.test.ts`: `monthsBefore(NOW, 6, 'America/Bogota')` is `2026-05-15T20:00:00.000Z`.
     - `prune.test.ts`: a leech kept after its last failure is left out, and back after a failure later than the keep; a `not-useful` kept `2026-06-01` is left out, kept `2026-05-01` is back; a card that is a leech and kept only as `not-useful` stays a leech; `kept` lists keeps from `2026-05-15T20:00:00.000Z` on, newest first, `overlaps` `null` unless overlapping.
     - `card-candidates.test.ts`: `007-US4-AS2 card candidates leaves a kept leech out until a later failure, a kept not-useful for six months, and lists the recent keeps`. `tag-stats.test.ts`: a kept leech leaves `deck.candidates`.
+    - `card-candidates.test.ts`: `card candidates prints the candidates and the keeps as TOON` (from T011, decision 3).
   - **Code**: `monthsBefore(now, months, timeZone)` (research R7); `PruneInput` gains `keeps` and `keepStart`; `KEEP_MONTHS = 6` until T022; the rules of data-model.md's candidates table.
   - **Run**: quickstart §5
 - [ ] T019 [US4] `aletheia-prune` records a keep only when Angelo chooses it, for the reason he was shown, in `.claude/skills/aletheia-prune/SKILL.md`

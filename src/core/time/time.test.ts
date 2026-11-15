@@ -6,6 +6,7 @@ import {
   startOfToday,
   startOfTomorrow,
   startOfWindow,
+  monthsBefore,
   storedInstant,
 } from './time.ts'
 
@@ -54,6 +55,15 @@ describe('time', () => {
     const now = new Date('2026-11-15T20:00:00.000Z')
 
     expect(startOfWindow(now, 30, 'America/Bogota').toISOString()).toBe('2026-10-17T05:00:00.000Z')
+  })
+
+  it('monthsBefore is the same local instant that many months earlier, across daylight saving', () => {
+    const now = new Date('2026-11-15T20:00:00.000Z')
+
+    expect(monthsBefore(now, 6, 'America/Bogota').toISOString()).toBe('2026-05-15T20:00:00.000Z')
+    expect(
+      monthsBefore(new Date('2026-12-01T15:00:00.000Z'), 6, 'America/New_York').toISOString(),
+    ).toBe('2026-06-01T14:00:00.000Z')
   })
 
   it('minutesAfter adds minutes to an instant', () => {

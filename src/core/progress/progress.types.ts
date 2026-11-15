@@ -1,4 +1,5 @@
 import type { Card } from '#core/cards'
+import type { Keep } from '#core/prune'
 import type { Review, ReviewFlag } from '#core/reviews'
 import type { Grade } from '#core/scheduling'
 import type { CARD_SORT_FIELDS, TAG_SORT_FIELDS } from './progress.constants.ts'
@@ -12,6 +13,8 @@ export type ProgressInput = {
   tomorrow: Date
   windowStart: Date
   leechFailures: number
+  keeps: Keep[]
+  keepStart: Date
 }
 
 export type ProgressCounts = {

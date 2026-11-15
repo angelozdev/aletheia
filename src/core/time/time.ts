@@ -1,5 +1,5 @@
 import { TZDate } from '@date-fns/tz'
-import { addDays, addMinutes, formatISO, parseISO, startOfDay, subDays } from 'date-fns'
+import { addDays, addMinutes, formatISO, parseISO, startOfDay, subDays, subMonths } from 'date-fns'
 
 export function storedInstant(instant: Date): string {
   return instant.toISOString()
@@ -28,6 +28,11 @@ export function startOfWindow(now: Date, days: number, timeZone: string): Date {
   const today = new TZDate(now, timeZone)
   const firstDay = startOfDay(subDays(today, days - 1))
   return new Date(firstDay.getTime())
+}
+
+export function monthsBefore(now: Date, months: number, timeZone: string): Date {
+  const earlier = subMonths(new TZDate(now, timeZone), months)
+  return new Date(earlier.getTime())
 }
 
 export function minutesAfter(instant: Date, minutes: number): Date {

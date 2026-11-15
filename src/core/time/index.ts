@@ -1,6 +1,7 @@
 export {
   instantFrom,
   minutesAfter,
+  monthsBefore,
   shownInstant,
   startOfToday,
   startOfTomorrow,

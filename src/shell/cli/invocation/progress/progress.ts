@@ -1,6 +1,12 @@
 import { EVER, PROGRESS_WINDOW_DAYS, WEAK_FAILURES, type ProgressInput } from '#core/progress'
-import { startOfToday, startOfTomorrow, startOfWindow } from '#core/time'
-import { StoreCardRepository, StoreReviewRepository, type Store } from '#shell/db'
+import { KEEP_MONTHS } from '#core/prune'
+import { monthsBefore, startOfToday, startOfTomorrow, startOfWindow } from '#core/time'
+import {
+  StoreCardRepository,
+  StoreKeepRepository,
+  StoreReviewRepository,
+  type Store,
+} from '#shell/db'
 import type { CliContext } from '../../main/main.types.ts'
 import { topicFrom } from '../topic/topic.ts'
 
@@ -24,6 +30,8 @@ export function progressInput(
     tomorrow: startOfTomorrow(now, context.timeZone),
     windowStart: startOfWindow(now, days, context.timeZone),
     leechFailures: WEAK_FAILURES,
+    keeps: new StoreKeepRepository(store).all(),
+    keepStart: monthsBefore(now, KEEP_MONTHS, context.timeZone),
   }
 }
 

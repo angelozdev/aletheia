@@ -1,4 +1,4 @@
-import { candidates, type Candidate } from '#core/prune'
+import { candidates, kept, type Candidate, type Keep } from '#core/prune'
 import { shownInstant } from '#core/time'
 import { progressInput } from '../../invocation/progress/progress.ts'
 import { withStore } from '../../invocation/with-store/with-store.ts'
@@ -18,6 +18,10 @@ function candidateRow(candidate: Candidate, timeZone: string) {
   }
 }
 
+function keptRow(keep: Keep, timeZone: string) {
+  return { ...keep, keptAt: shownInstant(keep.keptAt, timeZone) }
+}
+
 export const cardCandidatesCommand: CliCommand = {
   group: 'card',
   name: 'candidates',
@@ -25,7 +29,10 @@ export const cardCandidatesCommand: CliCommand = {
   description: 'list the active cards to consider pruning, with their reasons and evidence',
   run: (context, options, tags) =>
     withStore(context, options, async (store) => {
-      const found = candidates(progressInput(store, context, tags))
-      return { candidates: found.map((row) => candidateRow(row, context.timeZone)), kept: [] }
+      const input = progressInput(store, context, tags)
+      return {
+        candidates: candidates(input).map((row) => candidateRow(row, context.timeZone)),
+        kept: kept(input).map((keep) => keptRow(keep, context.timeZone)),
+      }
     }),
 }
