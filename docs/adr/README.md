@@ -28,4 +28,4 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 | 0016 | Review settings in one row, with a nullable column each | accepted | 2026-11-10 |
 | 0017 | A review carries one flag and the card it was a prerequisite of | accepted | 2026-11-10 |
 | 0018 | A review keeps the question as asked | accepted | 2026-11-14 |
-| 0019 | Archive, restore and keep as append-only logs | proposed | 2026-11-15 |
+| 0019 | Archive, restore and keep as append-only logs | accepted | 2026-11-15 |

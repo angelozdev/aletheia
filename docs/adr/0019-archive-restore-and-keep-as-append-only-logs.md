@@ -1,6 +1,6 @@
 # 0019. Archive, restore and keep as append-only logs
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-11-15
 - **Deciders:** Angelo
 - **Supersedes:** —
@@ -27,14 +27,14 @@ them?
 
 ## Considered options
 
-1. `cards.status` kept, and two append-only logs: `status_changes` and `keeps`
+1. `cards.status` kept, and two append-only logs: `card_status_history` and `keeps`
 2. `archived_at` and `archive_reason` columns on `cards`, and a `keeps` table
 3. `cards.status` kept, and one `card_decisions` log for archive, restore and keep
 
 ## Decision outcome
 
 Chosen option: **1**, as written in
-[the data model](../../specs/007-prune/data-model.md). `status_changes(id, card_id, status,
+[the data model](../../specs/007-prune/data-model.md). `card_status_history(id, card_id, status,
 reason, changed_at)` with `reason` not blank for `archived` and `null` for `active`;
 `keeps(id, card_id, reason, overlaps, kept_at)` with `reason` one of four and `overlaps`
 present exactly for `overlapping` and never the same card. The card repository writes a status
@@ -44,6 +44,8 @@ tables (INV-03).
 ### Pros and cons of the options
 
 **Two logs beside the status**
+- Good, because it is the usual current state plus status history (`orders.status` and
+  `order_status_history`), and the store already pairs `cards`' schedule with `reviews`.
 - Good, because a restore keeps the archive it undoes, with its reason.
 - Good, because each table's rules are plain `CHECK`s.
 - Bad, because `cards.status` and the latest status change say the same thing twice; one
