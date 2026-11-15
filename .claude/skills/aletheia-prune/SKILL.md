@@ -134,6 +134,47 @@ Offer what can be done with it, and wait for Angelo to choose before the next on
 
 Never choose for him, and never act on two cards at once.
 
+### Replace, split or merge
+
+A merge (two cards into one), a split (one card into one per idea) and a replacement (one card
+whose fix changes what it asks) are the same two steps: save the new cards, then archive each
+old card naming them. The new cards follow the card rules of the `az-aletheia-add` skill.
+
+Show each old card's question and each draft with every field, as `az-aletheia-add` shows a
+draft. Wait until Angelo approves the exact drafts, with his edits, and ask his why in his
+words if he has not said it: it goes in each old card's archive reason. Save and archive
+only after Angelo approves.
+
+Save every draft in one call, its `source` naming the old cards:
+
+```sh
+aletheia card add <<'JSON'
+[
+  {
+    "type": "concept",
+    "question": "En un broker de mensajes, ¿qué pasa con un mensaje que el consumidor recibió pero no confirmó con un ack?",
+    "answer": "Queda pendiente y el broker puede volver a entregarlo. En Redis Streams queda en la PEL hasta `XACK`; en RabbitMQ vuelve a la cola si el canal se cierra sin `ack`.",
+    "keyPoints": ["queda pendiente hasta el ack", "Redis Streams: en la PEL hasta `XACK`", "RabbitMQ: vuelve a la cola si el canal se cierra sin `ack`"],
+    "situation": "Un consumidor se cae a mitad de procesar un mensaje.",
+    "tags": ["messaging"],
+    "source": "reemplaza a #9p3x, #w2ab"
+  }
+]
+JSON
+```
+
+Read the ids it prints (`ids[1]: a7k2`). Then archive each old card, one call per card, the id
+without `#`, the reason `reemplazada por #<id>[, #<id>…]: <his why>`:
+
+```sh
+aletheia card archive <<'JSON'
+{"card":"9p3x","reason":"reemplazada por #a7k2: se solapaban, mejor una con ambos ejemplos"}
+JSON
+```
+
+The old cards keep their reviews. The new cards are new: the day's new-card limit applies to
+them, and FSRS spaces them out quickly when he grades them Easy. Say so in a line.
+
 ## 3. What only reading finds
 
 After the CLI's candidates, read the cards themselves for what no number shows: a situation
@@ -169,9 +210,12 @@ names for the same reason: Angelo kept it in the last six months, or the months 
   JSON
   ```
 
-  Offer no rewrite: merging two cards arrives with slice 8. Offer: keep both, recorded on one
-  of them (`aletheia card keep 9p3x --reason overlapping --overlaps w2ab`); archive one of
-  them, with his reason; or leave them for the merge, which records nothing.
+  Offer first to merge them: one draft that states the concept without naming a technology,
+  with an example in each, following the quality rules (one idea, an answer of one to three
+  lines), saved as in "Replace, split or merge" (section 2). Or keep both, recorded on one of
+  them (`aletheia card keep 9p3x --reason overlapping --overlaps w2ab`); archive one of them,
+  with his reason; or leave them, which records nothing and brings them back at the next
+  prune.
 
 One card or pair at a time, waiting for Angelo after each. When a topic is done, ask whether
 to go on with the next one, and stop when he says so.

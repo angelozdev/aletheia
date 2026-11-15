@@ -65,7 +65,7 @@ describe('the aletheia-prune skill', () => {
       expect(skill.text).toContain(text)
   })
 
-  it('007-US3-AS2 aletheia-prune reads PROFILE.md and each topic through aletheia card list --content, proposes outdated situations and overlaps as its judgment, skips what kept names, and for an overlap offers keep, archive one or leave for the merge', () => {
+  it('007-US3-AS2 aletheia-prune reads PROFILE.md and each topic through aletheia card list --content, proposes outdated situations and overlaps as its judgment, skips what kept names, and for an overlap offers keep, archive one or leave', () => {
     const skill = readSkill(PRUNE_SKILL)
 
     for (const text of [
@@ -78,10 +78,33 @@ describe('the aletheia-prune skill', () => {
       'kept',
       'six months',
       'my judgment',
-      'slice 8',
       'go on',
     ])
       expect(skill.text).toContain(text)
     expect(skill.text.indexOf('## 3.')).toBeGreaterThan(skill.text.indexOf('## 2.'))
+  })
+
+  it('008-US1-AS1 aletheia-prune offers merge for an overlap, and only after Angelo approves the draft and gives his why saves it through aletheia card add and archives each old card with reemplazada por', () => {
+    const skill = readSkill(PRUNE_SKILL)
+    const start = skill.text.indexOf('### Replace, split or merge')
+    const subsection = skill.text.slice(start, skill.text.indexOf('\n## ', start))
+
+    for (const text of [
+      '### Replace, split or merge',
+      'merge',
+      'without naming a technology',
+      'an example in each',
+      'aletheia card add',
+      'reemplaza a #',
+      'aletheia card archive',
+      'reemplazada por #',
+      'his why',
+      'only after Angelo approves',
+    ])
+      expect(skill.text).toContain(text)
+    expect(subsection).toContain('aletheia card add')
+    expect(subsection.indexOf('aletheia card add')).toBeLessThan(
+      subsection.indexOf('aletheia card archive'),
+    )
   })
 })
