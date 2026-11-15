@@ -120,6 +120,16 @@ Offer what can be done with it, and wait for Angelo to choose before the next on
 
   When the fix would change what the key points mean, the card needs replacing, which arrives
   with slice 8: say so in a line and offer the other choices.
+- **Keep it**: Angelo wants it as it is. Record the keep for the reason he was shown, one
+  call per reason when the card has two and he keeps it for both:
+
+  ```sh
+  aletheia card keep k7m2 --reason leech
+  ```
+
+  `--reason` is `leech` or `not-useful`, as printed in `reasons`. A kept leech is not proposed
+  again until a new failure after the keep; a card kept as `not-useful`, not for six months.
+  Say so in a line.
 - **Leave it**: nothing is recorded, and the CLI lists it again next time.
 
 Never choose for him, and never act on two cards at once.

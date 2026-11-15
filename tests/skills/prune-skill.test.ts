@@ -51,4 +51,17 @@ describe('the aletheia-prune skill', () => {
     ])
       expect(skill.text).toContain(text)
   })
+
+  it("007-US4-AS3 aletheia-prune records a keep through aletheia card keep only on Angelo's choice, for the reason shown", () => {
+    const skill = readSkill(PRUNE_SKILL)
+
+    for (const text of [
+      'aletheia card keep',
+      '--reason leech',
+      'the reason he was shown',
+      'a new failure',
+      'six months',
+    ])
+      expect(skill.text).toContain(text)
+  })
 })

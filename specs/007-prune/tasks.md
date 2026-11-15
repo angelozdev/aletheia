@@ -243,7 +243,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
     - `card-candidates.test.ts`: `card candidates prints the candidates and the keeps as TOON` (from T011, decision 3).
   - **Code**: `monthsBefore(now, months, timeZone)` (research R7); `PruneInput` gains `keeps` and `keepStart`; `KEEP_MONTHS = 6` until T022; the rules of data-model.md's candidates table.
   - **Run**: quickstart §5
-- [ ] T019 [US4] `aletheia-prune` records a keep only when Angelo chooses it, for the reason he was shown, in `.claude/skills/aletheia-prune/SKILL.md`
+- [X] T019 [US4] `aletheia-prune` records a keep only when Angelo chooses it, for the reason he was shown, in `.claude/skills/aletheia-prune/SKILL.md`
   - **Test**: `prune-skill.test.ts`, `007-US4-AS3 aletheia-prune records a keep through aletheia card keep only on Angelo's choice, for the reason shown`: the text holds `aletheia card keep`, `--reason`, `the reason he was shown`.
   - **Code**: keep becomes the third choice of section 2, with what it means (a leech comes back after a new failure, the rest after six months).
   - **Run**: `pnpm test -t 007-US4-AS3`
