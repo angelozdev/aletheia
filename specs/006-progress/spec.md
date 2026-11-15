@@ -3,6 +3,14 @@
 **Feature Branch**: `006-progress` | **Created**: 2026-11-15 | **Status**: Draft
 **Input**: Slice 6 of `docs/design/2026-11-08-aletheia-design.md` §13: progress. A tag tree with each topic's cards, retention, cards due today, weak cards (leeches) and gaps, filterable by tag and sortable by any column, and filterable queries Claude runs to answer free-form questions ("¿qué tengo flojo?", "¿qué no repaso hace un mes?") (design §8.3), through a new local skill. Angelo exercises it by asking "¿qué tengo flojo?".
 
+## Clarifications
+
+### Session 2026-11-15
+
+- Q: Which reviews count toward a topic's retention? → A: Only reviews of a card already learned (in review before it), not voided: recall days after learning, comparable with FSRS's 0.9. A new card's first sight and a same-session re-show do not count, so a card just captured gives no retention until it comes back. Counting every non-voided review (a re-show minutes after the answer inflates it) and FSRS's predicted recall (a prediction, not the log) were rejected.
+- Q: How many failures make a card weak, and over what period? → A: 4 counted failures (Again on a learned card, not voided, not flagged missing-prerequisite), ever: a badly written card fails fast, since FSRS brings it back sooner after each lapse, and lapses that accumulate match prune's keep, which waits for new lapses (design §8.4). 3 (flags normal forgetting over time), 8 (Anki's default, late for a small deck) and 4 in the last 90 days (forgets old lapses) were rejected.
+- Q: Does the review history (US3) belong in this slice? → A: Yes, whole: one line per review and the counts. It is the only way to read the Measures of slices 4 and 5 (004 SC-003, 005 SC-002) from the log instead of from memory. It reads the reviews already stored, so it needs no new table. Counts without the lines (no way to see which card was voided twice) and a slice of its own (those Measures wait for it) were rejected.
+
 ## User Scenarios & Testing _(mandatory)_
 
 Every number is a fact the CLI computes from the review log (constitution II, VI); picking the query that answers Angelo's question and saying what the numbers mean is judgment. Nothing in this slice writes to the deck.
