@@ -15,18 +15,21 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
   and it defaults to `prod` in `~/.aletheia/`. Aletheia's own skills (review, stats,
   prune) are the exception: they call the installed `aletheia`, because that is use, not
   development.
-- The CLI's commands: `backup`; `card add`, `card edit`, `card search` and `review grade`
-  (with its required `askedQuestion` and its optional `flag` and `prerequisiteOf`), which read
-  JSON on stdin (a quoted heredoc, `<<'JSON'`); `card show <id>`, `tag list`, `review due` and
-  `review topic <tag>...`; `settings show` and `settings set`; and the read-only progress
-  commands `tag stats [tags...]` (`--sort`, `--desc`), `card list [tags...]` (`--weak`,
-  `--gaps`, `--not-reviewed`, `--sort`, `--desc`) and `review history [tags...]` (`--days`,
+- The CLI's commands: `backup`; `card add`, `card edit`, `card archive` (with its reason),
+  `card search` and `review grade` (with its required `askedQuestion` and its optional `flag`
+  and `prerequisiteOf`), which read JSON on stdin (a quoted heredoc, `<<'JSON'`);
+  `card show <id>`, `card restore <id>`, `card keep <id>` (`--reason`, `--overlaps`),
+  `tag list`, `review due` and `review topic <tag>...`; `settings show` and `settings set`;
+  and the read-only progress and prune commands `tag stats [tags...]` (`--sort`, `--desc`),
+  `card list [tags...]` (`--weak`, `--gaps`, `--not-reviewed`, `--sort`, `--desc`,
+  `--content`), `card candidates [tags...]` and `review history [tags...]` (`--days`,
   `--grade`, `--flag`). Numbers go as flags: the lists take `--session`, `--session-size`,
-  `--new-per-day` and `--new-share`, and `settings set` the last three, or `default`. `--help`
-  on any of them gives its usage; `specs/001-capture-and-review/contracts/cli.md`,
-  `specs/002-intake-filter/contracts/cli.md`, `specs/003-topic-review/contracts/cli.md`,
-  `specs/004-gaps-and-rewrites/contracts/cli.md`, `specs/005-varied-questions/contracts/cli.md`
-  and `specs/006-progress/contracts/cli.md` give their output and errors.
+  `--new-per-day` and `--new-share`, and `settings set` those three, `--leech-failures` and
+  `--keep-months`, or `default`. `--help` on any of them gives its usage;
+  `specs/001-capture-and-review/contracts/cli.md`, `specs/002-intake-filter/contracts/cli.md`,
+  `specs/003-topic-review/contracts/cli.md`, `specs/004-gaps-and-rewrites/contracts/cli.md`,
+  `specs/005-varied-questions/contracts/cli.md`, `specs/006-progress/contracts/cli.md` and
+  `specs/007-prune/contracts/cli.md` give their output and errors.
 - `pnpm db:generate --name <name>` derives a migration from the `*.schema.ts` files;
   `pnpm exec drizzle-kit generate --custom --name <name>` makes an empty one for triggers.
   Read the SQL before committing it.
@@ -47,9 +50,10 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
   as commands to run.
 - Skills: `az-aletheia-add` (global) lives in `skills/az-aletheia-add/` and reaches Claude only
   through a release, which copies it to `~/.aletheia/skills/`; editing it here changes nothing
-  until the next `pnpm release`. `aletheia-review` and `aletheia-stats` (local) live in
-  `.claude/skills/aletheia-review/` and `.claude/skills/aletheia-stats/`. All three call the
-  installed `aletheia`, never `pnpm aletheia`.
+  until the next `pnpm release`. `aletheia-review`, `aletheia-stats` and `aletheia-prune`
+  (local) live in `.claude/skills/aletheia-review/`, `.claude/skills/aletheia-stats/` and
+  `.claude/skills/aletheia-prune/`. All four call the installed `aletheia`, never
+  `pnpm aletheia`.
 
 ## Code
 

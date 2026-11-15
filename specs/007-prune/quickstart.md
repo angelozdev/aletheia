@@ -21,8 +21,8 @@ pnpm aletheia card restore <id>
 ```
 
 Expected: the card printed `archived` with its reason; it is absent from `review due`,
-`card list` and `tag stats`; grading it exits 1 with `card <id> is archived`. Restored, it is
-back with the same `due` and `state`.
+`card list` and `tag stats`; grading it exits 1 with `card "<id>" is archived`. Restored, it
+is back with the same `due` and `state`.
 
 ## 2. A pruned card found at capture, in `test`
 
@@ -38,7 +38,9 @@ Expected: the card, `status: archived`, with its reason.
 
 ## 3. Leeches, in `test`
 
-Grade a card already in review `again` three times (with an `askedQuestion`), then:
+Grade a card already in review `again`, `good`, `again`, `good`, `again` (with an
+`askedQuestion`): only an Again on a card in review is a failure, and `good` brings it back
+from relearning. Then:
 
 ```sh
 pnpm aletheia card candidates

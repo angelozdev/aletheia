@@ -291,7 +291,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
 
 ## Phase 10: Close
 
-- [ ] T023 Close the slice's docs
+- [X] T023 Close the slice's docs
   - In `CLAUDE.md` Commands, add `card archive` (JSON on stdin), `card restore <id>`, `card keep <id>` (`--reason`, `--overlaps`), `card candidates [tags...]`, `card list --content`, the settings `--leech-failures` and `--keep-months`, and `specs/007-prune/contracts/cli.md` to the contracts list. In Workflow's skills bullet, add `aletheia-prune` (local) beside the other two.
   - The contract takes the TOON and messages the tests fixed (decision 3).
   - Run quickstart §1 to §7 in `test` through `pnpm aletheia`.

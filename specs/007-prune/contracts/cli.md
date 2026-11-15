@@ -19,16 +19,16 @@ JSON
 
 | Field | Rule | Message when broken |
 |---|---|---|
-| `card` | an id | `invalid archive: card: …` |
-| `reason` | text, not blank | `invalid archive: reason: must not be blank` |
-| any other | none | `invalid archive: <field>: not an archive field` |
+| `card` | an id | `invalid archive: card: is required` |
+| `reason` | text, not blank | `invalid archive: reason: is required` |
+| any other | none | `invalid archive: <field>: is not an archive field` |
 
-Then `card <id> not found` or `card <id> is archived`.
+Then `card "<id>" not found` or `card "<id>" is archived`.
 
 ## `aletheia card restore <id>`
 
 Makes an archived card active again, with the schedule it had (007-US1-AS3). Prints the card.
-Errors: `card <id> not found`, `card <id> is not archived`.
+Errors: `card "<id>" not found`, `card "<id>" is not archived`.
 
 ## `aletheia card keep <id> --reason <reason> [--overlaps <id>]`
 
@@ -48,11 +48,11 @@ keptAt: "2026-11-22T19:30:00-05:00"
 
 | Option | Value | Message when broken |
 |---|---|---|
-| `--reason <reason>` | `leech`, `not-useful`, `outdated-situation` or `overlapping` | `--reason: must be leech, not-useful, outdated-situation or overlapping` |
-| `--overlaps <id>` | another card, with `overlapping` only | `--overlaps: goes with --reason overlapping, and only with it` |
+| `--reason <reason>` | required: `leech`, `not-useful`, `outdated-situation` or `overlapping` | `--reason: is required`; `--reason: must be leech, not-useful, outdated-situation or overlapping` |
+| `--overlaps <id>` | another card, with `overlapping` only | `--overlaps: goes with --reason overlapping, and only with it`; `--overlaps: must be another card` |
 
-Option messages come in one `invalid options:` line joined by `; `; then `card <id> not found`
-or `card <id> is archived`, for either card, and `--overlaps: must be another card`.
+Option messages come in one `invalid options:` line joined by `; `; then `card "<id>" not
+found` or `card "<id>" is archived`, for either card.
 
 ## `aletheia card candidates [tags...]`
 
@@ -92,19 +92,21 @@ kept[1]{card,reason,overlaps,keptAt}:
 
 ## Changed commands
 
-- `card show <id>`: gains `archivedAt` and `archiveReason`, from the card's latest archive;
-  `null` while active.
+- `card show <id>`: gains `archivedAt` and `archiveReason` after `status`, from the card's
+  latest archive; `null` while active. `card edit`, `card archive` and `card restore` print
+  the card the same way.
 - `card list [tags...] --content`: each row gains `keyPoints` and `situation` (007-US3-AS1).
   `weak` is `failures >= leech-failures`.
 - `card search`: matches words over archived cards too. Each item gains `status` and
-  `archiveReason` (`null` when active). Cards sharing only a tag family are active ones.
-- `tag stats`: `deck` gains `candidates`, the candidates of its scope (007-US1-AS5); `weak`
-  is `failures >= leech-failures`.
+  `archiveReason` (`null` when active), after `answer`. Cards sharing only a tag family are
+  active ones.
+- `tag stats`: `deck` gains `candidates`, last, the candidates of its scope (007-US1-AS5);
+  `weak` is `failures >= leech-failures`.
 - `review grade`: `flag` may be `not-useful`, which schedules and counts as no flag.
 - `review history`: counts `not-useful` among the flags; `--flag not-useful` filters by it;
   reviews of archived cards stay.
 - `review grade` and `card edit`: an archived card, or an archived `prerequisiteOf`, exits 1
-  with `card <id> is archived`.
+  with `card "<id>" is archived`.
 - `settings show`: five rows, `leech-failures` (3) and `keep-months` (6) after the three of
   slice 3. `settings set` takes `--leech-failures <n>` and `--keep-months <n>`: a whole number,
   1 or more, or `default`; broken, `--leech-failures: must be a whole number, 1 or more, or

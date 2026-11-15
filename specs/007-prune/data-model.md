@@ -80,10 +80,10 @@ latest `not-useful` review, or `null`). Order: as saved (`bySaved`).
 
 | Action | Needs | Records | Refused with |
 |---|---|---|---|
-| archive | an active card, a reason not blank | `status: archived`, the reason, `now` | `card <id> not found`, `card <id> is archived`, a blank reason |
-| restore | an archived card | `status: active`, `now`; the schedule untouched | `card <id> not found`, `card <id> is not archived` |
+| archive | an active card, a reason not blank | `status: archived`, the reason, `now` | `card "<id>" not found`, `card "<id>" is archived`, a blank reason |
+| restore | an archived card | `status: active`, `now`; the schedule untouched | `card "<id>" not found`, `card "<id>" is not archived` |
 | keep | an active card; for `overlapping`, another active card | the keep, `now` | not found, archived, an unknown reason, `--overlaps` missing, extra or the same card |
-| grade, edit | an active card, and an active `prerequisiteOf` | as before | `card <id> is archived` |
+| grade, edit | an active card, and an active `prerequisiteOf` | as before | `card "<id>" is archived` |
 
 ## Invariants
 
