@@ -34,4 +34,9 @@ export interface KeepRepository {
   all(): Keep[]
 }
 
-export type KeepCardDeps = { cards: CardRepository; keeps: KeepRepository; now: Date }
+export type KeepCardDeps = {
+  cards: CardRepository
+  keeps: KeepRepository
+  now: Date
+  evidence: PruneInput
+}

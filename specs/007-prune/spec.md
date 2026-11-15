@@ -18,6 +18,8 @@
 
 - Q: Which phrase prunes one topic? → A: "poda <tema>" ("poda mensajería"); "podemos el mazo" stays for the whole deck. "podemos <tema>" was rejected after the code review: "podemos" is also the verb poder ("podemos seguir con la tarea") and would start a prune in ordinary chat.
 
+- Q: Does the CLI refuse a keep for a reason the card does not have? → A: Yes, for `leech` and `not-useful`, the reasons the CLI finds: a keep is refused when the card is not a candidate for it now, which also refuses keeping it twice. Otherwise a keep made by mistake hides the real reason when it comes, for up to the keep's months. Trusting the skill alone was rejected after the code review.
+
 ## User Scenarios & Testing _(mandatory)_
 
 Leech and not-useful candidates, archive, restore and keep are facts the CLI computes and records (constitution II). Whether a situation still applies to the profile, whether two cards ask the same thing, and what Angelo chooses are judgment. Prune never acts on its own: nothing is archived or kept without his choice.
@@ -57,7 +59,7 @@ Claude also reads the deck, topic by topic: #m4cd's situation, "cuando prepare e
 Angelo keeps #k7m2: "falla porque es difícil, no porque esté mal escrita". The next prune does not list it as a leech; after it fails again, it does. The kept pair #9p3x and #w2ab is not proposed again for six months.
 **Independent Test**: keep a leech; the candidates leave it out until a new counted failure is recorded.
 
-1. **007-US4-AS1** Given an active card and a candidate reason, When it is kept, Then the keep is recorded with the card, the reason, the instant and, for an overlap, the other card, so it covers only that pair; an unknown reason, or a card that does not exist or is archived, exits 1 and nothing is recorded.
+1. **007-US4-AS1** Given an active card and a candidate reason, When it is kept, Then the keep is recorded with the card, the reason, the instant and, for an overlap, the other card, so it covers only that pair; an unknown reason, a card that does not exist or is archived, or a `leech` or `not-useful` keep for a card that is not a candidate for it now (kept already included), exits 1 and nothing is recorded.
 2. **007-US4-AS2** Given a kept candidate, When the candidates are asked, Then a kept leech is left out until a failure counted after the keep, and a kept not-useful for six months after it; the card's other reasons are not affected.
 3. **007-US4-AS3** Given the prune skill file, When it is read, Then it records a keep only when Angelo chooses it, for the reason he was shown.
 

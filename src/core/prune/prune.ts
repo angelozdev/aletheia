@@ -1,7 +1,8 @@
 import { activeCardById, bySaved, type Card } from '#core/cards'
 import { isFailure, NOT_USEFUL, type Review } from '#core/reviews'
 import { topicCards } from '#core/tags'
-import { LEECH } from './prune.constants.ts'
+import { CANDIDATE_REASONS, LEECH } from './prune.constants.ts'
+import { NotACandidateError } from './prune.errors.ts'
 import type {
   Candidate,
   CandidateReason,
@@ -86,9 +87,22 @@ export function kept(input: PruneInput): Keep[] {
     .toSorted(newestFirst)
 }
 
-export function keepCard(draft: KeepDraft, { cards, keeps, now }: KeepCardDeps): Keep {
-  activeCardById(cards, draft.card)
+function isCandidateReason(reason: KeepReason): reason is CandidateReason {
+  return CANDIDATE_REASONS.some((candidate) => candidate === reason)
+}
+
+function checkCandidate(card: Card, reason: KeepReason, evidence: PruneInput): void {
+  if (!isCandidateReason(reason)) return
+  const reviews = evidence.reviews.filter(({ cardId }) => cardId === card.id)
+  const keeps = evidence.keeps.filter((keep) => keep.card === card.id)
+  const { reasons } = candidateOf(card, reviews, keeps, evidence)
+  if (!reasons.includes(reason)) throw new NotACandidateError(card.id, reason)
+}
+
+export function keepCard(draft: KeepDraft, { cards, keeps, now, evidence }: KeepCardDeps): Keep {
+  const card = activeCardById(cards, draft.card)
   if (draft.overlaps !== null) activeCardById(cards, draft.overlaps)
+  checkCandidate(card, draft.reason, evidence)
   const keep = { ...draft, keptAt: now }
   keeps.save(keep)
   return keep

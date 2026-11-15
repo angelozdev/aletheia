@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { addTagged, rowCounts } from '../../../../../tests/support/progress/progress.ts'
-import { archiveCard, jsonOf, pruneCli } from '../../../../../tests/support/prune/prune.ts'
+import { addTagged, reviewed, rowCounts } from '../../../../../tests/support/progress/progress.ts'
+import { archiveCard, failed, jsonOf, pruneCli } from '../../../../../tests/support/prune/prune.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 import { selectAll } from '../../../../../tests/support/store/store.ts'
 
@@ -18,9 +18,19 @@ function keeps() {
   return selectAll(cli.db, 'select card_id, reason, overlaps, kept_at from keeps order by id')
 }
 
+async function expectRefused(refusals: [string[], string][]): Promise<void> {
+  for (const [argv, error] of refusals) {
+    const { code, stdout, stderr } = await cli.run(['card', 'keep', ...argv])
+
+    expect({ code, stdout }).toEqual({ code: 1, stdout: '' })
+    expect(stderr).toMatch(new RegExp(`\\nerror: ${RegExp.escape(error)}\\n$`))
+  }
+}
+
 describe('aletheia card keep', () => {
   it('007-US4-AS1 card keep records the card, the reason, the instant and, for an overlap, the other card', async () => {
     const [card, other] = await addTagged(cli, [['messaging'], ['messaging']])
+    failed(cli, card)
 
     const leech = await jsonOf(cli, ['card', 'keep', card, '--reason', 'leech'])
     const overlap = await jsonOf(cli, [
@@ -64,14 +74,26 @@ describe('aletheia card keep', () => {
       [[card, '--reason', 'overlapping', '--overlaps', archived], `card "${archived}" is archived`],
     ]
 
-    for (const [argv, error] of refusals) {
-      const { code, stdout, stderr } = await cli.run(['card', 'keep', ...argv])
-
-      expect({ code, stdout }).toEqual({ code: 1, stdout: '' })
-      expect(stderr).toMatch(new RegExp(`\\nerror: ${RegExp.escape(error)}\\n$`))
-    }
+    await expectRefused(refusals)
     expect(keeps()).toEqual([])
     expect(rowCounts(cli.db)).toEqual(before)
+  })
+
+  it('007-US4-AS1 card keep refuses a leech or not-useful keep for a card that is not that candidate, or no longer is once kept, and records nothing more', async () => {
+    const [card, leech, useless] = await addTagged(cli, [['docker'], ['docker'], ['docker']])
+    failed(cli, leech)
+    reviewed(cli.db, useless, '2026-11-09T15:00:00.000Z', { flag: 'not-useful' })
+    await cli.run(['card', 'keep', leech, '--reason', 'leech'])
+    const refusals: [string[], string][] = [
+      [[card, '--reason', 'leech'], `card "${card}" is not a leech candidate`],
+      [[card, '--reason', 'not-useful'], `card "${card}" is not a not-useful candidate`],
+      [[useless, '--reason', 'leech'], `card "${useless}" is not a leech candidate`],
+      [[leech, '--reason', 'leech'], `card "${leech}" is not a leech candidate`],
+    ]
+
+    await expectRefused(refusals)
+    expect(keeps()).toMatchObject([{ card_id: leech, reason: 'leech' }])
+    expect(keeps()).toHaveLength(1)
   })
 
   it('card keep prints the keep as TOON', async () => {

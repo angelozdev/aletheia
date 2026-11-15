@@ -52,7 +52,9 @@ keptAt: "2026-11-22T19:30:00-05:00"
 | `--overlaps <id>` | another card, with `overlapping` only | `--overlaps: goes with --reason overlapping, and only with it`; `--overlaps: must be another card` |
 
 Option messages come in one `invalid options:` line joined by `; `; then `card "<id>" not
-found` or `card "<id>" is archived`, for either card.
+found` or `card "<id>" is archived`, for either card; then, for `leech` and `not-useful`,
+`card "<id>" is not a <reason> candidate` when the card is not a candidate for that reason
+now (`card candidates`), which also refuses keeping it twice.
 
 ## `aletheia card candidates [tags...]`
 

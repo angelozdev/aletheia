@@ -1,6 +1,7 @@
 import { keepCard } from '#core/prune'
 import { shownInstant } from '#core/time'
 import { StoreCardRepository, StoreKeepRepository } from '#shell/db'
+import { progressInput } from '../../invocation/progress/progress.ts'
 import { optionsFrom } from '../../invocation/session/session.ts'
 import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand } from '../../main/main.types.ts'
@@ -22,6 +23,7 @@ export const cardKeepCommand: CliCommand = {
           cards: new StoreCardRepository(store),
           keeps: new StoreKeepRepository(store),
           now: context.clock(),
+          evidence: progressInput(store, context, []),
         },
       )
       return { ...keep, keptAt: shownInstant(keep.keptAt, context.timeZone) }
