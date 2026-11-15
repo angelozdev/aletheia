@@ -58,7 +58,7 @@ describe('tag progress', () => {
 
   it('tagProgress on an empty deck gives a deck of zeros and no tags', () => {
     expect(progressOf([])).toMatchObject({
-      deck: { cards: 0, new: 0, due: 0, retention: null },
+      deck: { cards: 0, new: 0, due: 0, retention: null, weak: 0, gaps: 0 },
       tags: [],
     })
   })
@@ -107,6 +107,64 @@ describe('tag progress', () => {
       ]
 
       expect(progressOf(cards, reviews).deck).toMatchObject({ retention: 50 })
+    })
+  })
+
+  describe("006-US1-AS3 a card with 4 failures is weak under each of its tags, and a gap counts under the reviewed card's tags", () => {
+    const AGAIN = { grade: 'again' } as const
+
+    function failed(cardId: string, times: number): Review[] {
+      return Array.from({ length: times }, () =>
+        reviewOf(cardId, '2026-11-10T15:00:00.000Z', AGAIN),
+      )
+    }
+
+    it('4 failures ever make a card weak in each row covering it, and 3 do not', () => {
+      const cards = [cardOf('weak', ['a::b']), cardOf('3ago', ['a'])]
+      const reviews = [
+        reviewOf('weak', '2026-01-01T15:00:00.000Z', AGAIN),
+        ...failed('weak', 3),
+        ...failed('3ago', 3),
+      ]
+
+      expect(progressOf(cards, reviews)).toMatchObject({
+        deck: { weak: 1 },
+        tags: [
+          { tag: 'a', weak: 1 },
+          { tag: 'a::b', weak: 1 },
+        ],
+      })
+    })
+
+    it('an Again flagged missing-prerequisite or voided, or on a card not yet learned, is not a failure', () => {
+      const cards = [cardOf('aaaa', ['a'])]
+      const reviews = [
+        ...failed('aaaa', 3),
+        reviewOf('aaaa', '2026-11-10T15:00:00.000Z', { ...AGAIN, flag: 'missing-prerequisite' }),
+        reviewOf('aaaa', '2026-11-10T15:00:00.000Z', { ...AGAIN, flag: 'badly-written' }),
+        reviewOf('aaaa', '2026-11-10T15:00:00.000Z', { ...AGAIN, stateBefore: 'learning' }),
+      ]
+
+      expect(progressOf(cards, reviews).deck).toMatchObject({ weak: 0 })
+    })
+
+    it('a review flagged missing-prerequisite in the window is a gap of the reviewed card, and one before it is not', () => {
+      const gap = { ...AGAIN, flag: 'missing-prerequisite' } as const
+      const cards = [cardOf('aaaa', ['a::b']), cardOf('cccc', ['c'])]
+      const reviews = [
+        reviewOf('aaaa', '2026-10-17T05:00:00.000Z', gap),
+        reviewOf('aaaa', '2026-10-17T04:59:59.000Z', gap),
+        reviewOf('cccc', '2026-11-10T15:00:00.000Z', gap),
+      ]
+
+      expect(progressOf(cards, reviews)).toMatchObject({
+        deck: { gaps: 2 },
+        tags: [
+          { tag: 'a', gaps: 1 },
+          { tag: 'a::b', gaps: 1 },
+          { tag: 'c', gaps: 1 },
+        ],
+      })
     })
   })
 })

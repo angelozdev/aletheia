@@ -1,12 +1,20 @@
 import { NEW_STATE, type Card } from '#core/cards'
-import { policyOf, REVIEW_STATE, type Review } from '#core/reviews'
+import { MISSING_PREREQUISITE, policyOf, REVIEW_STATE, type Review } from '#core/reviews'
 import { AGAIN_GRADE } from '#core/scheduling'
 import { bySegments, coveredTags } from '#core/tags'
-import { PERCENT } from './progress.constants.ts'
+import { PERCENT, WEAK_FAILURES } from './progress.constants.ts'
 import type { CardFacts, ProgressCounts, ProgressInput, ProgressTree } from './progress.types.ts'
 
 function isCounted({ flag, stateBefore }: Review): boolean {
   return policyOf(flag).countsInStats && stateBefore === REVIEW_STATE
+}
+
+function isFailure(review: Review): boolean {
+  return isCounted(review) && review.grade === AGAIN_GRADE && review.flag !== MISSING_PREREQUISITE
+}
+
+function isGap({ flag, reviewedAt }: Review, windowStart: Date): boolean {
+  return flag === MISSING_PREREQUISITE && reviewedAt >= windowStart
 }
 
 function hidesToday({ reviewedAt, flag }: Review, today: Date): boolean {
@@ -24,6 +32,8 @@ function cardFacts(card: Card, reviews: Review[], input: ProgressInput): CardFac
     isDue: !isNew && card.due < input.tomorrow && !hidden,
     counted: counted.length,
     passed: counted.filter(({ grade }) => grade !== AGAIN_GRADE).length,
+    failures: reviews.filter(isFailure).length,
+    gaps: reviews.filter((review) => isGap(review, input.windowStart)).length,
   }
 }
 
@@ -52,6 +62,8 @@ function countsOf(facts: CardFacts[]): ProgressCounts {
     new: facts.filter(({ isNew }) => isNew).length,
     due: facts.filter(({ isDue }) => isDue).length,
     retention: retentionOf(facts),
+    weak: facts.filter(({ failures }) => failures >= WEAK_FAILURES).length,
+    gaps: total(facts, (cardFacts) => cardFacts.gaps),
   }
 }
 

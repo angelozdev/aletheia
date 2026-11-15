@@ -134,7 +134,7 @@ Intentionally empty. Every type, helper and field lands with the first task that
     - `progress.constants.ts`: `PROGRESS_WINDOW_DAYS = 30`, which `tag-stats.ts` passes to `startOfWindow`.
     - `progress.ts`: a review is counted when "`policyOf(flag).countsInStats` and `stateBefore = review`", passed when also "`grade ≠ again`"; retention is "passed ÷ counted, over the covered cards' counted reviews in the window, as a whole percent (`Math.round`); `null` with no counted review".
   - **Run**: quickstart §1, the retention point
-- [ ] T004 [US1] `tag stats` gives weak cards and gaps, in `src/core/progress/progress.ts`
+- [X] T004 [US1] `tag stats` gives weak cards and gaps, in `src/core/progress/progress.ts`
   - **Test**:
     - `progress.test.ts`, `006-US1-AS3 a card with 4 failures is weak under each of its tags, and a gap counts under the reviewed card's tags`:
       - 4 `again` from `review`, one of them on `2026-01-01`, make the card weak in each covered row and in `deck`; 3 do not.

@@ -61,9 +61,56 @@ describe('aletheia tag stats', () => {
     })
   })
 
+  it('006-US1-AS3 tag stats gives the weak cards and gaps of each tag', async () => {
+    const [weak, gapped] = await addTagged(cli, [
+      ['messaging::rabbitmq'],
+      ['messaging::redis-streams'],
+    ])
+    for (const day of ['01', '05', '09', '13'])
+      reviewed(cli.db, weak, `2026-11-${day}T15:00:00.000Z`, { grade: 'again' })
+    reviewed(cli.db, gapped, '2026-11-14T15:00:00.000Z', {
+      grade: 'again',
+      flag: 'missing-prerequisite',
+    })
+
+    expect(await stats()).toMatchObject({
+      deck: { weak: 1, gaps: 1 },
+      tags: [
+        { tag: 'messaging', weak: 1, gaps: 1 },
+        { tag: 'messaging::rabbitmq', weak: 1, gaps: 0 },
+        { tag: 'messaging::redis-streams', weak: 0, gaps: 1 },
+      ],
+    })
+  })
+
+  it('tag stats prints the tree as TOON', async () => {
+    const [studiedCard] = await addTagged(cli, [['messaging'], ['messaging::rabbitmq']])
+    studied(cli.db, studiedCard, 'review', DUE_TODAY)
+    reviewed(cli.db, studiedCard, '2026-11-10T15:00:00.000Z')
+
+    const { code, stdout } = await cli.run(['tag', 'stats'])
+
+    expect(code).toBe(0)
+    expect(stdout).toBe(
+      [
+        'deck:',
+        '  cards: 2',
+        '  new: 1',
+        '  due: 1',
+        '  retention: 100',
+        '  weak: 0',
+        '  gaps: 0',
+        'tags[2]{tag,cards,new,due,retention,weak,gaps}:',
+        '  messaging,2,1,1,100,0,0',
+        '  "messaging::rabbitmq",1,1,0,null,0,0',
+        '',
+      ].join('\n'),
+    )
+  })
+
   it('tag stats on an empty deck gives a deck of zeros and no tags', async () => {
     expect(await stats()).toMatchObject({
-      deck: { cards: 0, new: 0, due: 0, retention: null },
+      deck: { cards: 0, new: 0, due: 0, retention: null, weak: 0, gaps: 0 },
       tags: [],
     })
   })

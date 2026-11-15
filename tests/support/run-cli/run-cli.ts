@@ -5,6 +5,7 @@ import { SHIPPED_MIGRATIONS } from '../fixture-migrations/fixture-migrations.con
 import { noMigrations } from '../fixture-migrations/fixture-migrations.ts'
 import { captureStream } from '../streams/streams.ts'
 import { tempDir } from '../temp-dir/temp-dir.ts'
+import type { OnTestFinished } from '../temp-dir/temp-dir.types.ts'
 import { FIXED_INSTANT } from './run-cli.constants.ts'
 import type { CliOverrides, CliRun, StoreCli } from './run-cli.types.ts'
 
@@ -42,7 +43,10 @@ export function runOnStore(
   })
 }
 
-export function cliOnTempStore(overrides: CliOverrides = {}): StoreCli {
-  const db = join(tempDir('aletheia-cli-'), 'store.sqlite')
+export function cliOnTempStore(
+  overrides: CliOverrides = {},
+  onFinished?: OnTestFinished,
+): StoreCli {
+  const db = join(tempDir('aletheia-cli-', onFinished), 'store.sqlite')
   return { db, run: (argv, stdin = '') => runOnStore(db, argv, stdin, overrides) }
 }
