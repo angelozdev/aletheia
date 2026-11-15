@@ -161,4 +161,13 @@ describe('prune candidates', () => {
     expect(underA).toEqual([keeps[3], keeps[1]])
     expect(deck).toEqual([keeps[3], keeps[2], keeps[1]])
   })
+
+  it('007-US3-AS1 kept under the topic of the other card of an overlap gives that keep', () => {
+    const cards = [cardOf('aaaa', ['a']), cardOf('bbbb', ['b'])]
+    const keeps = [keptAt('aaaa', 'overlapping', '2026-11-02T15:00:00.000Z', 'bbbb')]
+
+    const underB = kept(inputOf(cards, [], ['b'], keeps))
+
+    expect(underB).toEqual(keeps)
+  })
 })

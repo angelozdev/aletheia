@@ -88,6 +88,7 @@ kept[1]{card,reason,overlaps,keptAt}:
 
 - A kept leech comes back after a failure later than its keep; the other reasons after
   `keep-months`.
+- `kept` gives an overlap keep under the topic of either card of the pair.
 - Nothing to list: `candidates: []` and `kept: []`.
 
 ## Changed commands
