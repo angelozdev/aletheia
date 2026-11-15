@@ -211,7 +211,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
   - **Test**: `prune.test.ts`: two `not-useful` reviews → `reasons: ['not-useful']`, `notUseful` the latest's `{ at, rationale }`; a leech with one → `reasons: ['leech', 'not-useful']`, one row. `card-candidates.test.ts`: `007-US2-AS2 card candidates gives a card said to be useless, with the instant and rationale of its latest not-useful review`.
   - **Code**: the `not-useful` rule of data-model.md, without keeps yet.
   - **Run**: quickstart §4
-- [ ] T016 [US2] `aletheia-review` flags a review `not-useful` when Angelo says a card adds nothing, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T016 [US2] `aletheia-review` flags a review `not-useful` when Angelo says a card adds nothing, in `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `tests/skills/review-skill.test.ts`, `007-US2-AS3 aletheia-review grades as usual and flags not-useful, quoting Angelo, when he says a card adds nothing, and archives nothing`: the text holds `esto no me sirve`, `esto lo sé de memoria`, `"flag": "not-useful"`, `quote his words in the rationale`, `prune will list it`, and no `aletheia card archive`.
   - **Code**: a rule beside the other flags: grade the answer as usual; when the review already carries a flag, keep it and put his words in the rationale (spec Edge Cases).
   - **Run**: `pnpm test -t 007-US2-AS3`

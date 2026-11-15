@@ -286,9 +286,29 @@ schedule and its reviews. If it exits 1, nothing changed: read the `error:` line
 and send it again.
 
 When the fix would change what the key points mean, the card needs replacing, which arrives
-with slice 7 (prune): say so in a line and leave the card as it is.
+with slice 8: say so in a line and leave the card as it is.
 
 A rewrite does not change the grade being settled, and a voided review stays voided.
+
+### A card that adds nothing
+
+When Angelo says a card adds nothing to him ("esto no me sirve", "esto lo sé de memoria",
+"nunca uso esto"), grade his answer as usual, then record the review with the flag
+`not-useful`; quote his words in the rationale:
+
+```sh
+aletheia review grade <<'JSON'
+{"card":"q3rt","grade":"good","claudeGrade":"good","answer":"ps muestra los que corren, -a también los detenidos.","rationale":"Dijo: \"esto no me sirve, nunca lo uso\". La respuesta cubre los dos puntos.","askedQuestion":"¿Qué contenedores añade `docker ps -a` a lo que lista `docker ps`?","flag":"not-useful"}
+JSON
+```
+
+The flag changes nothing in the schedule or the stats: the review counts as one without a
+flag. Tell him in a line that prune will list it ("lo verás al podar"). This skill never
+archives a card; `aletheia-prune` does, when he chooses.
+
+A review that already carries a flag (`missing-prerequisite`, `badly-written` or
+`badly-rephrased`) keeps its flag: put his words in the rationale, and prune will not list the
+card from that review.
 
 ## 5. Doubts about the card
 

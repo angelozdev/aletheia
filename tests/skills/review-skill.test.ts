@@ -107,7 +107,7 @@ describe('the aletheia-review skill', () => {
       'the exact before and after',
       'same knowledge',
       'only after Angelo approves',
-      'slice 7',
+      'slice 8',
     ])
       expect(skill.text).toContain(text)
   })
@@ -144,5 +144,20 @@ describe('the aletheia-review skill', () => {
       '"flag":"badly-written"',
     ])
       expect(skill.text).toContain(text)
+  })
+
+  it('007-US2-AS3 aletheia-review grades as usual and flags not-useful, quoting Angelo, when he says a card adds nothing, and archives nothing', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+
+    for (const text of [
+      'esto no me sirve',
+      'esto lo sé de memoria',
+      '"flag":"not-useful"',
+      'quote his words in the rationale',
+      'keeps its flag',
+      'prune will list it',
+    ])
+      expect(skill.text).toContain(text)
+    expect(skill.text).not.toContain('aletheia card archive')
   })
 })
