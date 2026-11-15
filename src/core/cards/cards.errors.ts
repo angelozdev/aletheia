@@ -24,3 +24,13 @@ export class NoFreeCardIdError extends Error {
     this.draws = draws
   }
 }
+
+export class CardArchivedError extends Error {
+  readonly id: string
+
+  constructor(id: string) {
+    super(`card "${id}" is archived`)
+    this.name = new.target.name
+    this.id = id
+  }
+}

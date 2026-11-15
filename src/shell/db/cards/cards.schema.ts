@@ -1,6 +1,8 @@
 import { sql } from 'drizzle-orm'
 import { check, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import {
+  ACTIVE_STATUS,
+  ARCHIVED_STATUS,
   CARD_STATES,
   CARD_STATUSES,
   CARD_TYPES,
@@ -8,7 +10,7 @@ import {
   type CardStatus,
   type CardType,
 } from '#core/cards'
-import { notBlank, oneOf } from '../checks/checks.ts'
+import { notBlank, oneOf, textLiteral } from '../checks/checks.ts'
 
 export const cards = sqliteTable(
   'cards',
@@ -63,5 +65,25 @@ export const cardTags = sqliteTable(
   (table) => [
     primaryKey({ columns: [table.cardId, table.tag] }),
     check('card_tags_tag', sql`length(${table.tag}) > 0 AND ${table.tag} NOT GLOB '*[^a-z0-9:-]*'`),
+  ],
+)
+
+export const cardStatusHistory = sqliteTable(
+  'card_status_history',
+  {
+    id: integer().primaryKey(),
+    cardId: text('card_id')
+      .notNull()
+      .references(() => cards.id),
+    status: text().$type<CardStatus>().notNull(),
+    reason: text(),
+    changedAt: text('changed_at').notNull(),
+  },
+  (table) => [
+    check('card_status_history_status', oneOf(table.status, CARD_STATUSES)),
+    check(
+      'card_status_history_reason',
+      sql`(${table.status} = ${textLiteral(ARCHIVED_STATUS)} AND ${table.reason} IS NOT NULL AND ${notBlank(table.reason)}) OR (${table.status} = ${textLiteral(ACTIVE_STATUS)} AND ${table.reason} IS NULL)`,
+    ),
   ],
 )

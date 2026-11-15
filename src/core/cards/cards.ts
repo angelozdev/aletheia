@@ -1,13 +1,20 @@
 import {
   ACTIVE_STATUS,
+  ARCHIVED_STATUS,
   ID_ALPHABET,
   ID_LENGTH,
   MAX_ID_DRAWS,
   NEW_STATE,
 } from './cards.constants.ts'
-import { CardIdTakenError, CardNotFoundError, NoFreeCardIdError } from './cards.errors.ts'
+import {
+  CardArchivedError,
+  CardIdTakenError,
+  CardNotFoundError,
+  NoFreeCardIdError,
+} from './cards.errors.ts'
 import type {
   AddCardsDeps,
+  ArchiveDraft,
   Card,
   CardDraft,
   CardEdit,
@@ -67,6 +74,21 @@ export function cardById(repository: CardRepository, id: string): Card {
   const card = repository.find(id)
   if (card === null) throw new CardNotFoundError(id)
   return card
+}
+
+function activeCardById(repository: CardRepository, id: string): Card {
+  const card = cardById(repository, id)
+  if (card.status !== ACTIVE_STATUS) throw new CardArchivedError(id)
+  return card
+}
+
+export function archiveCard(
+  { card, reason }: ArchiveDraft,
+  { repository, now }: EditCardDeps,
+): Card {
+  const found = activeCardById(repository, card)
+  repository.archive(found.id, reason, now)
+  return { ...found, status: ARCHIVED_STATUS }
 }
 
 export function editCard({ card, ...changes }: CardEdit, { repository, now }: EditCardDeps): Card {

@@ -13,6 +13,8 @@ import { closeStore } from '../database/database.ts'
 import { StoreCardRepository } from './cards.ts'
 
 const NOW = '2026-11-09T15:00:00.000Z'
+const LATER = '2026-11-10T15:00:00.000Z'
+const STATUS_CHANGES = 'select card_id, status, reason, changed_at from card_status_history'
 
 const VALID_CARD: Record<string, string> = {
   id: 'k7m2',
@@ -162,6 +164,60 @@ describe('StoreCardRepository', () => {
     ])
   })
 
+  it('archive sets the card archived and records the reason and the instant, together', async () => {
+    const store = await openTestStore(path)
+    const repository = new StoreCardRepository(store)
+    repository.saveAll([newCard(SAMPLE_DRAFT, 'k7m2', new Date(NOW))])
+    const at = new Date(LATER)
+
+    try {
+      repository.archive('k7m2', 'ya no lo uso', at)
+
+      expect(repository.find('k7m2')).toMatchObject({ status: 'archived' })
+      expect(repository.archiveOf('k7m2')).toEqual({ reason: 'ya no lo uso', at })
+      expect(repository.active()).toEqual([])
+    } finally {
+      closeStore(store)
+    }
+
+    expect(selectAll(path, STATUS_CHANGES)).toEqual([
+      { card_id: 'k7m2', status: 'archived', reason: 'ya no lo uso', changed_at: LATER },
+    ])
+  })
+
+  it('archive with a blank reason leaves the card active and records nothing', async () => {
+    const store = await openTestStore(path)
+    const repository = new StoreCardRepository(store)
+    repository.saveAll([newCard(SAMPLE_DRAFT, 'k7m2', new Date(NOW))])
+
+    try {
+      expect(() => repository.archive('k7m2', '  ', new Date(LATER))).toThrow()
+      expect(repository.find('k7m2')).toMatchObject({ status: 'active' })
+      expect(repository.archiveOf('k7m2')).toBeNull()
+    } finally {
+      closeStore(store)
+    }
+
+    expect(selectAll(path, STATUS_CHANGES)).toEqual([])
+  })
+
+  it('INV-03 the store refuses to delete or change a card status change', async () => {
+    const store = await openTestStore(path)
+    const repository = new StoreCardRepository(store)
+    repository.saveAll([newCard(SAMPLE_DRAFT, 'k7m2', new Date(NOW))])
+    repository.archive('k7m2', 'ya no lo uso', new Date(LATER))
+    closeStore(store)
+    const before = selectAll(path, STATUS_CHANGES)
+
+    expect(() => runSql(path, 'delete from card_status_history')).toThrow(
+      'card status changes are never deleted',
+    )
+    expect(() => runSql(path, "update card_status_history set reason = 'x'")).toThrow(
+      'card status changes are never changed',
+    )
+    expect(selectAll(path, STATUS_CHANGES)).toEqual(before)
+  })
+
   it('matching returns the active cards holding a term as a prefix, most relevant first', async () => {
     const store = await openTestStore(path)
     const now = new Date(NOW)
@@ -227,5 +283,42 @@ describe('the cards table', () => {
 
   it('refuses a tag for a card that does not exist', () => {
     expect(() => runSql(path, insertTag('docker', 'zzzz'))).toThrow()
+  })
+})
+
+describe('the card_status_history table', () => {
+  const change = (overrides: Record<string, string> = {}) =>
+    insertSql('card_status_history', {
+      card_id: VALID_CARD.id,
+      status: 'archived',
+      reason: 'ya no lo uso',
+      changed_at: NOW,
+      ...overrides,
+    })
+
+  beforeEach(() => runSql(path, insertCard()))
+
+  it('accepts an archive with a reason and a restore without one', () => {
+    runSql(path, change())
+    runSql(
+      path,
+      "insert into card_status_history (card_id, status, changed_at) values ('k7m2', 'active', '2026-11-10T15:00:00.000Z')",
+    )
+
+    expect(selectAll(path, 'select count(*) as n from card_status_history')).toEqual([{ n: 2 }])
+  })
+
+  it.for<[string, string]>([
+    [
+      'an archive without a reason',
+      "insert into card_status_history (card_id, status, changed_at) values ('k7m2', 'archived', '2026-11-09T15:00:00.000Z')",
+    ],
+    ['an archive with a blank reason', change({ reason: '  ' })],
+    ['a restore with a reason', change({ status: 'active' })],
+    ['a status outside active and archived', change({ status: 'deleted' })],
+    ['a change of a card that does not exist', change({ card_id: 'zzzz' })],
+  ])('refuses %s', ([, statement]) => {
+    expect(() => runSql(path, statement)).toThrow()
+    expect(selectAll(path, 'select count(*) as n from card_status_history')).toEqual([{ n: 0 }])
   })
 })

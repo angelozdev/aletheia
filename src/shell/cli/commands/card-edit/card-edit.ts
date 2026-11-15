@@ -22,10 +22,8 @@ export const cardEditCommand: CliCommand = {
   run: (context, options) =>
     withStore(context, options, async (store) => {
       const changes = editFrom(await readJson(context))
-      const card = editCard(changes, {
-        repository: new StoreCardRepository(store),
-        now: context.clock(),
-      })
-      return shownCard(card, context.timeZone)
+      const repository = new StoreCardRepository(store)
+      const card = editCard(changes, { repository, now: context.clock() })
+      return shownCard(card, repository.archiveOf(card.id), context.timeZone)
     }),
 }

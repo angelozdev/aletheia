@@ -1,10 +1,18 @@
-import { ACTIVE_STATUS, CardIdTakenError, type Card, type CardRepository } from '#core/cards'
-import { DrizzleQueryError, eq, inArray, sql, type SQL } from 'drizzle-orm'
+import {
+  ACTIVE_STATUS,
+  ARCHIVED_STATUS,
+  CardIdTakenError,
+  type Card,
+  type CardArchive,
+  type CardRepository,
+  type CardStatus,
+} from '#core/cards'
+import { desc, DrizzleQueryError, eq, inArray, sql, type SQL } from 'drizzle-orm'
 import { instantFrom, storedInstant } from '#core/time'
 import { database } from '../database/database.ts'
 import type { Database, Store } from '../database/database.types.ts'
 import { TAKEN_ID, TERM_SEPARATOR } from './cards.constants.ts'
-import { cards, cardTags } from './cards.schema.ts'
+import { cards, cardStatusHistory, cardTags } from './cards.schema.ts'
 import type { CardRow, ContentRow, ScheduleRow, StoredCard, TagRow } from './cards.types.ts'
 
 export function scheduleRow(card: Card): ScheduleRow {
@@ -98,6 +106,30 @@ export class StoreCardRepository implements CardRepository {
       tx.delete(cardTags).where(eq(cardTags.cardId, card.id)).run()
       tx.insert(cardTags).values(tagRows(card)).run()
     })
+  }
+
+  archive(id: string, reason: string, at: Date): void {
+    this.#changeStatus(id, ARCHIVED_STATUS, reason, at)
+  }
+
+  #changeStatus(id: string, status: CardStatus, reason: string | null, at: Date): void {
+    this.#db.transaction((tx) => {
+      tx.update(cards).set({ status }).where(eq(cards.id, id)).run()
+      tx.insert(cardStatusHistory)
+        .values({ cardId: id, status, reason, changedAt: storedInstant(at) })
+        .run()
+    })
+  }
+
+  archiveOf(id: string): CardArchive | null {
+    const latest = this.#db
+      .select()
+      .from(cardStatusHistory)
+      .where(eq(cardStatusHistory.cardId, id))
+      .orderBy(desc(cardStatusHistory.id))
+      .get()
+    if (latest?.status !== ARCHIVED_STATUS || latest.reason === null) return null
+    return { reason: latest.reason, at: instantFrom(latest.changedAt) }
   }
 
   find(id: string): Card | null {

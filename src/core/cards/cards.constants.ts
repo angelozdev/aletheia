@@ -6,6 +6,8 @@ export const CARD_STATES = ['new', 'learning', 'review', 'relearning'] as const
 
 export const ACTIVE_STATUS = 'active'
 
+export const ARCHIVED_STATUS = 'archived'
+
 export const NEW_STATE = 'new'
 
 export const ID_ALPHABET = '0123456789abcdefghjkmnpqrstvwxyz'

@@ -45,6 +45,8 @@ describe('aletheia card show', () => {
         'situation: Un contenedor se cayó y no aparece en `docker ps`.',
         'source: diarium',
         'status: active',
+        'archivedAt: null',
+        'archiveReason: null',
         'state: new',
         'due: "2026-11-09T10:00:00-05:00"',
         'lastReview: null',

@@ -1,5 +1,6 @@
 export {
   ACTIVE_STATUS,
+  ARCHIVED_STATUS,
   CARD_STATES,
   CARD_STATUSES,
   CARD_TYPES,
@@ -9,9 +10,11 @@ export {
   TAG_PATTERN,
 } from './cards.constants.ts'
 export { CardIdTakenError } from './cards.errors.ts'
-export { addCards, bySaved, cardById, editCard, newCard } from './cards.ts'
+export { addCards, archiveCard, bySaved, cardById, editCard, newCard } from './cards.ts'
 export type {
+  ArchiveDraft,
   Card,
+  CardArchive,
   CardDraft,
   CardEdit,
   CardRepository,

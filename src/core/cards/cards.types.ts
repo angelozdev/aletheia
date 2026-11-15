@@ -32,6 +32,10 @@ export type Card = CardDraft & {
   updatedAt: Date
 }
 
+export type CardArchive = { reason: string; at: Date }
+
+export type ArchiveDraft = { card: string; reason: string }
+
 export type CardEdit = { card: string } & Partial<Omit<CardDraft, 'source'>>
 
 export type RandomIndex = (bound: number) => number
@@ -42,6 +46,8 @@ export interface CardRepository {
   active(): Card[]
   matching(terms: string[]): Card[]
   update(card: Card): void
+  archive(id: string, reason: string, at: Date): void
+  archiveOf(id: string): CardArchive | null
 }
 
 export type EditCardDeps = { repository: CardRepository; now: Date }

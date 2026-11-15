@@ -1,10 +1,10 @@
-import { cardById, type Card } from '#core/cards'
+import { cardById, type Card, type CardArchive } from '#core/cards'
 import { shownInstant } from '#core/time'
 import { StoreCardRepository } from '#shell/db'
 import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand } from '../../main/main.types.ts'
 
-export function shownCard(card: Card, timeZone: string) {
+export function shownCard(card: Card, archive: CardArchive | null, timeZone: string) {
   const shown = (instant: Date) => shownInstant(instant, timeZone)
   return {
     id: card.id,
@@ -16,6 +16,8 @@ export function shownCard(card: Card, timeZone: string) {
     situation: card.situation,
     source: card.source,
     status: card.status,
+    archivedAt: archive === null ? null : shown(archive.at),
+    archiveReason: archive?.reason ?? null,
     state: card.state,
     due: shown(card.due),
     lastReview: card.lastReview === null ? null : shown(card.lastReview),
@@ -37,7 +39,8 @@ export const cardShowCommand: CliCommand = {
   description: 'print every field of a card',
   run: (context, options, [id]) =>
     withStore(context, options, async (store) => {
-      const card = cardById(new StoreCardRepository(store), id)
-      return shownCard(card, context.timeZone)
+      const repository = new StoreCardRepository(store)
+      const card = cardById(repository, id)
+      return shownCard(card, repository.archiveOf(id), context.timeZone)
     }),
 }
