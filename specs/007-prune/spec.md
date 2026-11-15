@@ -8,23 +8,23 @@
 ### Session 2026-11-15
 
 - Q: Do replace, split and merge belong in this slice? → A: No: they are slice 8, and design §13 is renumbered. Until then an overlapping pair is kept, one of them archived ("solapada con #9p3x"), or left for the merge. Everything in slice 7 (about twice slice 6, against constitution V's one to two days) and a split by who detects (slice 7 with only leech, mastered and not useful, which would list almost nothing before late January 2027) were rejected.
-- Q: Are the thresholds settings now? → A: Yes: the mastered stability, the leech failures and the keep's months are settings in this slice, beside the session and new-card limits (ADR-0016). Constants until Angelo wants to change one was rejected.
+- Q: Are the thresholds settings now? → A: Yes: the leech failures and the keep's months are settings in this slice, beside the session and new-card limits (ADR-0016). Constants until Angelo wants to change one was rejected.
 - Q: Does prune work on a topic or always on the whole deck? → A: Either: the CLI's candidates come from the whole deck or from the topics Angelo names ("podemos mensajería"), as in progress; Claude's reading goes topic by topic, and after each it asks whether to go on. Always the whole deck (a reading that grows with the deck) and always one topic (a leech elsewhere waits until its topic is pruned) were rejected.
 - Q: Does the duplicate search find archived cards? → A: Yes, marked archived with Angelo's reason, so a card he pruned does not come back unnoticed: when a draft matches one, `az-aletheia-add` quotes the reason and he chooses to drop the draft, save it, or restore the old card. Active cards only, as in slice 2, was rejected.
 - Q: What does prune do with two overlapping cards before merge? → A: Angelo wants one card with the concept stated agnostically and examples in both technologies, which is a merge (slice 8). Until then Claude proposes no rewrite for an overlap: it offers to keep the pair, archive one, or leave it for the merge, which records nothing, so the pair comes back at the next prune. Rewriting one in place and archiving the other, and bringing merge into this slice, were rejected.
 - Q: When does a card kept after a `not-useful` review come back as not useful? → A: Six months after the keep, as design §8.4 says, even if Angelo never says it again; a new `not-useful` review before then waits for the six months too. Only when he says it again after the keep, and whichever comes first, were rejected.
-- Q: Besides a stability of 365 days, what makes a card mastered? → A: Its last two counted reviews graded Easy: three Easy in a row reach it on day 74, while a card always graded Good, at 497 days on day 222, is not mastered, since Good says recall took effort. The last review Easy (one easy answer after several Good) and the stability alone were rejected.
+- Q: Is a mastered card a candidate? → A: No: Angelo does not mind reviewing a card once a year and does not want to forget it, so a card he recalls easily stays active, and FSRS spaces it a year or more (three Easy in a row: 397 days from day 74). Mastered leaves prune, with its stability threshold; design §8.4 is updated. Mastered as stability 365 and the last two counted reviews Easy, first chosen in this session, is dropped with it.
 
 ## User Scenarios & Testing _(mandatory)_
 
-Leech, mastered and not-useful candidates, archive, restore and keep are facts the CLI computes and records (constitution II). Whether a situation still applies to the profile, whether two cards ask the same thing, and what Angelo chooses are judgment. Prune never acts on its own: nothing is archived or kept without his choice.
+Leech and not-useful candidates, archive, restore and keep are facts the CLI computes and records (constitution II). Whether a situation still applies to the profile, whether two cards ask the same thing, and what Angelo chooses are judgment. Prune never acts on its own: nothing is archived or kept without his choice.
 
 ### User Story 1 - Archive what no longer helps, and get it back (Priority: P1)
 
-Angelo says "podemos el mazo". Claude lists the candidates the CLI finds, each with its reason and evidence: #k7m2 is a leech, 5 failures, the last on 2026-11-20; #r8tn is mastered, recall predicted beyond a year and its last two reviews Easy. For each he chooses archive, rewrite or keep. He archives #r8tn: "la respondo sin pensar". It leaves the reviews, the lists and progress; `card show` and the duplicate search still give it, archived, with his reason. A week later, "devuélveme #r8tn": it is active again, with the schedule it had.
-**Independent Test**: on a deck with a card failed 4 times and a mastered one, the candidates give both with their reasons; archiving one takes it out of every list and progress; restoring it brings it back with the same schedule.
+Angelo says "podemos el mazo". Claude lists the candidates the CLI finds, each with its reason and evidence: #k7m2 is a leech, 5 failures, the last on 2026-11-20; #q3rt is not useful, in his words of a week ago. For each he chooses archive, rewrite or keep. He archives #q3rt: "no lo uso desde que dejé ese proyecto". It leaves the reviews, the lists and progress; `card show` and the duplicate search still give it, archived, with his reason. A week later, "devuélveme #q3rt": it is active again, with the schedule it had.
+**Independent Test**: on a deck with a card failed 4 times and one failed 3 times, the candidates give only the first, with its failures; archiving one takes it out of every list and progress; restoring it brings it back with the same schedule.
 
-1. **007-US1-AS1** Given active cards and their reviews, When the prune candidates are asked, of the whole deck or under one or more tags (as in 006-US1-AS4), Then a card with 4 or more counted failures is a leech (006 FR-002), and a card in review whose stability (days until predicted recall falls to 90%) reaches 365 and whose last two counted reviews were Easy is mastered; each candidate gives its id, stored question, tags, reasons and evidence (failures and the last one; stability and the last reviews).
+1. **007-US1-AS1** Given active cards and their reviews, When the prune candidates are asked, of the whole deck or under one or more tags (as in 006-US1-AS4), Then a card with 4 or more counted failures is a leech (006 FR-002); each candidate gives its id, stored question, tags, reasons and evidence (for a leech, its failures and the last one).
 2. **007-US1-AS2** Given an active card and a reason, When it is archived, Then it is archived with the reason and the instant, its schedule and reviews kept; it leaves the due list, topic review, card list, tag list, tag stats and the candidates; `card show` and the deck search give it with its status, reason and instant, and its reviews stay in the review history. A blank reason, a card that does not exist or one already archived exits 1 naming the problem, and nothing changes.
 3. **007-US1-AS3** Given an archived card, When it is restored, Then it is active with the schedule it had (overdue means due now) and back in every view; an active card or one that does not exist exits 1 naming it.
 4. **007-US1-AS4** Given an archived card, When it is graded, edited or named as a prerequisite, Then it exits 1 naming it, and nothing is recorded.
@@ -55,7 +55,7 @@ Angelo keeps #k7m2: "falla porque es difícil, no porque esté mal escrita". The
 **Independent Test**: keep a leech; the candidates leave it out until a new counted failure is recorded.
 
 1. **007-US4-AS1** Given an active card and a candidate reason, When it is kept, Then the keep is recorded with the card, the reason, the instant and, for an overlap, the other card, so it covers only that pair; an unknown reason, or a card that does not exist or is archived, exits 1 and nothing is recorded.
-2. **007-US4-AS2** Given a kept candidate, When the candidates are asked, Then a kept leech is left out until a failure counted after the keep, and a kept not-useful or mastered for six months after it; the card's other reasons are not affected.
+2. **007-US4-AS2** Given a kept candidate, When the candidates are asked, Then a kept leech is left out until a failure counted after the keep, and a kept not-useful for six months after it; the card's other reasons are not affected.
 3. **007-US4-AS3** Given the prune skill file, When it is read, Then it records a keep only when Angelo chooses it, for the reason he was shown.
 
 ### User Story 5 - Tune the thresholds (Priority: P3)
@@ -63,7 +63,7 @@ Angelo keeps #k7m2: "falla porque es difícil, no porque esté mal escrita". The
 "#k7m2 es difícil, no está mal escrita: pon el leech en 6 fallos". Claude sets it; the candidates and the weak cards of progress follow at once.
 **Independent Test**: set the leech threshold to 6; a card with 5 failures is neither a candidate nor weak, and `default` brings back 4.
 
-1. **007-US5-AS1** Given the mastered stability (365 days), the leech failures (4) and the keep's months (6), When one is set, Then the candidates and progress use it from the next query (the weak cards of 006 included); `default` brings back the built-in value, and `settings show` gives each with whether it is set. A value below 1 or not a whole number exits 1 naming it, and nothing changes.
+1. **007-US5-AS1** Given the leech failures (4) and the keep's months (6), When one is set, Then the candidates and progress use it from the next query (the weak cards of 006 included); `default` brings back the built-in value, and `settings show` gives each with whether it is set. A value below 1 or not a whole number exits 1 naming it, and nothing changes.
 
 ### Edge Cases
 
@@ -79,13 +79,13 @@ Angelo keeps #k7m2: "falla porque es difícil, no porque esté mal escrita". The
 
 ### Functional Requirements
 
-- **FR-001**: The CLI MUST give the candidates it can find on its own (leech, mastered, not useful), of the whole deck or under the tags named, each with its reasons and evidence, leaving out the reasons kept (FR-004).
+- **FR-001**: The CLI MUST give the candidates it can find on its own (leech, not useful), of the whole deck or under the tags named, each with its reasons and evidence, leaving out the reasons kept (FR-004).
 - **FR-002**: The CLI MUST archive an active card with a required reason and restore an archived one, keeping its schedule and reviews; an archived card MUST leave every list and progress, MUST be found by the deck search marked archived with its reason, and MUST NOT be graded, edited or named as a prerequisite. Nothing is deleted (INV-02).
 - **FR-003**: A review MUST accept the flag `not-useful`, which counts like no flag everywhere and marks the card as a candidate.
 - **FR-004**: The CLI MUST record a keep per card and reason, and leave a kept reason out until new evidence or the keep's months pass (007-US4-AS2) or, for the reasons it cannot see, give the keep to the skill.
 - **FR-005**: The progress tree MUST give the count of FR-001's candidates.
 - **FR-006**: A local prune skill MUST list the CLI's candidates and its own judgment ones, and archive, keep, restore or rewrite only on Angelo's choice, through the installed `aletheia`, in Spanish.
-- **FR-007**: The mastered stability (365 days), the leech failures (4) and the keep's months (6) MUST be settings Angelo can change and reset to their built-in value, read by the candidates and by progress.
+- **FR-007**: The leech failures (4) and the keep's months (6) MUST be settings Angelo can change and reset to their built-in value, read by the candidates and by progress.
 
 ### Key Entities
 
@@ -104,9 +104,9 @@ Angelo keeps #k7m2: "falla porque es difícil, no porque esté mal escrita". The
 
 ## Assumptions
 
-- Mastered reads the card's stability: with FSRS-6, three Easy in a row reach it on day 74 (397 days), so the first mastered card in `prod` is due around late January 2027.
 - Archive, restore and keep are recorded, never overwritten.
 - `az-aletheia-add` reaches Claude only through a release, so AS7 is seen in `prod` after it.
 - Replace, split and merge, and a rewrite that changes what the key points mean, are slice 8.
-- A keep of an overlap covers only that pair: new captures are frequent, and a keep per card would hide a new duplicate for six months. Progress's 30-day window stays a constant.
+- A keep of an overlap covers only that pair: new captures are frequent, and a keep per card would hide a new duplicate for six months.
+- Progress's 30-day window stays a constant.
 - Command names, flags, output fields and the store shape are left to the plan.
