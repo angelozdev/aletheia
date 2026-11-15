@@ -128,10 +128,14 @@ describe('topic list', () => {
 })
 
 describe('flag policies', () => {
-  it('policyOf counts in stats a review with no flag or flagged missing-prerequisite, and never a voided one', () => {
+  it('policyOf counts in stats a review with no flag or flagged missing-prerequisite or not-useful, and never a voided one', () => {
     const counted = REVIEW_FLAGS.filter((flag) => policyOf(flag).countsInStats)
 
     expect(policyOf(null).countsInStats).toBe(true)
-    expect(counted).toEqual(['missing-prerequisite'])
+    expect(counted).toEqual(['missing-prerequisite', 'not-useful'])
+  })
+
+  it('007-US2-AS1 policyOf schedules, introduces and counts a not-useful review as one with no flag', () => {
+    expect(policyOf('not-useful')).toBe(policyOf(null))
   })
 })

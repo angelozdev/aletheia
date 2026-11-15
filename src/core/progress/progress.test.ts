@@ -331,7 +331,12 @@ describe('review history', () => {
     expect(history.counts).toEqual({
       reviews: 3,
       grades: { again: 1, hard: 0, good: 1, easy: 1 },
-      flags: { 'missing-prerequisite': 0, 'badly-written': 0, 'badly-rephrased': 1 },
+      flags: {
+        'missing-prerequisite': 0,
+        'badly-written': 0,
+        'badly-rephrased': 1,
+        'not-useful': 0,
+      },
       disputed: 1,
     })
   })

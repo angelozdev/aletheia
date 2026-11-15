@@ -199,7 +199,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
 
 **Independent Test**: quickstart §4.
 
-- [ ] T014 [US2] `review grade` takes the flag `not-useful`, which counts as no flag, in `src/core/reviews/reviews.constants.ts` and `src/shell/db/reviews/reviews.schema.ts`
+- [X] T014 [US2] `review grade` takes the flag `not-useful`, which counts as no flag, in `src/core/reviews/reviews.constants.ts` and `src/shell/db/reviews/reviews.schema.ts`
   - **Test**:
     - `src/core/reviews/reviews.test.ts`: `policyOf('not-useful')` is `NO_FLAG`.
     - `review-grade.test.ts`, `007-US2-AS1 review grade records a not-useful review and schedules it as with no flag`: same `due` and `state` as an unflagged grade of a twin card; it counts toward retention in `tag stats` and toward the session in `review due`.

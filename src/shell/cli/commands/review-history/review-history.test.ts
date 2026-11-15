@@ -41,7 +41,12 @@ describe('aletheia review history', () => {
       counts: {
         reviews: 2,
         grades: { again: 1, hard: 0, good: 1, easy: 0 },
-        flags: { 'missing-prerequisite': 0, 'badly-written': 0, 'badly-rephrased': 1 },
+        flags: {
+          'missing-prerequisite': 0,
+          'badly-written': 0,
+          'badly-rephrased': 1,
+          'not-useful': 0,
+        },
         disputed: 1,
       },
       reviews: [
@@ -102,7 +107,8 @@ describe('aletheia review history', () => {
     const flag = await cli.run(['review', 'history', '--flag', 'nope'])
     const both = await cli.run(['review', 'history', '--flag', 'nope', '--grade', 'nope'])
     const GRADE_RULE = '--grade: must be again, hard, good or easy'
-    const FLAG_RULE = '--flag: must be missing-prerequisite, badly-written or badly-rephrased'
+    const FLAG_RULE =
+      '--flag: must be missing-prerequisite, badly-written, badly-rephrased or not-useful'
 
     for (const refused of [grade, flag, both])
       expect(refused).toMatchObject({ code: 1, stdout: '' })
@@ -132,6 +138,7 @@ describe('aletheia review history', () => {
         '    "missing-prerequisite": 0',
         '    "badly-written": 0',
         '    "badly-rephrased": 1',
+        '    "not-useful": 0',
         '  disputed: 1',
         'reviews[2]{card,reviewedAt,grade,claudeGrade,flag,askedQuestion}:',
         `  "0001","2026-11-15T09:00:00-05:00",good,good,badly-rephrased,${ASKED}`,

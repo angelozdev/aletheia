@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { ASKED, SAMPLE_DRAFT } from '../../../../../tests/support/cards/cards.constants.ts'
 import { cliOnTempStore, runOnStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { CliRun, StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
+import { studied } from '../../../../../tests/support/progress/progress.ts'
 import { runSql, selectAll } from '../../../../../tests/support/store/store.ts'
 
 const NOW = '2026-11-09T15:00:00.000Z'
@@ -176,6 +177,32 @@ describe('aletheia review grade', () => {
     (finalGrade) => expectVoided('badly-rephrased', finalGrade),
   )
 
+  it('007-US2-AS1 review grade records a not-useful review, schedules it and counts it as with no flag', async () => {
+    const added = await cli.run(
+      ['card', 'add', '--json'],
+      JSON.stringify([SAMPLE_DRAFT, SAMPLE_DRAFT]),
+    )
+    const [twin, failing] = JSON.parse(added.stdout).ids
+    for (const id of ['0123', twin, failing]) studied(cli.db, id, 'review', NOW)
+
+    const flagged = await grade({ flag: 'not-useful' })
+    const plain = await grade({ card: twin })
+    await grade({ card: failing, grade: 'again', claudeGrade: 'again' })
+    const { stdout } = await runOnStore(cli.db, ['tag', 'stats', '--json'])
+
+    const schedule = (id: string) =>
+      selectAll(cli.db, `select state, due, stability, difficulty from cards where id = '${id}'`)
+
+    expect([flagged.code, plain.code]).toEqual([0, 0])
+    expect(schedule('0123')).toEqual(schedule(twin))
+    expect(selectAll(cli.db, 'select card_id, flag from reviews')).toEqual([
+      { card_id: '0123', flag: 'not-useful' },
+      { card_id: twin, flag: null },
+      { card_id: failing, flag: null },
+    ])
+    expect(JSON.parse(stdout).deck).toMatchObject({ retention: 67 })
+  })
+
   it('review grade records the card a prerequisite was asked for', async () => {
     await cli.run(['card', 'add'], JSON.stringify([SAMPLE_DRAFT]))
 
@@ -254,13 +281,16 @@ describe('aletheia review grade', () => {
         { grade: 'hard', flag: 'missing-prerequisite' },
         'flag: missing-prerequisite needs the grade again',
       ],
-      [{ flag: 'trivia' }, 'flag: must be missing-prerequisite, badly-written or badly-rephrased'],
+      [
+        { flag: 'trivia' },
+        'flag: must be missing-prerequisite, badly-written, badly-rephrased or not-useful',
+      ],
       [
         { flag: ['missing-prerequisite', 'badly-written'] },
-        'flag: must be missing-prerequisite, badly-written or badly-rephrased',
+        'flag: must be missing-prerequisite, badly-written, badly-rephrased or not-useful',
       ],
     ])(
-      '004-US1-AS2 review grade refuses a missing-prerequisite that is not Again, and a flag outside the three',
+      '004-US1-AS2 review grade refuses a missing-prerequisite that is not Again, and a flag outside the four',
       async ([fields, message]) => {
         expectRefused(await grade(fields), line(`invalid review: ${message}`))
       },

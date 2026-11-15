@@ -226,6 +226,13 @@ describe('the reviews table', () => {
     expect(selectAll(path, 'select count(*) as n from reviews')).toEqual([{ n: 1 }])
   })
 
+  it('accepts a not-useful review of any grade', () => {
+    runSql(path, insertReview({ flag: 'not-useful', grade: 'again' }))
+    runSql(path, insertReview({ flag: 'not-useful', grade: 'easy' }))
+
+    expect(selectAll(path, 'select count(*) as n from reviews')).toEqual([{ n: 2 }])
+  })
+
   it('accepts a badly-rephrased review of any grade', () => {
     runSql(path, insertReview({ flag: 'badly-rephrased', grade: 'again' }))
     runSql(path, insertReview({ flag: 'badly-rephrased', grade: 'easy' }))
@@ -251,7 +258,7 @@ describe('the reviews table', () => {
     ['a blank rationale', { rationale: '  ' }],
     ['a blank question as asked', { asked_question: '  ' }],
     ['a review for a card that does not exist', { card_id: 'zzzz' }],
-    ['a flag outside the three', { flag: 'trivia' }],
+    ['a flag outside the four', { flag: 'trivia' }],
     ['a missing prerequisite that is not Again', { flag: 'missing-prerequisite', grade: 'hard' }],
     ['a card that is its own prerequisite', { prerequisite_of: 'k7m2' }],
     ['a prerequisite of a card that does not exist', { prerequisite_of: 'zzzz' }],
