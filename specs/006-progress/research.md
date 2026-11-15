@@ -1,7 +1,7 @@
 # Research: Progress
 
 Decisions marked **Angelo** were his, in the spec's Clarifications. The command names and
-options (R1, R2) are public interface: Angelo accepts them before step 1. Nothing here needs a
+options (R1, R2) are public interface: Angelo accepted them on 2026-11-15. Nothing here needs a
 new dependency, a migration or an ADR: every number is derived in the core from the stored
 cards and reviews (constitution II, VI).
 
@@ -43,7 +43,7 @@ cards and reviews (constitution II, VI).
 - **Decision**: a window of N days runs from the start of the local day N−1 days before today
   up to now, so 1 day is today. Retention and gaps read a window of 30 days, a constant of the
   core (`PROGRESS_WINDOW_DAYS`). `--not-reviewed <n>` and `--days <n>` take whole numbers from 1
-  up. `#core/time` gains `startOfDaysAgo(now, days, timeZone)`, and the shell passes its
+  up. `#core/time` gains `startOfWindow(now, days, timeZone)`, and the shell passes its
   result into the core, as it does `today` and `tomorrow`.
 - **Rationale**: "today" is already the local day (CLAUDE.md), so "¿cómo me fue hoy?" is
   `--days 1` and "esta semana" is `--days 7`, with no hour of the day leaking into the answer.

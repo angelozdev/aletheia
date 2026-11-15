@@ -90,7 +90,7 @@ src/
 │   ├── progress/       new: tag rows, card rows, history and counts
 │   ├── reviews/        FlagPolicy gains countsInStats
 │   ├── tags/           exports coveredTags and bySegments
-│   └── time/           startOfDaysAgo
+│   └── time/           startOfWindow
 └── shell/cli/
     ├── main/           Flags take booleans; three commands registered
     └── commands/
@@ -112,7 +112,7 @@ Before step 1, in their own commits: Angelo accepts the commands and options (R1
 design catches up (R10).
 
 1. **How each topic is going** (006-US1-AS1 to AS3, AS6). `tag stats` with no tags and no
-   sort, `countsInStats`, `startOfDaysAgo`, `coveredTags`, and the rows of data-model.md. The
+   sort, `countsInStats`, `startOfWindow`, `coveredTags`, and the rows of data-model.md. The
    skill is born with its triggers, its rules and the tree. The performance test starts with
    `tag stats`. Run: quickstart §1.
 2. **Filter and sort the tree** (006-US1-AS4, AS5). `[tags...]`, `--sort`, `--desc`, and
