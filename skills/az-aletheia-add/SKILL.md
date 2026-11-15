@@ -112,6 +112,12 @@ never verdicts: read every listed card and judge it against the draft.
 - The card it repeats is listed with `status: archived`: Angelo retired it. Add `archivada` and
   his reason, the card's `archiveReason`, to the flag, and quote the archived card's question:
   `⚠ duplica a #<id>, archivada: «<archiveReason>»`.
+- The archived card's `archiveReason` starts with `reemplazada por #`: other cards took its
+  place. Run `aletheia card show <id>` for each id it names, and judge the draft against an
+  active one as against any active card (`duplica a`, `se solapa con`, merge). Offer
+  no restore for the replaced card: it would leave two cards saying the same. When none of them
+  is active, follow their own `archiveReason` the same way; when the chain ends in no active
+  card, flag the draft as repeating an archived card, above.
 - Sharing a word or a tag alone is not a repeat: no flag.
 
 Two drafts of the same batch that repeat each other are merged, or one is dropped, before

@@ -63,4 +63,11 @@ describe('the az-aletheia-add skill', () => {
       expect(skill.text).toContain(text)
     expect(skill.text).not.toContain('Replacing or merging an old card is not offered')
   })
+
+  it('008-US3-AS2 az-aletheia-add follows a match archived as reemplazada por to the active card through aletheia card show and offers no restore for it', () => {
+    const skill = readSkill('skills/az-aletheia-add/SKILL.md')
+
+    for (const text of ['reemplazada por #', 'aletheia card show', 'no restore'])
+      expect(skill.text).toContain(text)
+  })
 })
