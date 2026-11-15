@@ -45,6 +45,33 @@ async function shownCard() {
   return JSON.parse(stdout)
 }
 
+async function expectVoided(flag: string, finalGrade: string): Promise<void> {
+  const before = await shownCard()
+
+  const { code, stdout } = await grade({ grade: finalGrade, claudeGrade: 'hard', flag })
+
+  expect(code).toBe(0)
+  expect(stdout).toBe(
+    `card: "0123"\ngrade: ${finalGrade}\nstate: ${before.state}\ndue: "${before.due}"\n`,
+  )
+  expect(
+    selectAll(
+      cli.db,
+      'select grade, claude_grade, answer, rationale, flag, asked_question from reviews',
+    ),
+  ).toEqual([
+    {
+      grade: finalGrade,
+      claude_grade: 'hard',
+      answer: GRADE.answer,
+      rationale: GRADE.rationale,
+      flag,
+      asked_question: ASKED,
+    },
+  ])
+  expect(await shownCard()).toEqual(before)
+}
+
 function recordedReviews() {
   return selectAll(
     cli.db,
@@ -141,32 +168,12 @@ describe('aletheia review grade', () => {
 
   it.for(['again', 'good'])(
     "004-US2-AS1 review grade logs a badly-written review with both grades and leaves the card's schedule unchanged",
-    async (finalGrade) => {
-      const before = await shownCard()
+    (finalGrade) => expectVoided('badly-written', finalGrade),
+  )
 
-      const { code, stdout } = await grade({
-        grade: finalGrade,
-        claudeGrade: 'hard',
-        flag: 'badly-written',
-      })
-
-      expect(code).toBe(0)
-      expect(stdout).toBe(
-        `card: "0123"\ngrade: ${finalGrade}\nstate: ${before.state}\ndue: "${before.due}"\n`,
-      )
-      expect(
-        selectAll(cli.db, 'select grade, claude_grade, answer, rationale, flag from reviews'),
-      ).toEqual([
-        {
-          grade: finalGrade,
-          claude_grade: 'hard',
-          answer: GRADE.answer,
-          rationale: GRADE.rationale,
-          flag: 'badly-written',
-        },
-      ])
-      expect(await shownCard()).toEqual(before)
-    },
+  it.for(['again', 'good'])(
+    "005-US2-AS1 review grade logs a badly-rephrased review with both grades, the answer, the rationale and the question as asked, and leaves the card's schedule unchanged",
+    (finalGrade) => expectVoided('badly-rephrased', finalGrade),
   )
 
   it('review grade records the card a prerequisite was asked for', async () => {
@@ -247,13 +254,13 @@ describe('aletheia review grade', () => {
         { grade: 'hard', flag: 'missing-prerequisite' },
         'flag: missing-prerequisite needs the grade again',
       ],
-      [{ flag: 'trivia' }, 'flag: must be missing-prerequisite or badly-written'],
+      [{ flag: 'trivia' }, 'flag: must be missing-prerequisite, badly-written or badly-rephrased'],
       [
         { flag: ['missing-prerequisite', 'badly-written'] },
-        'flag: must be missing-prerequisite or badly-written',
+        'flag: must be missing-prerequisite, badly-written or badly-rephrased',
       ],
     ])(
-      '004-US1-AS2 review grade refuses a missing-prerequisite that is not Again, and a flag outside the two',
+      '004-US1-AS2 review grade refuses a missing-prerequisite that is not Again, and a flag outside the three',
       async ([fields, message]) => {
         expectRefused(await grade(fields), line(`invalid review: ${message}`))
       },

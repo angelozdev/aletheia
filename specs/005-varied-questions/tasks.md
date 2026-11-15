@@ -157,7 +157,7 @@ card; the skill tells a bad rephrasing from a badly written card.
 
 **Independent Test**: quickstart §2.
 
-- [ ] T004 [P] [US2] `review grade` voids a `badly-rephrased` review of any grade, in `src/core/reviews/reviews.constants.ts`
+- [X] T004 [P] [US2] `review grade` voids a `badly-rephrased` review of any grade, in `src/core/reviews/reviews.constants.ts`
   - **Test**:
     - `review-grade.test.ts`, with the helper of decision 6:
       - `005-US2-AS1 review grade logs a badly-rephrased review with both grades, the answer, the rationale and the question as asked, and leaves the card's schedule unchanged`, with `it.for(['again', 'good'])`.

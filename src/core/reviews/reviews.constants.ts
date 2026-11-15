@@ -8,11 +8,13 @@ export const REVIEW_STATE: CardState = 'review'
 
 export const LEARN_AHEAD_MINUTES = 20
 
-export const REVIEW_FLAGS = ['missing-prerequisite', 'badly-written'] as const
+export const REVIEW_FLAGS = ['missing-prerequisite', 'badly-written', 'badly-rephrased'] as const
 
 export const MISSING_PREREQUISITE = 'missing-prerequisite'
 
 const BADLY_WRITTEN = 'badly-written'
+
+const BADLY_REPHRASED = 'badly-rephrased'
 
 export const NO_FLAG: FlagPolicy = {
   schedule: scheduleAfter,
@@ -22,11 +24,14 @@ export const NO_FLAG: FlagPolicy = {
 
 const KEEP_SCHEDULE = (card: Card) => card
 
+const VOIDED: FlagPolicy = {
+  schedule: KEEP_SCHEDULE,
+  hidesUntilTomorrow: true,
+  countsAsIntroduced: false,
+}
+
 export const FLAG_POLICIES: Record<ReviewFlag, FlagPolicy> = {
   [MISSING_PREREQUISITE]: NO_FLAG,
-  [BADLY_WRITTEN]: {
-    schedule: KEEP_SCHEDULE,
-    hidesUntilTomorrow: true,
-    countsAsIntroduced: false,
-  },
+  [BADLY_WRITTEN]: VOIDED,
+  [BADLY_REPHRASED]: VOIDED,
 }
