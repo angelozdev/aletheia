@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { DEVELOPMENT_ONLY } from '../support/skills/skills.constants.ts'
 import { readSkill } from '../support/skills/skills.ts'
 
+const GRADE_HEREDOC = /aletheia review grade <<'JSON'\n(.*)\n\s*JSON/g
+
 describe('the aletheia-review skill', () => {
   it('001-US2-AS7 aletheia-review carries its Spanish triggers and calls the installed aletheia', () => {
     const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
@@ -102,5 +104,26 @@ describe('the aletheia-review skill', () => {
       'slice 7',
     ])
       expect(skill.text).toContain(text)
+  })
+
+  it('005-US1-AS3 aletheia-review asks every question rephrased, with the same key points, and records the question as asked', () => {
+    const skill = readSkill('.claude/skills/aletheia-review/SKILL.md')
+    const grades = [...skill.text.matchAll(GRADE_HEREDOC)].map(([, body]) => body)
+    const asked = grades.filter((body) => body.includes('"askedQuestion"'))
+
+    for (const text of [
+      '"askedQuestion"',
+      'rephrase',
+      'the same key points',
+      'names the technology and the variant',
+      'verbatim',
+      'no hint',
+      'earlier in this session',
+      'pregúntamela como está',
+      'against the stored key points',
+    ])
+      expect(skill.text).toContain(text)
+    expect(grades.length).toBeGreaterThan(0)
+    expect(asked).toEqual(grades)
   })
 })

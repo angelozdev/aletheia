@@ -129,7 +129,7 @@ the rebuild; the skill asks every question rephrased.
     - `review-grade.schema.ts`: `askedQuestion: requiredText`, after `rationale`.
     - The fixtures of decision 4: `REVIEW` in `reviews.test.ts`, `graded()` in `src/core/sessions/sessions.test.ts`, `GRADE` in `review-grade.test.ts`, `GOOD` in `card-edit.test.ts`, and `grade()` in `review-due.test.ts` and `review-topic.test.ts`.
   - **Run**: quickstart §1
-- [ ] T003 [US1] `aletheia-review` asks every question rephrased and records the question as asked, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T003 [US1] `aletheia-review` asks every question rephrased and records the question as asked, in `.claude/skills/aletheia-review/SKILL.md`
   - **Test**: `tests/skills/review-skill.test.ts`: `005-US1-AS3 aletheia-review asks every question rephrased, with the same key points, and records the question as asked`.
     - The text contains `"askedQuestion"`, `rephrase`, `the same key points`, `names the technology and the variant`, `verbatim`, `no hint`, `earlier in this session`, `pregúntamela como está` and `against the stored key points`. Each phrase stays on one line of `SKILL.md`.
     - The count of `aletheia review grade <<'JSON'` in the text equals the count of `"askedQuestion"` inside those heredocs.

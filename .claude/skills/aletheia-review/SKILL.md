@@ -81,12 +81,30 @@ wait for tomorrow. Stop there.
 
 ## 2. One question at a time
 
-Show the next card's question, with its type and tags, and nothing else: never its answer and
-never its key points. Refer to the card as `#<id>`. Angelo answers in his own words.
+Show the next card's question, rephrased, with its type and tags, and nothing else: never its
+answer and never its key points. Refer to the card as `#<id>`. Angelo answers in his own words.
+
+Rephrase every question, so Angelo recalls the concept instead of recognizing a sentence he has
+read before:
+
+- The rephrasing asks for the same key points as the stored question, and
+  names the technology and the variant as the stored question does.
+- Keep code, commands and their flags verbatim; only the words around them change.
+- Give no hint the stored question does not give, and never part of the answer.
+- Word it differently from the stored question and from any wording asked
+  earlier in this session, a card shown again in it included.
+- A prerequisite and a topic's cards are rephrased like any other. After a rewrite
+  (`aletheia card edit`), start from the new stored question.
+
+Ask it as stored when no rewording keeps what it asks, or when Angelo asks for it
+("pregúntamela como está"); rephrase again from the next card. When Angelo does not understand
+a rephrasing ("¿responde cómo?"), reword it before he answers. The last wording before he
+answered is the question as asked, which you record (section 4).
 
 ## 3. Grade the answer
 
-Check the answer against the card's key points and the rule of its type:
+Check the answer against the stored key points, never against your rephrased wording, and the
+rule of the card's type:
 
 | type | What counts |
 |---|---|
@@ -106,7 +124,7 @@ Then give one of four grades, never a number or a score:
 No timing signal: how long the answer took says nothing in a chat.
 
 Show the grade, the reason in one or two lines (which key points were there, which were
-missing), and the card's full answer. Then **stop and wait** for Angelo, after every grade,
+missing), and the card's full answer as stored, never rephrased. Then **stop and wait** for Angelo, after every grade,
 whatever it was. He may have doubts about a card he got right.
 
 ## 4. Settle and record the grade
@@ -121,7 +139,7 @@ Record it with the card's id without `#`, through a quoted heredoc:
 
 ```sh
 aletheia review grade <<'JSON'
-{"card":"k7m2","grade":"easy","claudeGrade":"good","answer":"ps muestra los que corren, -a todos","rationale":"Cubre los dos key points, sin dudar."}
+{"card":"k7m2","grade":"easy","claudeGrade":"good","answer":"ps muestra los que corren, -a todos","rationale":"Cubre los dos key points, sin dudar.","askedQuestion":"Si corres `docker ps` y luego `docker ps -a`, ¿qué contenedores añade el segundo?"}
 JSON
 ```
 
@@ -133,6 +151,8 @@ JSON
   "creo que"); if hedging weighed on the grade, say so in the rationale. His doubts and
   questions after the grade are not part of the answer.
 - `rationale`: your reason, in Spanish.
+- `askedQuestion`: the question exactly as you asked it, the last wording before Angelo
+  answered; the stored one when you asked it as stored.
 
 For example, Angelo answered #5ks0 (VM vs. container) with "no estoy así 100% seguro pero la
 máquina virtual contiene el sistema operativo, el kernel y las aplicaciones que van encima
@@ -153,7 +173,7 @@ consumer group"), the grade is Again. Once his reply settles it, record it with 
 
 ```sh
 aletheia review grade <<'JSON'
-{"card":"k7m2","grade":"again","claudeGrade":"again","answer":"No recuerda qué es un consumer group.","rationale":"Le falta el concepto base: qué es un consumer group.","flag":"missing-prerequisite"}
+{"card":"k7m2","grade":"again","claudeGrade":"again","answer":"No recuerda qué es un consumer group.","rationale":"Le falta el concepto base: qué es un consumer group.","askedQuestion":"Tienes dos workers leyendo el mismo stream de Redis con un consumer group: ¿cómo se reparten los mensajes?","flag":"missing-prerequisite"}
 JSON
 ```
 
@@ -181,7 +201,7 @@ not enough.
 
   ```sh
   aletheia review grade <<'JSON'
-  {"card":"c4gr","grade":"good","claudeGrade":"good","answer":"Un consumer group reparte los mensajes de un stream entre sus consumidores.","rationale":"Cubre los dos key points.","prerequisiteOf":"k7m2"}
+  {"card":"c4gr","grade":"good","claudeGrade":"good","answer":"Un consumer group reparte los mensajes de un stream entre sus consumidores.","rationale":"Cubre los dos key points.","askedQuestion":"En Redis Streams, ¿qué hace un consumer group con los mensajes de un stream?","prerequisiteOf":"k7m2"}
   JSON
   ```
 
@@ -209,7 +229,7 @@ Once his reply settles it, record it with the flag:
 
 ```sh
 aletheia review grade <<'JSON'
-{"card":"9p3x","grade":"again","claudeGrade":"again","answer":"Dice que el mensaje se queda en la cola tras el ack.","rationale":"La pregunta se lee de dos formas: no dice si la cola es clásica o quorum.","flag":"badly-written"}
+{"card":"9p3x","grade":"again","claudeGrade":"again","answer":"Dice que el mensaje se queda en la cola tras el ack.","rationale":"La pregunta se lee de dos formas: no dice si la cola es clásica o quorum.","askedQuestion":"Cuando el consumidor hace `ack` de un mensaje, ¿qué pasa con él?","flag":"badly-written"}
 JSON
 ```
 
