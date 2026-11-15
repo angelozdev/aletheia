@@ -1,4 +1,4 @@
-import { EVER, PROGRESS_WINDOW_DAYS, type ProgressInput } from '#core/progress'
+import { EVER, PROGRESS_WINDOW_DAYS, WEAK_FAILURES, type ProgressInput } from '#core/progress'
 import { startOfToday, startOfTomorrow, startOfWindow } from '#core/time'
 import { StoreCardRepository, StoreReviewRepository, type Store } from '#shell/db'
 import type { CliContext } from '../../main/main.types.ts'
@@ -23,6 +23,7 @@ export function progressInput(
     today: startOfToday(now, context.timeZone),
     tomorrow: startOfTomorrow(now, context.timeZone),
     windowStart: startOfWindow(now, days, context.timeZone),
+    leechFailures: WEAK_FAILURES,
   }
 }
 

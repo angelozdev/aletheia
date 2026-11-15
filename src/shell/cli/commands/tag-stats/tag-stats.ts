@@ -11,7 +11,7 @@ export const tagStatsCommand: CliCommand = {
   name: 'stats',
   argument: { name: '[tags...]', description: 'tags to narrow to; their descendants are included' },
   description:
-    'give each tag in use and the deck their cards, new, due today, retention, weak cards and gaps',
+    'give each tag in use and the deck their cards, new, due today, retention, weak cards and gaps, and the deck its candidates to prune',
   options: TAG_STATS_OPTIONS,
   run: (context, options, tags, flags) =>
     withStore(context, options, async (store) => {

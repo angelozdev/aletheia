@@ -11,6 +11,7 @@ export type ProgressInput = {
   today: Date
   tomorrow: Date
   windowStart: Date
+  leechFailures: number
 }
 
 export type ProgressCounts = {
@@ -24,7 +25,9 @@ export type ProgressCounts = {
 
 export type TagProgress = { tag: string } & ProgressCounts
 
-export type ProgressTree = { deck: ProgressCounts; tags: TagProgress[] }
+type DeckProgress = ProgressCounts & { candidates: number }
+
+export type ProgressTree = { deck: DeckProgress; tags: TagProgress[] }
 
 export type CardFacts = {
   isNew: boolean
@@ -32,6 +35,7 @@ export type CardFacts = {
   counted: number
   passed: number
   failures: number
+  weak: boolean
   gaps: number
   lastReview: Date | null
 }

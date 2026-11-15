@@ -17,7 +17,7 @@ function cardOf(id: string, tags: string[], state: CardState = 'review', due = D
 }
 
 function inputOf(cards: Card[], reviews: Review[]): ProgressInput {
-  return { cards, archived: [], topic: [], reviews, today, tomorrow, windowStart }
+  return { cards, archived: [], topic: [], reviews, today, tomorrow, windowStart, leechFailures: 3 }
 }
 
 function progressOf(cards: Card[], reviews: Review[] = [], order?: TagOrder): ProgressTree {
@@ -62,7 +62,7 @@ describe('tag progress', () => {
 
   it('tagProgress on an empty deck gives a deck of zeros and no tags', () => {
     expect(progressOf([])).toMatchObject({
-      deck: { cards: 0, new: 0, due: 0, retention: null, weak: 0, gaps: 0 },
+      deck: { cards: 0, new: 0, due: 0, retention: null, weak: 0, gaps: 0, candidates: 0 },
       tags: [],
     })
   })

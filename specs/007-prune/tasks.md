@@ -180,7 +180,7 @@ Intentionally empty. Every table, type and field lands with the first task that 
     - `tests/progress/performance.test.ts`: `SC-004 card candidates answers in under 1 second on 1,000 cards and 20,000 reviews`.
   - **Code**: `src/core/prune/` new: `prune.types.ts` (`PruneInput = { cards, topic, reviews, leechFailures }`, `Candidate`), `prune.constants.ts` (`CANDIDATE_REASONS = ['leech', 'not-useful'] as const`), `prune.ts` (`candidates`), `index.ts`. The command: group `card`, name `candidates`, `[tags...]` through `topicFrom`, returns `{ candidates, kept: [] }`. Registered after `cardListCommand`.
   - **Run**: quickstart §3, the first command
-- [ ] T012 [US1] `tag stats` gives the deck's count of candidates, in `src/core/progress/progress.ts`
+- [X] T012 [US1] `tag stats` gives the deck's count of candidates, in `src/core/progress/progress.ts`
   - **Test**: `tag-stats.test.ts`, `007-US1-AS5 tag stats gives in its deck line how many cards are candidates`: one leech and one not → `deck.candidates: 1`; under a tag without it → `0`. `progress.test.ts`: the empty deck gives `candidates: 0`.
   - **Code**: `tagProgress` counts `candidates(…)` of its scope into `deck.candidates`; `ProgressInput` gains what `PruneInput` needs.
   - **Run**: quickstart §3, the second command

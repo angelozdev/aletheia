@@ -7,15 +7,10 @@ import {
   REVIEW_FLAGS,
   type Review,
 } from '#core/reviews'
+import { candidates } from '#core/prune'
 import { AGAIN_GRADE, GRADES } from '#core/scheduling'
 import { bySegments, coveredTags, isUnder, TAG_SEPARATOR, topicCards } from '#core/tags'
-import {
-  DEFAULT_CARD_ORDER,
-  DEFAULT_TAG_ORDER,
-  PERCENT,
-  TAG_FIELD,
-  WEAK_FAILURES,
-} from './progress.constants.ts'
+import { DEFAULT_CARD_ORDER, DEFAULT_TAG_ORDER, PERCENT, TAG_FIELD } from './progress.constants.ts'
 import type {
   CardFacts,
   CardFilters,
@@ -55,12 +50,14 @@ function cardFacts(card: Card, reviews: Review[], input: ProgressInput): CardFac
   const counted = reviews.filter(
     (review) => review.reviewedAt >= input.windowStart && isCounted(review),
   )
+  const failures = reviews.filter(isFailure).length
   return {
     isNew,
     isDue: !isNew && card.due < input.tomorrow && !hidden,
     counted: counted.length,
     passed: counted.filter(({ grade }) => grade !== AGAIN_GRADE).length,
-    failures: reviews.filter(isFailure).length,
+    failures,
+    weak: failures >= input.leechFailures,
     gaps: reviews.filter((review) => isGap(review, input.windowStart)).length,
     lastReview: latest(reviews),
   }
@@ -93,17 +90,13 @@ function retentionOf(facts: CardFacts[]): number | null {
   return counted === 0 ? null : Math.round((passed * PERCENT) / counted)
 }
 
-function isWeak({ failures }: CardFacts): boolean {
-  return failures >= WEAK_FAILURES
-}
-
 function countsOf(facts: CardFacts[]): ProgressCounts {
   return {
     cards: facts.length,
     new: facts.filter(({ isNew }) => isNew).length,
     due: facts.filter(({ isDue }) => isDue).length,
     retention: retentionOf(facts),
-    weak: facts.filter(isWeak).length,
+    weak: facts.filter(({ weak }) => weak).length,
     gaps: total(facts, (cardFacts) => cardFacts.gaps),
   }
 }
@@ -169,8 +162,8 @@ export function tagProgress(input: ProgressInput, order = DEFAULT_TAG_ORDER): Pr
   const byTag = factsByTag(facts)
   const tags = [...byTag.keys()].filter((tag) => inTopic(tag, input.topic)).toSorted(bySegments)
   const rows = tags.map((tag) => ({ tag, ...countsOf(byTag.get(tag) ?? []) }))
-  const deckFacts = [...facts.values()]
-  return { deck: countsOf(deckFacts), tags: treeOrder(rows, tagComparator(rows, order)) }
+  const deck = { ...countsOf([...facts.values()]), candidates: candidates(input).length }
+  return { deck, tags: treeOrder(rows, tagComparator(rows, order)) }
 }
 
 const BY_ID = byValue(
@@ -210,7 +203,7 @@ export function cardProgress(
     card,
     failures: cardFacts.failures,
     gaps: cardFacts.gaps,
-    weak: isWeak(cardFacts),
+    weak: cardFacts.weak,
     lastReview: cardFacts.lastReview,
   }))
   const compare = byValue(CARD_VALUES[field], desc, BY_ID)

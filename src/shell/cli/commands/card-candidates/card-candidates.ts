@@ -1,8 +1,6 @@
-import { EVER, WEAK_FAILURES } from '#core/progress'
 import { candidates, type Candidate } from '#core/prune'
 import { shownInstant } from '#core/time'
-import { StoreCardRepository, StoreReviewRepository } from '#shell/db'
-import { topicFrom } from '../../invocation/topic/topic.ts'
+import { progressInput } from '../../invocation/progress/progress.ts'
 import { withStore } from '../../invocation/with-store/with-store.ts'
 import type { CliCommand } from '../../main/main.types.ts'
 
@@ -24,12 +22,7 @@ export const cardCandidatesCommand: CliCommand = {
   description: 'list the active cards to consider pruning, with their reasons and evidence',
   run: (context, options, tags) =>
     withStore(context, options, async (store) => {
-      const found = candidates({
-        cards: new StoreCardRepository(store).active(),
-        topic: topicFrom(tags),
-        reviews: new StoreReviewRepository(store).since(EVER),
-        leechFailures: WEAK_FAILURES,
-      })
+      const found = candidates(progressInput(store, context, tags))
       return { candidates: found.map((row) => candidateRow(row, context.timeZone)), kept: [] }
     }),
 }

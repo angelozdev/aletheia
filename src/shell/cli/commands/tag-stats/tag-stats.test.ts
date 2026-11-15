@@ -6,6 +6,7 @@ import {
   rowCounts,
   studied,
 } from '../../../../../tests/support/progress/progress.ts'
+import { failed } from '../../../../../tests/support/prune/prune.ts'
 import { cliOnTempStore } from '../../../../../tests/support/run-cli/run-cli.ts'
 import type { StoreCli } from '../../../../../tests/support/run-cli/run-cli.types.ts'
 
@@ -156,6 +157,7 @@ describe('aletheia tag stats', () => {
         '  retention: 100',
         '  weak: 0',
         '  gaps: 0',
+        '  candidates: 0',
         'tags[2]{tag,cards,new,due,retention,weak,gaps}:',
         '  messaging,2,1,1,100,0,0',
         '  "messaging::rabbitmq",1,1,0,null,0,0',
@@ -165,9 +167,19 @@ describe('aletheia tag stats', () => {
   })
 
   it('tag stats on an empty deck gives a deck of zeros and no tags', async () => {
-    expect(await stats()).toMatchObject({
-      deck: { cards: 0, new: 0, due: 0, retention: null, weak: 0, gaps: 0 },
+    expect(await stats()).toEqual({
+      deck: { cards: 0, new: 0, due: 0, retention: null, weak: 0, gaps: 0, candidates: 0 },
       tags: [],
     })
+  })
+
+  it('007-US1-AS5 tag stats gives in its deck line how many cards are candidates', async () => {
+    const [leech, passing] = await addTagged(cli, [['messaging'], ['docker']])
+    failed(cli, leech)
+    failed(cli, passing, 2)
+
+    expect((await stats()).deck).toMatchObject({ candidates: 1 })
+    expect((await stats(['messaging'])).deck).toMatchObject({ candidates: 1 })
+    expect((await stats(['docker'])).deck).toMatchObject({ candidates: 0 })
   })
 })
