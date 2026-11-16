@@ -280,6 +280,26 @@ answer for a card with something to run, the answer gets one by rule 8 and "The 
 the `az-aletheia-add` skill. Check it before showing the before and after, and put its check
 line under the `answer` field's header. Otherwise an old card keeps its answer.
 
+When the rewrite changes the question, the answer or the key points, search the deck first, in
+that turn:
+
+```sh
+aletheia card search <<'JSON'
+{"words":"En una cola clásica de RabbitMQ, ¿qué pasa con un mensaje después de que el consumidor lo confirma con ack? ack confirmación acknowledge borrado","tags":["messaging","messaging::rabbitmq"]}
+JSON
+```
+
+- `words` holds the new question and answer lines, with their terms in Spanish and English.
+  The example block stays out, except names that matter (`thiserror`, `#[error]`): `fn`,
+  `let` and `println` would match every Rust card. `tags` holds the new tags.
+- Set the card itself aside: its own words bring it back.
+- Judge each listed card as the `az-aletheia-add` skill judges a draft's matches (its section
+  2, archived and replaced cards included). Flag a repeat or an overlap on the line after the
+  before and after's first header (`⚠ se solapa con #w2ab: …`).
+- A flagged rewrite offers three choices: drop it, save it anyway, or merge both into one
+  card, as in "A replacement", each old card archived naming it.
+- A change of tags, situation or type alone runs no search.
+
 Show the exact before and after of every field that changes, and nothing else:
 
 ```
@@ -311,8 +331,9 @@ A rewrite does not change the grade being settled, and a voided review stays voi
 When the fix would change what the key points mean, or the card holds two ideas, offer to
 replace it, or to split it into one card per idea, after the grade is recorded. Draft the new
 cards by the card rules of the `az-aletheia-add` skill, their tags listed as for a rewrite,
-with `aletheia tag list` in that turn, and their examples checked as for a rewrite. Show the
-old card and each draft with every field. Ask his why in his words if he has not said it: it
+with `aletheia tag list` in that turn, and their examples checked as for a rewrite. Search
+each draft as for a rewrite before showing it, the old card set aside. Show the old card and
+each draft with every field. Ask his why in his words if he has not said it: it
 goes in the old card's archive reason. Only after Angelo approves the exact drafts, with his
 edits, and gives his why, save them in one call, their `source` naming the old card:
 

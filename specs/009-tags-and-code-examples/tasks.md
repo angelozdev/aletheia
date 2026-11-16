@@ -230,7 +230,7 @@ searched against the deck before it is shown, so an overlap is decided before it
 
 **Independent Test**: quickstart §4's search bullets, no release needed.
 
-- [ ] T009 [US4] `aletheia-review` searches a rewrite and a replacement before showing them, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T009 [US4] `aletheia-review` searches a rewrite and a replacement before showing them, in `.claude/skills/aletheia-review/SKILL.md`
   - **Code**: in "### A rewrite", before "Show the exact before and after": when the rewrite
     changes the question, the answer or the key points, search the deck first, in that turn,
     with a `sh` block:
