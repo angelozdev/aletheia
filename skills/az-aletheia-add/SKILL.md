@@ -27,6 +27,14 @@ known.
 
 ## 1. Draft
 
+List the tags in use first, in that turn:
+
+```sh
+aletheia tag list
+```
+
+It prints each tag with its ancestors and how many active cards it covers.
+
 Draft from the conversation, one card per idea worth remembering. Fewer, better cards beat many.
 Every draft is held to these rules:
 
@@ -79,7 +87,12 @@ A `code` question carries its snippet in a fenced block inside the question.
   en `docker ps`.").
 - `tags`: one or more, in English, lowercase `a`–`z`, digits and dashes, in segments joined by
   `::`, from general to specific: `docker::commands`, `messaging::redis-streams`. No accents,
-  no `ñ`, no uppercase. Angelo may name a topic in Spanish; you find its English tag.
+  no `ñ`, no uppercase. One tag for each topic the card rests on: its subject, the concept it
+  builds on (`rust::ownership` for a card on `String` vs `&str`), and the library it is about,
+  under its language with its ecosystem's word for a library (`rust::crates::anyhow`,
+  `typescript::packages::zod`, `python::packages::requests`). Reuse a tag in use before making
+  one. A topic the card only mentions gets none. Angelo may name a topic in Spanish; you find
+  its English tag.
 - `source`: the name of the repo you are in, or the study context when there is no repo
   ("libro Designing Data-Intensive Applications").
 
@@ -136,6 +149,13 @@ flag on the line after its header:
    Respuesta: `ps` muestra solo los contenedores en ejecución; `-a` incluye los detenidos.
    Key points: `ps`: solo en ejecución · `-a`: incluye detenidos
    Situación: Un contenedor se cayó y no aparece en `docker ps`.
+```
+
+A tag the list did not print is marked `(nuevo)` in the header, so a typo or a near-duplicate
+shows before it is saved; send it without the mark:
+
+```
+2. concept · rust::error-handling, rust::crates::anyhow (nuevo)
 ```
 
 Show flagged drafts with the rest, never drop one silently. Ask Angelo to approve, edit or

@@ -81,7 +81,7 @@ under its language, and a new tag shows before it is saved.
 
 **Independent Test**: quickstart §1 in `test`; §2, and §4's tag bullet, after the release.
 
-- [ ] T002 [US1] `az-aletheia-add` drafts tags from the tags in use, in `skills/az-aletheia-add/SKILL.md`
+- [X] T002 [US1] `az-aletheia-add` drafts tags from the tags in use, in `skills/az-aletheia-add/SKILL.md`
   - **Code**: at the start of section 1, before "Draft from the conversation": "List the tags in
     use first, in that turn:", a `sh` block with `aletheia tag list`, and "It prints each tag
     with its ancestors and how many active cards it covers." In "The fields", the `tags` bullet
