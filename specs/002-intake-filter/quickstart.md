@@ -33,6 +33,7 @@ Angelo runs `pnpm release` from a clean `main` after the merge. Then, in another
 (`diarium`), talk about `docker ps -a` for a minute and say "guarda esto".
 
 Expected: the draft shows `⚠ duplica a #<id>` naming the Docker card in the deck. Reject it.
+Checks 002-US1-AS7.
 
 ## 3. Junk flagged by the profile
 
@@ -40,7 +41,7 @@ Still in another repo: ask what `useState` returns and in which year Docker came
 "guarda esto".
 
 Expected: one draft flagged `ya lo sabes por tu perfil`, the other `trivia`, each with its reason.
-Both are shown; reject both and nothing is saved.
+Both are shown; reject both and nothing is saved. Checks 002-US2-AS1.
 
 ## 4. The profile kept current
 
@@ -49,7 +50,8 @@ diario".
 
 Expected: Claude's next reply ends with `¿Anoto en tu perfil: «…»?` and the review goes on. Say
 yes, check the new line in `PROFILE.md`, then in another repo discuss what `terraform plan` does,
-say "guarda esto" and see the draft flagged `ya lo sabes por tu perfil`.
+say "guarda esto" and see the draft flagged `ya lo sabes por tu perfil`. Reject another draft
+with "eso ya lo sé": the reply ends with `¿Anoto en tu perfil: «…»?`. Checks 002-US3-AS1.
 
 ## Measures
 

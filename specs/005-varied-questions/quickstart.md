@@ -44,9 +44,9 @@ The release backs up `prod` before migrating it. In a new Claude Code session in
 - A card you have reviewed before comes back worded differently, without your asking, and its
   grade follows the stored key points (SC-001).
 - Say "pregúntamela como está": that card is asked as stored, and the next one is rephrased
-  again.
+  again (005-US1-AS3).
 - When a rephrasing misleads you, say so: Claude voids the review as a bad rephrasing, proposes
-  no rewrite, and the card does not come back today.
+  no rewrite, and the card does not come back today (005-US2-AS3).
 
 ## Measures
 

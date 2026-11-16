@@ -57,10 +57,11 @@ Expected: today's reviews, newest first, with the question as asked, and counts 
 In a new Claude Code session in this repo, without a command or a `/`:
 
 - "¿qué tengo flojo?": Claude runs `aletheia tag stats` and names the topics with weak cards or
-  low retention, then the weak cards (SC-001).
-- "¿qué no repaso hace un mes?": the cards, from `aletheia card list --not-reviewed 30`.
+  low retention, then the weak cards (SC-001, 006-US1-AS6).
+- "¿qué no repaso hace un mes?": the cards, from `aletheia card list --not-reviewed 30`
+  (006-US2-AS4).
 - "¿cuántos repasos anulaste por reformulación estas dos semanas?": the count from
-  `aletheia review history --days 14`, quoted, not counted by Claude.
+  `aletheia review history --days 14`, quoted, not counted by Claude (006-US3-AS2).
 
 ## Measures
 

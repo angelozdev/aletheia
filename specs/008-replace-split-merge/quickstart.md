@@ -40,22 +40,25 @@ Expected: the new card `active`, `state: new`, its source naming both; both old 
 After the merge to `main` (the local skills read the repo) and slice 7's release:
 
 - "podemos el mazo": at an overlap, choose merge; approve the draft and give the why. Expected:
-  one `card add`, then one `card archive` per old card, each shown before it runs.
+  one `card add`, then one `card archive` per old card, each shown before it runs
+  (008-US1-AS1).
 - At a leech that holds two ideas, choose split. Expected: two drafts, then one archive naming
-  both.
+  both (008-US2-AS1).
 - In "repasemos", when a fix would change what a card asks: after the grade, a replacement is
-  offered, not "slice 8".
+  offered, not "slice 8" (008-US2-AS2).
 
 ## 3. Merge at capture, in `prod`
 
 After `pnpm release` (Angelo), from another repo, "guarda esto" on something a card already
-covers in another technology. Expected: `⚠ se solapa con #…` and the choice to merge. A draft
+covers in another technology. Expected: `⚠ se solapa con #…` and the choice to merge
+(008-US3-AS1). A draft
 that repeats a card archived "reemplazada por #…" is judged against the active one, with no
-restore offered.
+restore offered (008-US3-AS2).
 
 ## 4. Measures (two weeks)
 
 - SC-002: every card archived "reemplazada por" shows his why, and none was saved or archived
   without his approval.
 - SC-003: `aletheia card search` on each replaced card's words lists its replacement active and
-  the old card archived; no pair left both active.
+  the old card archived; no pair left both active. When an archive failed after the save,
+  Claude said which old card was still active and archived it again (008-US1-AS2).

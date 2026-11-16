@@ -62,9 +62,10 @@ In a new Claude Code session in this repo, "repasemos":
 
 - On a card that rests on another, say "no recuerdo qué es <concepto>": Claude grades Again,
   searches, and asks the card on that concept without explaining first; or, with none,
-  explains in two or three lines and offers one.
+  explains in two or three lines and offers one (004-US1-AS4).
 - On a card whose wording misled you, say so: Claude voids the review, the card does not come
-  back today, and Claude proposes the rewrite, saved only after you approve it.
+  back today, and Claude proposes the rewrite, saved only after you approve it (004-US2-AS4,
+  004-US3-AS4).
 
 ## Measures
 

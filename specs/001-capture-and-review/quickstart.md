@@ -72,7 +72,8 @@ migrations: `cards`, `cards_never_deleted`, `reviews` and `reviews_never_change`
 3. In `~/me/aletheia`, say "repasemos". Answer; accept or dispute the grade; ask a doubt; say
    "sigue". Ask when the card comes back: Claude runs the CLI and reads the date as printed.
 
-No command and no `/` typed in any of the three.
+No command and no `/` typed in any of the three. Checks 001-US1-AS6 (step 1) and 001-US2-AS7
+(step 3).
 
 ## Measures
 

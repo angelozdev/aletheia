@@ -67,11 +67,11 @@ nothing changed; then back to `default: true`.
 In a new Claude Code session in this repo:
 
 - "repasemos mensajería": Claude lists the tags, picks `messaging`, shows a card that is not
-  due, and records its grade.
+  due, and records its grade (003-US1-AS8).
 - "repasemos" with more than 20 cards due: at the 20th, Claude says how many remain and asks;
-  "sigue" brings up to 20 more.
+  "sigue" brings up to 20 more (003-US2-AS5).
 - "a partir de ahora sesiones de 15": Claude shows `aletheia settings set --session-size 15`
-  and runs it only after Angelo approves.
+  and runs it only after Angelo approves (003-US4-AS4).
 
 ## Measures
 

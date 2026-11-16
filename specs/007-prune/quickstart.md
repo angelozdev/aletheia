@@ -88,12 +88,15 @@ In a new Claude Code session in this repo, without a command or a `/`:
 
 - "podemos el mazo": Claude lists the leeches and the cards said to be useless, one at a time,
   with their evidence, and waits for Angelo's choice on each; then offers to read topic by
-  topic (SC-001).
+  topic (SC-001, 007-US1-AS6, 007-US3-AS2).
+- Keep a leech: Claude records the keep for the reason shown, and the next prune does not
+  list it (007-US4-AS3).
 - "poda mensajería": the same, under `messaging` only, and the reading of that topic.
-- "devuélveme #<id>": the card is active again.
-- Reviewing, "esto no me sirve": the review is graded and flagged; the next prune lists it.
+- "devuélveme #<id>": the card is active again (007-US1-AS6).
+- Reviewing, "esto no me sirve": the review is graded and flagged; the next prune lists it
+  (007-US2-AS3).
 - From another repo, a draft on something archived: `az-aletheia-add` quotes the archived card
-  and its reason.
+  and its reason (007-US1-AS7).
 
 ## Measures
 
