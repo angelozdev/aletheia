@@ -111,9 +111,19 @@ Offer what can be done with it, and wait for Angelo to choose before the next on
   question, a tidier answer or key points of the same meaning. Every rewrite runs
   `aletheia tag list` in that turn and tags the card by the card rules of the `az-aletheia-add`
   skill, adding any tag it lacks, a tag not in use marked `(nuevo)` in the before and after
-  and sent without the mark. Show the exact before and after
-  of every field that changes, as the `aletheia-review` skill does, and run `aletheia card edit`
-  only after he approves:
+  and sent without the mark. When it changes the question, the answer or the key points,
+  search the deck first, in that turn, as the `aletheia-review` skill does for a rewrite:
+
+  ```sh
+  aletheia card search <<'JSON'
+  {"words":"En Redis Streams, ¿cómo reparte un consumer group los mensajes de un stream entre sus consumidores? consumer group XREADGROUP reparto","tags":["messaging::redis-streams"]}
+  JSON
+  ```
+
+  Set the card itself aside, flag a repeat or an overlap on the before and after, and offer to
+  drop the rewrite, save it anyway, or merge both as in "Replace, split or merge" below. Show
+  the exact before and after of every field that changes, as the `aletheia-review` skill does,
+  and run `aletheia card edit` only after he approves:
 
   ```sh
   aletheia card edit <<'JSON'
@@ -147,6 +157,9 @@ A merge (two cards into one), a split (one card into one per idea) and a replace
 whose fix changes what it asks) are the same two steps: save the new cards, then archive each
 old card naming them. The new cards follow the card rules of the `az-aletheia-add` skill.
 Their tags come from `aletheia tag list`, run in that turn.
+
+Search each draft before showing it, as for a rewrite in place, the old cards set aside. A
+flagged draft offers dropping it, saving it, or merging it with the card it overlaps.
 
 Show each old card's question and each draft with every field, as `az-aletheia-add` shows a
 draft. Wait until Angelo approves the exact drafts, with his edits, and ask his why in his

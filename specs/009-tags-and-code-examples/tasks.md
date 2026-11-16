@@ -253,7 +253,7 @@ searched against the deck before it is shown, so an overlap is decided before it
   - **Check**: `pnpm -s vitest run tests/skills` (it runs the new `card search` block);
     `pnpm -s format:check`.
   - **Run**: quickstart §4 (009-US4-AS1, 009-US4-AS2).
-- [ ] T010 [P] [US4] `aletheia-prune` searches a rewrite in place and a replacement before showing them, in `.claude/skills/aletheia-prune/SKILL.md`
+- [X] T010 [P] [US4] `aletheia-prune` searches a rewrite in place and a replacement before showing them, in `.claude/skills/aletheia-prune/SKILL.md`
   - **Code**: in the "**Rewrite it in place**" choice, before its `aletheia card edit` block:
     when it changes the question, the answer or the key points, search the deck first, in that
     turn, as the `aletheia-review` skill does for a rewrite. Show a `sh` block:
