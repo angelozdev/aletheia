@@ -128,7 +128,7 @@ toolchain's exit status, and the draft says whether it was checked.
 
 **Independent Test**: quickstart §3 and §4's example bullet, after the release.
 
-- [ ] T005 [US2] `az-aletheia-add` gains rules 2 and 8 and how an example is checked, in `skills/az-aletheia-add/SKILL.md`
+- [X] T005 [US2] `az-aletheia-add` gains rules 2 and 8 and how an example is checked, in `skills/az-aletheia-add/SKILL.md`
   - **Code**:
     - Rule 2 becomes: "**An answer of one to three lines.** Longer means it is not one idea
       yet. An example goes after them, in its own code block, and does not count toward them,

@@ -39,7 +39,8 @@ Draft from the conversation, one card per idea worth remembering. Fewer, better 
 Every draft is held to these rules:
 
 1. **One idea or mechanism.** An unrelated "and also" is a second card.
-2. **An answer of one to three lines.** Longer means it is not one idea yet.
+2. **An answer of one to three lines.** Longer means it is not one idea yet. An example goes
+   after them, in its own code block, and does not count toward them, whatever its length.
 3. **A question that stands alone.** It names the technology, and the variant when it matters
    ("una cola _classic_ de RabbitMQ"). No "esto", "lo de antes", "nuestro proyecto".
 4. **A credible situation** where knowing it matters.
@@ -47,9 +48,14 @@ Every draft is held to these rules:
    in seconds.
 6. **Not already known**, judged against the profile and the similar cards.
 7. **No duplicate**, judged by the search (step 2).
+8. **An example when the card has something to run**: code, a command or a short program that
+   shows its idea, in a language card or a system one (`strace` for a system call). A
+   comparison, or a concept nothing runnable shows, gets none. A `command` card's answer is its
+   example, run read-only to check it, and a `code` card's snippet, in its question, is its
+   example: neither gets a second block.
 
-Rules 1–3 are about shape: fix a draft that breaks one before showing it, by splitting,
-shortening or rephrasing. Rules 4–7 are about worth: never drop a draft for breaking one; flag
+Rules 1–3 and 8 are about shape: fix a draft that breaks one before showing it, by splitting,
+shortening, rephrasing or adding its example. Rules 4–7 are about worth: never drop a draft for breaking one; flag
 it with its reason, in Spanish, and let Angelo decide:
 
 - `⚠ sin situación creíble: <por qué>`
@@ -96,6 +102,48 @@ A `code` question carries its snippet in a fenced block inside the question.
 - `source`: the name of the repo you are in, or the study context when there is no repo
   ("libro Designing Data-Intensive Applications").
 
+### The example
+
+The example goes at the end of `answer`: its lines, a blank line, then a fenced block naming
+its language (`rust`). The block is the code that ran, whole: a complete program, with its
+`use` lines and `fn main`, so it runs again as stored.
+
+Check it before showing the draft, in a folder from `mktemp -d`, never in the repo, `data/` or
+`~/.aletheia/`. Use `rustc` for a Rust snippet on `std`, and `cargo` in a throwaway project for
+one on a crate. Use `node` for JavaScript and TypeScript: Node strips types and does not check
+them, so a card on a type error needs `tsc` at hand, or says it was not checked. Use `python3`
+for Python, and the command itself for a read-only one (`docker ps -a` with Docker running).
+
+```sh
+dir=$(mktemp -d)
+cat > "$dir/main.rs" <<'RS'
+struct Celsius(f64);
+
+impl From<f64> for Celsius {
+    fn from(grados: f64) -> Self {
+        Celsius(grados)
+    }
+}
+
+fn main() {
+    let c: Celsius = 21.5.into();
+    println!("{}", c.0);
+}
+RS
+rustc --edition 2024 "$dir/main.rs" -o "$dir/main" && "$dir/main"; echo "exit=$?"
+```
+
+- The verdict is the exit status the same call prints, never the text the run prints. An
+  example meant to fail (`"42".parse()` with no type) passes when it fails with the error the
+  card names (E0284). A `code` card's snippet, in its question, is checked the same way.
+- Fetching a crate or package into the throwaway project through its package manager is the
+  toolchain at work. Never run an example that deletes, writes outside the folder, calls a
+  server or needs root.
+- A Linux-only tool missing on the Mac (`strace`) leaves the example unchecked: start no
+  container for it.
+- A failing example is fixed and run again. One that cannot be fixed is shown failing, never
+  as checked.
+
 ## 2. Search for similar cards
 
 Before showing any draft, search the deck once for each draft. Drafts are independent: run
@@ -139,17 +187,27 @@ never show a draft whose search did not answer.
 
 ## 3. Show every draft
 
-Before saving anything, show each draft numbered, with every field. A flagged draft carries its
-flag on the line after its header:
+Before saving anything, show each draft numbered, with every field. A draft with an example
+carries its check line under its header, before any flag, and a flagged draft its flag:
 
 ```
 1. command · docker::commands
+   ✓ ejemplo comprobado: docker ps -a, exit 0
    ⚠ duplica a #k7m2
    Pregunta: En Docker, ¿qué diferencia hay entre `docker ps` y `docker ps -a`?
    Respuesta: `ps` muestra solo los contenedores en ejecución; `-a` incluye los detenidos.
    Key points: `ps`: solo en ejecución · `-a`: incluye detenidos
    Situación: Un contenedor se cayó y no aparece en `docker ps`.
 ```
+
+The check line is one of three:
+
+- `✓ ejemplo comprobado: <herramienta>, exit <n>`, naming the crate or package it fetched
+  (`✓ ejemplo comprobado: cargo con anyhow, exit 0`);
+- `⚠ ejemplo sin comprobar: <por qué>` (`⚠ ejemplo sin comprobar: strace no existe en macOS`);
+- `⚠ ejemplo falla: <el error>`, for one that cannot be fixed.
+
+The line is not stored.
 
 A tag the list did not print is marked `(nuevo)` in the header, so a typo or a near-duplicate
 shows before it is saved; send it without the mark:
@@ -197,6 +255,15 @@ aletheia card add <<'JSON'
     "situation": "Un contenedor se cayó y no aparece en `docker ps`.",
     "tags": ["docker::commands"],
     "source": "diarium"
+  },
+  {
+    "type": "concept",
+    "question": "En Rust, ¿qué te da implementar `From<A> for B`?",
+    "answer": "Convierte un `A` en un `B` con `B::from(a)`, y gratis `a.into()` donde se espera un `B`.\n\n```rust\nstruct Celsius(f64);\n\nimpl From<f64> for Celsius {\n    fn from(grados: f64) -> Self {\n        Celsius(grados)\n    }\n}\n\nfn main() {\n    let c: Celsius = 21.5.into();\n    println!(\"{}\", c.0);\n}\n```",
+    "keyPoints": ["`B::from(a)` convierte `A` en `B`", "`.into()` viene gratis"],
+    "situation": "Una función recibe `Celsius` y quieres pasarle un `f64` sin envolverlo a mano.",
+    "tags": ["rust::traits"],
+    "source": "aletheia"
   }
 ]
 JSON
