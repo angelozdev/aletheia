@@ -120,6 +120,10 @@ a tag includes all descendants: `messaging` covers `messaging::rabbitmq`.
 Tags are written in English, like the rest of the system (constitution 1.5.0);
 Angelo names a topic in Spanish and Claude finds its tag.
 A card may carry several tags (a Redis-vs-RabbitMQ card lives under both).
+Claude reuses the tags already in use, and gives a card one tag for each topic it
+rests on: its subject, the concept it builds on (`rust::ownership` on `String` vs
+`&str`) and the library it is about (`rust::crates::anyhow`). — _Angelo's call,
+2026-11-16, spec 009: a review found cards on `anyhow` that no tag named._
 
 **Review log** (one row per graded review): card, rating, Claude's rating before
 any dispute (a dispute changed the grade when the two differ), the card's state
@@ -150,7 +154,10 @@ reason, date. Used so kept cards are not proposed again without new evidence
 prune skills always read, as context for judging usefulness (not a whitelist of
 topics). It is kept current from the conversation: during a capture or a review,
 the moment Angelo states his level, Claude offers the exact line to add or change
-and writes it only if he approves (spec 002, ADR-0015). Initial content:
+and writes it only if he approves (spec 002, ADR-0015). A line stays general (an
+area's level, his role, how he learns), never one crate or one thing he has not
+done yet: those fill the profile without telling what he knows. — _Angelo's call,
+2026-11-16, spec 009._ Initial content:
 
 - Very strong frontend; working backend knowledge; studying AWS.
 - _Guess, not stated:_ heading toward full-stack with weight on cloud.
@@ -163,7 +170,9 @@ Enforced by `az-aletheia-add` when drafting, and by prune when reviewing the dec
 1. **One idea or mechanism per card.** If the answer has an unrelated "and also",
    split it. Several points are allowed only when they are so tied that one
    makes no sense without the other.
-2. **Answer fits in 1–3 lines.** Longer means it is not one idea yet.
+2. **Answer fits in 1–3 lines.** Longer means it is not one idea yet. A code
+   example goes after those lines, in its own block, and does not count toward
+   them; it has no length cap.
 3. **Self-contained question.** Names the technology and the variant when it
    matters ("a _classic_ RabbitMQ queue", because RabbitMQ Streams behave
    differently). No "this", "the earlier thing", "our project".
@@ -173,6 +182,10 @@ Enforced by `az-aletheia-add` when drafting, and by prune when reviewing the dec
    year and found in seconds.
 6. **Not already known.** Judged against the profile and existing cards.
 7. **No duplicates.** Checked against existing cards before proposing.
+8. **A code example when the card is about code.** Its answer carries an
+   example, which Claude compiles or runs before showing it when the toolchain
+   is at hand, and says so when it is not. — _Angelo's call, 2026-11-16, spec
+   009: in one review he asked for an example on four cards._
 
 Calibration examples (Spanish content, as stored):
 
@@ -451,6 +464,7 @@ can use.
 | 6   | Progress: tag tree, retention, weak, gaps, sorting, free-form queries                                           | "¿qué tengo flojo?"                                          |
 | 7   | Prune: candidates, archive with reason, restore, keep                                                           | run the prune skill                                          |
 | 8   | Replace, split and merge: new cards with fresh state in place of archived ones                                  | merge two overlapping cards into one                         |
+| 9   | Card rules from use: a tag per topic, code examples, a general profile                                          | capture a Rust card: tags reused, its crate tagged, example compiled |
 
 Renumbered 2026-11-10, when varied questions became slice 5: progress moved from 5
 to 6 and prune from 6 to 7. Specs 000–003 and ADRs up to 0016 use the old numbers.
