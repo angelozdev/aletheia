@@ -470,7 +470,7 @@ can use.
 | 6   | Progress: tag tree, retention, weak, gaps, sorting, free-form queries                                           | "¿qué tengo flojo?"                                          |
 | 7   | Prune: candidates, archive with reason, restore, keep                                                           | run the prune skill                                          |
 | 8   | Replace, split and merge: new cards with fresh state in place of archived ones                                  | merge two overlapping cards into one                         |
-| 9   | Card rules from use: a tag per topic, code examples, a general profile                                          | capture a Rust card: tags reused, its crate tagged, example compiled |
+| 9   | Card rules from use: a tag per topic, code examples, a general profile, searched rewrites                       | capture a Rust card: tags reused, its crate tagged, example compiled |
 
 Renumbered 2026-11-10, when varied questions became slice 5: progress moved from 5
 to 6 and prune from 6 to 7. Specs 000–003 and ADRs up to 0016 use the old numbers.
