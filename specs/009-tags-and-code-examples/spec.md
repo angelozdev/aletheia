@@ -56,7 +56,7 @@ In a review Angelo asks to widen #xrrj to `.map`, `.filter` and `.take_while`. B
 ### Edge Cases
 
 - No tag in use fits a topic: Claude makes one in the tag format (002) and marks it new, so a typo or a near-duplicate tag shows before it is saved.
-- An example that needs a library is checked in a throwaway project outside the repo, `data/` and `~/.aletheia/` (INV-01).
+- An example that needs a library is checked in a throwaway project outside the repo, `data/` and `~/.aletheia/` (INV-01); fetching the library into it through its package manager is the toolchain at work, not the example's side effect.
 - An example with side effects (a command that deletes, writes outside a throwaway folder or calls a server) is never run; the draft says it was not checked.
 - An example that fails is fixed before the draft is shown; one that cannot be fixed is shown as failing, never as checked.
 - Cards saved before the slice keep their tags and answers; an example or a tag comes in through a rewrite when Angelo asks.
