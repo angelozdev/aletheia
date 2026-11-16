@@ -108,7 +108,10 @@ Offer what can be done with it, and wait for Angelo to choose before the next on
 
 - **Archive it**: as in section 1, with his reason in his words.
 - **Rewrite it in place**: only when the card still asks for the same knowledge, a clearer
-  question, a tidier answer or key points of the same meaning. Show the exact before and after
+  question, a tidier answer or key points of the same meaning. Every rewrite runs
+  `aletheia tag list` in that turn and tags the card by the card rules of the `az-aletheia-add`
+  skill, adding any tag it lacks, a tag not in use marked `(nuevo)` in the before and after
+  and sent without the mark. Show the exact before and after
   of every field that changes, as the `aletheia-review` skill does, and run `aletheia card edit`
   only after he approves:
 
@@ -143,6 +146,7 @@ Never choose for him, and never act on two cards at once.
 A merge (two cards into one), a split (one card into one per idea) and a replacement (one card
 whose fix changes what it asks) are the same two steps: save the new cards, then archive each
 old card naming them. The new cards follow the card rules of the `az-aletheia-add` skill.
+Their tags come from `aletheia tag list`, run in that turn.
 
 Show each old card's question and each draft with every field, as `az-aletheia-add` shows a
 draft. Wait until Angelo approves the exact drafts, with his edits, and ask his why in his

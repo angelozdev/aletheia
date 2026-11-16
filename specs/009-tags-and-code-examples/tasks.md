@@ -106,7 +106,7 @@ under its language, and a new tag shows before it is saved.
     listed the same way, in that turn.
   - **Check**: `pnpm -s vitest run tests/skills`; `pnpm -s format:check`.
   - **Run**: quickstart §4, after the release (009-US1-AS4).
-- [ ] T004 [P] [US1] `aletheia-prune` tags a rewrite and a replacement from the tags in use, in `.claude/skills/aletheia-prune/SKILL.md`
+- [X] T004 [P] [US1] `aletheia-prune` tags a rewrite and a replacement from the tags in use, in `.claude/skills/aletheia-prune/SKILL.md`
   - **Code**: in the "**Rewrite it in place**" choice, after its first sentence: every
     rewrite runs `aletheia tag list` in that turn (decision 6) and tags the card by the card
     rules of the `az-aletheia-add` skill, adding any tag it lacks, a tag not in use marked
