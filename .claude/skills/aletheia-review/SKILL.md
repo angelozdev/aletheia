@@ -285,10 +285,47 @@ It prints the card with every field; read it back in a line. The card keeps its 
 schedule and its reviews. If it exits 1, nothing changed: read the `error:` line, fix the JSON
 and send it again.
 
-When the fix would change what the key points mean, the card needs replacing, which arrives
-with slice 8: say so in a line and leave the card as it is.
-
 A rewrite does not change the grade being settled, and a voided review stays voided.
+
+### A replacement
+
+When the fix would change what the key points mean, or the card holds two ideas, offer to
+replace it, or to split it into one card per idea, after the grade is recorded. Draft the new
+cards by the card rules of the `az-aletheia-add` skill, and show the old card and each draft
+with every field. Ask his why in his words if he has not said it: it goes in the old card's
+archive reason. Only after Angelo approves the exact drafts, with his edits, and gives his
+why, save them in one call, their `source` naming the old card:
+
+```sh
+aletheia card add <<'JSON'
+[
+  {
+    "type": "concept",
+    "question": "En Redis Streams, ¿qué quita `XACK` y qué deja intacto?",
+    "answer": "Quita el mensaje de la lista de pendientes (PEL) del consumer group; el mensaje sigue en el stream hasta `XDEL` o un recorte con `XTRIM`.",
+    "keyPoints": ["quita el mensaje de la PEL", "el mensaje sigue en el stream", "se borra con `XDEL` o `XTRIM`"],
+    "situation": "Tras confirmar los mensajes con `XACK`, el stream sigue creciendo.",
+    "tags": ["messaging::redis-streams"],
+    "source": "reemplaza a #m4cd"
+  }
+]
+JSON
+```
+
+Read the ids it prints (`ids[1]: d6q1`), then archive the old card, the id without `#`, the
+reason `reemplazada por #<id>[, #<id>…]: <his why>`:
+
+```sh
+aletheia card archive <<'JSON'
+{"card":"m4cd","reason":"reemplazada por #d6q1: decía que XACK borra el mensaje del stream, y corregirlo cambia la pregunta"}
+JSON
+```
+
+If `aletheia card add` exits 1, nothing was saved: read the `error:` line, fix the JSON and
+send it again. If the archive exits 1 after the save, say that the old card is still active
+beside the new one, fix the JSON and archive it again; never send the drafts a second time.
+The new cards are new: they may come up in this session if the day's new cards allow it. Say
+so in a line.
 
 ### A card that adds nothing
 
@@ -304,7 +341,7 @@ JSON
 
 The flag changes nothing in the schedule or the stats: the review counts as one without a
 flag. Tell him in a line that prune will list it ("lo verás al podar"). This skill never
-archives a card; `aletheia-prune` does, when he chooses.
+archives a card for this; `aletheia-prune` does, when he chooses.
 
 A review that already carries a flag (`missing-prerequisite`, `badly-written` or
 `badly-rephrased`) keeps its flag: put his words in the rationale, and prune will not list the
