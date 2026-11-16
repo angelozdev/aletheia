@@ -213,7 +213,7 @@ none, unless it changes the area's level.
   - **Check**: `pnpm -s vitest run tests/skills`; `pnpm -s format:check`.
   - **Run**: quickstart §5's last bullet, at a capture after the release (009-US3-AS1,
     009-US3-AS2, 009-US3-AS3).
-- [ ] T008 [P] [US3] `aletheia-review` offers only general profile lines, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T008 [P] [US3] `aletheia-review` offers only general profile lines, in `.claude/skills/aletheia-review/SKILL.md`
   - **Code**: the same paragraph and bullet change as T007, in its "## Keep the profile
     current".
   - **Check**: `pnpm -s vitest run tests/skills`; `pnpm -s format:check`.
