@@ -43,7 +43,9 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
 - Spec Kit: `specs/NNN-<slice>/spec.md` says what, `tasks.md` says in which order. Work one
   task at a time, test first: failing test, minimal code, refactor.
 - Every test or eval that covers an acceptance scenario or an invariant carries its id
-  (`NNN-USx-ASy`, `INV-nn`) in its name. `tests/traceability/` fails while a spec id has none.
+  (`NNN-USx-ASy`, `INV-nn`) in its name; a skill's judgment is traced instead by the quickstart
+  step that checks it, naming its id (ADR-0020). `tests/traceability/` fails while a spec id has
+  none.
 - A test that looks wrong is raised with Angelo, never weakened, skipped or deleted.
 - Conventional Commits, small, on feature branches only, never on `main`. No push.
 - Destructive operations (deleting data, resetting a repo, uninstalling) are handed to Angelo
