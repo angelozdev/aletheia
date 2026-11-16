@@ -275,6 +275,11 @@ Then give the card one tag for each topic it rests on, by those rules, adding an
 tag the list did not print is marked `(nuevo)` in the before and after, and sent without the
 mark.
 
+When Angelo asks for an example ("dame un ejemplo en código"), or the rewrite drafts a new
+answer for a card with something to run, the answer gets one by rule 8 and "The example" of
+the `az-aletheia-add` skill. Check it before showing the before and after, and put its check
+line under the `answer` field's header. Otherwise an old card keeps its answer.
+
 Show the exact before and after of every field that changes, and nothing else:
 
 ```
@@ -306,9 +311,10 @@ A rewrite does not change the grade being settled, and a voided review stays voi
 When the fix would change what the key points mean, or the card holds two ideas, offer to
 replace it, or to split it into one card per idea, after the grade is recorded. Draft the new
 cards by the card rules of the `az-aletheia-add` skill, their tags listed as for a rewrite,
-with `aletheia tag list` in that turn, and show the old card and each draft with every field. Ask his why in his words if he has not said it: it goes in the old card's
-archive reason. Only after Angelo approves the exact drafts, with his edits, and gives his
-why, save them in one call, their `source` naming the old card:
+with `aletheia tag list` in that turn, and their examples checked as for a rewrite. Show the
+old card and each draft with every field. Ask his why in his words if he has not said it: it
+goes in the old card's archive reason. Only after Angelo approves the exact drafts, with his
+edits, and gives his why, save them in one call, their `source` naming the old card:
 
 ```sh
 aletheia card add <<'JSON'

@@ -178,7 +178,7 @@ toolchain's exit status, and the draft says whether it was checked.
     `pnpm -s format:check`.
   - **Run**: quickstart §3, after the release (009-US2-AS1, 009-US2-AS2, 009-US2-AS3,
     009-US2-AS4).
-- [ ] T006 [P] [US2] `aletheia-review` adds an example through a rewrite, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T006 [P] [US2] `aletheia-review` adds an example through a rewrite, in `.claude/skills/aletheia-review/SKILL.md`
   - **Code**: in "### A rewrite", after the tags paragraph of T003: when Angelo asks for an
     example ("dame un ejemplo en código"), or the rewrite drafts a new answer for a card with
     something to run, the answer gets one by rule 8 and "The example" of the `az-aletheia-add`
