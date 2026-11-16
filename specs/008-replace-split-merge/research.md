@@ -53,6 +53,10 @@ interface or schema to accept and no ADR. No new dependency.
 
 ## R5. Three tests that pin the slice-8 deferral are restated
 
+**Superseded** by [ADR-0020](../../docs/adr/0020-skills-checked-by-what-code-can-check.md) on
+2026-11-16: the skill-file tests that pinned wording were removed; skill scenario ids are traced
+by the quickstart steps.
+
 - **Decision**: `tests/skills/prune-skill.test.ts` (007-US1-AS6, 007-US3-AS2) and
   `tests/skills/review-skill.test.ts` (004-US3-AS4) expect the text `slice 8`, which pinned
   "arrives with slice 8". This slice replaces that text, so each drops `slice 8` from its
@@ -63,6 +67,10 @@ interface or schema to accept and no ADR. No new dependency.
 - **Alternatives**: leaving "slice 8" in the skill texts (a dangling promise once it ships).
 
 ## R6. Tests read the skill files; no eval yet
+
+**Superseded** by [ADR-0020](../../docs/adr/0020-skills-checked-by-what-code-can-check.md) on
+2026-11-16: the skill-file tests that pinned wording were removed; skill scenario ids are traced
+by the quickstart steps.
 
 - **Decision**: each scenario of the spec is a skill-file test in `tests/skills/`, named by its
   id, as for 004–007. No eval: no skill has misbehaved twice in real use (constitution IV).

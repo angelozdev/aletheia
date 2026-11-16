@@ -54,6 +54,12 @@ something Angelo runs, and each task carries the label of the story it serves.
    review and capture each show the two commands and the reason themselves, since a skill is
    read alone.
 
+6. **ADR-0020 replaced the phrase tests (2026-11-16, Angelo).** Implementing T002–T007 showed
+   the skill-file tests pinned wording, not behavior. Their tests went with the other skill
+   phrase tests; the 008 ids are traced by quickstart §2–§4, and decisions 2–4 are superseded.
+   A skill change is checked by `tests/skills/skills.test.ts` (every command it shows runs on
+   the CLI) and by Angelo's quickstart run. Plan: `docs/plans/2026-11-16-skill-checks.md`.
+
 ---
 
 ## Phase 1: Setup (gate)
@@ -101,9 +107,9 @@ replaced, at prune and in review.
   - **Code**: section 2's choices gain **Split it** (the card holds two ideas: one draft per idea) and **Replace it** (the fix would change what the key points mean: one new draft), both through the subsection of T002; the line "When the fix would change what the key points mean, the card needs replacing, which arrives with slice 8" goes. In section 3, an outdated situation offers replace when the card changes meaning, an in-place edit otherwise.
   - **Run**: `pnpm test -t 008-US2-AS1`
 - [ ] T005 [P] [US2] `aletheia-review` offers replace or split after the grade is recorded, in `.claude/skills/aletheia-review/SKILL.md`
-  - **Test**: `review-skill.test.ts`, `008-US2-AS2 aletheia-review offers replace or split after the grade is recorded, shows the old card and the exact drafts, and saves and archives only after Angelo approves`: the text holds `after the grade is recorded`, `two ideas`, `aletheia card add`, `reemplaza a #`, `aletheia card archive`, `reemplazada por #`, `only after Angelo approves`; it does not hold `slice 8`. Restate `004-US3-AS4` (decision 2): drop `slice 8`.
+  - **Check** (decision 6): `tests/skills/skills.test.ts` runs its new `card add` and `card archive` examples; 008-US2-AS2 is traced by quickstart §2. "This skill never archives a card" becomes "never archives a card for this", the not-useful case.
   - **Code**: the lines "When the fix would change what the key points mean, the card needs replacing, which arrives with slice 8" become: after the grade is recorded, offer to replace the card (or split it when it holds two ideas): show the old card and the exact drafts, and only after Angelo approves and gives his why, run `aletheia card add` (source `reemplaza a #m4cd`) and then `aletheia card archive` (`reemplazada por #d6q1: <why>`), with the failure rule of T003. Say in a line that the new card is new: it may come up in this session if the day's new cards allow it.
-  - **Run**: `pnpm test -t 008-US2-AS2`
+  - **Run**: `pnpm test tests/skills`; quickstart §2 after the release.
 
 **Checkpoint**: every id of US2 has its test; no skill says "slice 8".
 

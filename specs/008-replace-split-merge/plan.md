@@ -23,7 +23,9 @@ Decisions are in [research.md](./research.md).
 **Storage**: unchanged; no migration ([data-model.md](./data-model.md))
 
 **Testing**: vitest. Skill files read as text in `tests/skills/`; every scenario `008-USx-ASy`
-names its test. Three tests that pin the slice-8 deferral are restated (R5)
+names its test. Three tests that pin the slice-8 deferral are restated (R5). Superseded by ADR-0020:
+the scenarios are traced by quickstart steps, and `tests/skills/skills.test.ts` runs the
+commands the skills show
 
 **Target Platform**: macOS, Node 26, pnpm 11.28.8, Claude Code for the skills
 
