@@ -264,12 +264,26 @@ clearer question, a
 tidier answer or key points of the same meaning, adjusted tags, situation or type. It follows
 the card rules of the `az-aletheia-add` skill.
 
+Every rewrite lists the tags in use first, in that turn, since an earlier rewrite may have
+added one:
+
+```sh
+aletheia tag list
+```
+
+Then give the card one tag for each topic it rests on, by those rules, adding any it lacks. A
+tag the list did not print is marked `(nuevo)` in the before and after, and sent without the
+mark.
+
 Show the exact before and after of every field that changes, and nothing else:
 
 ```
 #9p3x · question
   antes:   ¿Qué pasa con un mensaje después del ack?
   después: En una cola clásica de RabbitMQ, ¿qué pasa con un mensaje después de que el consumidor lo confirma con `ack`?
+#9p3x · tags
+  antes:   messaging
+  después: messaging, messaging::rabbitmq (nuevo)
 ```
 
 Run `aletheia card edit` only after Angelo approves, with his edits, sending `card` and the
@@ -277,7 +291,7 @@ changed fields only:
 
 ```sh
 aletheia card edit <<'JSON'
-{"card":"9p3x","question":"En una cola clásica de RabbitMQ, ¿qué pasa con un mensaje después de que el consumidor lo confirma con `ack`?","tags":["messaging::rabbitmq"]}
+{"card":"9p3x","question":"En una cola clásica de RabbitMQ, ¿qué pasa con un mensaje después de que el consumidor lo confirma con `ack`?","tags":["messaging","messaging::rabbitmq"]}
 JSON
 ```
 
@@ -291,8 +305,8 @@ A rewrite does not change the grade being settled, and a voided review stays voi
 
 When the fix would change what the key points mean, or the card holds two ideas, offer to
 replace it, or to split it into one card per idea, after the grade is recorded. Draft the new
-cards by the card rules of the `az-aletheia-add` skill, and show the old card and each draft
-with every field. Ask his why in his words if he has not said it: it goes in the old card's
+cards by the card rules of the `az-aletheia-add` skill, their tags listed as for a rewrite,
+with `aletheia tag list` in that turn, and show the old card and each draft with every field. Ask his why in his words if he has not said it: it goes in the old card's
 archive reason. Only after Angelo approves the exact drafts, with his edits, and gives his
 why, save them in one call, their `source` naming the old card:
 

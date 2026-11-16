@@ -95,7 +95,7 @@ under its language, and a new tag shows before it is saved.
     second sample header: `2. concept · rust::error-handling, rust::crates::anyhow (nuevo)`.
   - **Check**: `pnpm -s vitest run tests/skills`; `pnpm -s format:check`.
   - **Run**: quickstart §1; §2 after the release (009-US1-AS1, 009-US1-AS2, 009-US1-AS3).
-- [ ] T003 [P] [US1] `aletheia-review` tags a rewrite and a replacement from the tags in use, in `.claude/skills/aletheia-review/SKILL.md`
+- [X] T003 [P] [US1] `aletheia-review` tags a rewrite and a replacement from the tags in use, in `.claude/skills/aletheia-review/SKILL.md`
   - **Code**: in "### A rewrite", after "It follows the card rules of the `az-aletheia-add`
     skill.": every rewrite lists the tags in use in that turn (decision 6), a `sh` block with
     `aletheia tag list`, and gives the card one tag for each topic it rests on, by those rules,
