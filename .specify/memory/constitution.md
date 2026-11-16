@@ -173,4 +173,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.7.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-16
+**Version**: 2.0.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-16
