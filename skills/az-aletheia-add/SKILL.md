@@ -305,13 +305,19 @@ Only while this skill runs, listen for Angelo stating his own level: "uso Terraf
 "nunca he tocado Kubernetes", a draft rejected with "eso ya lo sé".
 Only explicit statements count: never a grade, a streak of Easy, or your guess.
 
+Offer a line only for an area's level, his role, or how he learns. A narrow fact inside an area
+gets no offer: one crate, one flag, one thing he has or has not done in it («nunca he creado
+errores custom» under Rust). The exception is a narrow fact that changes the area's level: then
+offer the area's new line in general words, never naming the fact ("ya domino Lambda" against
+"estudiando AWS" → `¿Cambio en tu perfil «estudiando AWS» por «uso AWS en proyectos»?`).
+
 When he states one, end your next reply with one line offering the change, without holding
 back the drafts:
 
 - `¿Anoto en tu perfil: «<línea>»?` when no line covers that area;
 - `¿Cambio en tu perfil «<antes>» por «<después>»?` when a line already covers it, or says
-  something else ("ya domino Lambda" against "estudiando AWS"): change that line, never add a
-  second one.
+  something else ("ya uso Docker a diario" against "Docker: aprendiendo"): change that line,
+  never add a second one.
 
 The profile is `~/me/aletheia/PROFILE.md`, one bullet per area in Spanish
 (`- **Terraform**: uso diario.`). Edit it only after Angelo approves that exact line, and touch

@@ -200,7 +200,7 @@ none, unless it changes the area's level.
 
 **Independent Test**: quickstart §5 in review, no release needed; capture after the release.
 
-- [ ] T007 [US3] `az-aletheia-add` offers only general profile lines, in `skills/az-aletheia-add/SKILL.md`
+- [X] T007 [US3] `az-aletheia-add` offers only general profile lines, in `skills/az-aletheia-add/SKILL.md`
   - **Code**: in "## Keep the profile current", after "Only explicit statements count: never a
     grade, a streak of Easy, or your guess.": offer a line only for an area's level, his role,
     or how he learns. A narrow fact inside an area gets no offer: one crate, one flag, one
