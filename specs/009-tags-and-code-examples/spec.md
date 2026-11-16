@@ -32,7 +32,7 @@ Angelo captures a card on the `From` trait. The draft's answer gives the rule in
 In a review Angelo says "nunca he creado errores custom". Claude offers nothing for the profile: that is one thing he has not done, not his level in Rust. When he says "ya uso Docker a diario en el trabajo", Claude offers to change the Docker line.
 **Independent Test**: in `prod`, state a narrow fact and then a level during a review; only the level gets an offer.
 
-1. **009-US3-AS1** Given Angelo states one thing he has or has not done, or one tool, crate or flag, When the review or capture skill runs, Then Claude offers no profile line.
+1. **009-US3-AS1** Given Angelo states a narrow fact inside an area (one crate, one flag, or one thing he has or has not done in it, such as «nunca he creado errores custom» under Rust), When the review or capture skill runs, Then Claude offers no profile line.
 2. **009-US3-AS2** Given Angelo states his level in an area, his role or how he learns, When the review or capture skill runs, Then Claude offers the line as in 002, changing the area's line rather than adding a second one.
 
 ### Edge Cases
@@ -51,7 +51,7 @@ In a review Angelo says "nunca he creado errores custom". Claude offers nothing 
 - **FR-001**: When drafting a card (`az-aletheia-add`) or the new fields of a rewrite or replacement (review, prune), Claude MUST read the tags in use through the installed `aletheia tag list`, give the card one tag per topic it rests on (its subject, the concept it builds on, the library it is about), reuse a tag in use before making one, and mark a new tag in the draft.
 - **FR-002**: A card about code MUST carry an example in its own code block after its one to three lines; the block does not count toward them and has no length cap (design §6, rules 2 and 8).
 - **FR-003**: Claude MUST compile or run an example before showing the draft when the toolchain is at hand, judge it by the exit status, never run one with side effects, and say in the draft whether the example was checked, and if not, why.
-- **FR-004**: The review and capture skills MUST offer a profile line only for an area's level, Angelo's role or how he learns; never for one tool, crate, flag or thing he has or has not done (design §5).
+- **FR-004**: The review and capture skills MUST offer a profile line only for an area's level, Angelo's role or how he learns; never for a narrow fact inside an area: one crate, one flag, or one thing he has or has not done in it (design §5).
 - **FR-005**: The CLI and the store change nothing: the example is part of the card's answer, and tags keep the format of 002.
 
 ## Success Criteria _(mandatory)_
@@ -67,5 +67,6 @@ In a review Angelo says "nunca he creado errores custom". Claude offers nothing 
 
 - A library's tag uses its ecosystem's own word: `rust::crates::<name>`, `node::packages::<name>`.
 - A card is about code when its answer rests on a language construct, a library's API, a command or a snippet; concepts of systems (the kernel, a VM) and comparisons of tools with no code in them are not.
+- An area is what a profile line names («nunca he tocado Kubernetes», «uso Docker a diario»); a narrow fact sits inside one («nunca he creado errores custom» under Rust). Where one ends and the other begins is Angelo's call.
 - Prune drafts its replacements and rewrites by `az-aletheia-add`'s card rules, so it follows US1 and US2 through them.
 - `az-aletheia-add` reaches Claude only through a release; the review and prune skills are project-local and change when their files do.

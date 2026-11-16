@@ -34,5 +34,6 @@
 - The CLI, the installed `aletheia`, the skills and the tag names are named as in specs
   001–008: they are the product's surface, not its implementation. Rust snippets are the
   evidence from the 2026-11-16 review, not a stack choice.
-- No markers: two readings are recorded as assumptions for `/speckit-clarify` to confirm with
-  Angelo: the library tag form outside Rust, and which cards count as about code.
+- No markers: three readings are recorded as assumptions for `/speckit-clarify` to confirm
+  with Angelo: the library tag form outside Rust, which cards count as about code, and where an
+  area of the profile ends and a narrow fact begins.
