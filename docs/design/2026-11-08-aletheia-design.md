@@ -156,8 +156,10 @@ topics). It is kept current from the conversation: during a capture or a review,
 the moment Angelo states his level, Claude offers the exact line to add or change
 and writes it only if he approves (spec 002, ADR-0015). A line stays general (an
 area's level, his role, how he learns), never one crate or one thing he has not
-done yet: those fill the profile without telling what he knows. — _Angelo's call,
-2026-11-16, spec 009._ Initial content:
+done yet: those fill the profile without telling what he knows. A narrow fact that
+changes the area's level is offered as the area's new line in general words
+("estudiando AWS" → "uso AWS en proyectos" for "ya domino Lambda"). — _Angelo's
+call, 2026-11-16, spec 009._ Initial content:
 
 - Very strong frontend; working backend knowledge; studying AWS.
 - _Guess, not stated:_ heading toward full-stack with weight on cloud.
@@ -181,11 +183,15 @@ Enforced by `az-aletheia-add` when drafting, and by prune when reviewing the dec
 5. **Not trivia.** No dates, versions, who-created-what, or things used once a
    year and found in seconds.
 6. **Not already known.** Judged against the profile and existing cards.
-7. **No duplicates.** Checked against existing cards before proposing.
-8. **A code example when the card is about code.** Its answer carries an
-   example, which Claude compiles or runs before showing it when the toolchain
-   is at hand, and says so when it is not. — _Angelo's call, 2026-11-16, spec
-   009: in one review he asked for an example on four cards._
+7. **No duplicates.** Checked against existing cards before proposing, a rewrite
+   that changes the question, the answer or the key points included. — _Angelo's
+   call, 2026-11-16, spec 009: widening #xrrj made it overlap #805p._
+8. **A code example when the card has something to run.** Code, a command or a
+   short program that shows the idea, in a language card or in a system one
+   (`strace` for a system call); a comparison with nothing to run gets none. Its
+   answer carries the example, which Claude compiles or runs before showing it
+   when the toolchain is at hand, and says so when it is not. — _Angelo's call,
+   2026-11-16, spec 009: in one review he asked for an example on four cards._
 
 Calibration examples (Spanish content, as stored):
 
