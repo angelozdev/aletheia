@@ -273,7 +273,7 @@ searched against the deck before it is shown, so an overlap is decided before it
 
 ## Phase 7: Close
 
-- [ ] T011 Close the slice's docs, in `specs/002-intake-filter/spec.md`
+- [X] T011 Close the slice's docs, in `specs/002-intake-filter/spec.md`
   - In 002's edge cases, the shape-rule line ("an answer of 1–3 lines") gains "; spec 009 puts
     a code example after those lines, outside them". The Lambda line gains "; spec 009 words
     the changed line generally («uso AWS en proyectos»), never naming the narrow fact".

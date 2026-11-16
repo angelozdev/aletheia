@@ -47,10 +47,10 @@ During a review Angelo says "en el trabajo uso Terraform a diario", or during a 
 ### Edge Cases
 
 - Two drafts of the same batch repeat each other: Claude merges them or drops one before showing them.
-- A draft breaking a shape rule (one idea, an answer of 1–3 lines, a question that stands alone) is fixed by Claude before it is shown. Flags are for the worth rules: credible situation, not trivia, not already known, no duplicate.
+- A draft breaking a shape rule (one idea, an answer of 1–3 lines, a question that stands alone) is fixed by Claude before it is shown; spec 009 puts a code example after those lines, outside them. Flags are for the worth rules: credible situation, not trivia, not already known, no duplicate.
 - A flagged draft Angelo approves is saved like any other card; the flag is not stored.
 - A draft that overlaps a card but adds something is flagged `se solapa con #<id>`, naming what is new; replacing or merging the old card waits for slice 6.
-- Angelo states something that contradicts a profile line ("ya domino Lambda" against "estudiando AWS"): Claude offers to change that line, not to add a second one.
+- Angelo states something that contradicts a profile line ("ya domino Lambda" against "estudiando AWS"): Claude offers to change that line, not to add a second one; spec 009 words the changed line generally («uso AWS en proyectos»), never naming the narrow fact.
 - Only explicit statements about his level count; a grade, an Easy streak or Claude's guess never changes the profile (that is prune's evidence, slice 6).
 - The profile is missing (a fresh clone, `git clean -fdx`): the skill says so in one line and drafts without it, flagging nothing as `ya lo sabes por tu perfil`.
 - An empty deck: every search is empty and no draft is flagged as a duplicate.
