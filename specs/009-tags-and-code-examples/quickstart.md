@@ -84,6 +84,8 @@ In "repasemos", on a Rust card saved before the slice:
 - 009-US3-AS3: say "ya entiendo cómo el kernel agenda los procesos". Expected: an offer to
   change the Linux line to a general level («conozco lo básico de los internos»), without naming
   how the kernel schedules.
+- After the release, the same three statements at a capture ("guarda esto") get the same
+  offers from `az-aletheia-add` (009-US3-AS1, 009-US3-AS2, 009-US3-AS3).
 
 ## 6. Measures (two weeks after the release)
 

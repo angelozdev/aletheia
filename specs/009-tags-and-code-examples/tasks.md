@@ -49,6 +49,15 @@ skill that applies it. Each phase ends in a quickstart step Angelo runs.
 5. **An old card gets an example** when Angelo asks for one, or when a rewrite or replacement
    drafts a new answer for a card with something to run (spec edge case; FR-002 holds for every
    drafted answer). No skill offers one unprompted.
+6. **Every rewrite and replacement re-tags.** 009-US1-AS4 holds for each one, whatever it
+   changes: list the tags in use in that turn, give the card one tag per topic it rests on, and
+   show each tag added in the before and after. A card nobody rewrites keeps its tags (spec edge
+   case).
+7. **A `command` or `code` card already carries its example.** A `command` card's answer is the
+   command, run read-only to check it; a `code` card's snippet, in its question, is checked as
+   in R4. The block of rule 8 is for the other types. The add skill's own samples follow it: the
+   `docker ps` draft of section 3 gains its check line, and section 4's JSON gains a `concept`
+   card with a Rust block, which `tests/skills` then sends through `card add` (R1).
 
 ---
 
@@ -88,19 +97,20 @@ under its language, and a new tag shows before it is saved.
   - **Run**: quickstart §1; §2 after the release (009-US1-AS1, 009-US1-AS2, 009-US1-AS3).
 - [ ] T003 [P] [US1] `aletheia-review` tags a rewrite and a replacement from the tags in use, in `.claude/skills/aletheia-review/SKILL.md`
   - **Code**: in "### A rewrite", after "It follows the card rules of the `az-aletheia-add`
-    skill.": when the rewrite adds or changes tags, list the tags in use in that turn, a `sh`
-    block with `aletheia tag list`, and give the card one tag for each topic it rests on, by
-    those rules. Add a before and after sample for tags:
-    `#j3nx · tags` / `antes:   rust::error-handling` /
-    `después: rust::error-handling, rust::crates::anyhow (nuevo)`. In "### A replacement",
+    skill.": every rewrite lists the tags in use in that turn (decision 6), a `sh` block with
+    `aletheia tag list`, and gives the card one tag for each topic it rests on, by those rules,
+    adding any it lacks. Add a before and after sample for tags:
+    `#9p3x · tags` / `antes:   messaging` /
+    `después: messaging, messaging::rabbitmq (nuevo)`. In "### A replacement",
     after "Draft the new cards by the card rules of the `az-aletheia-add` skill": their tags are
     listed the same way, in that turn.
   - **Check**: `pnpm -s vitest run tests/skills`; `pnpm -s format:check`.
   - **Run**: quickstart §4, after the release (009-US1-AS4).
 - [ ] T004 [P] [US1] `aletheia-prune` tags a rewrite and a replacement from the tags in use, in `.claude/skills/aletheia-prune/SKILL.md`
-  - **Code**: in the "**Rewrite it in place**" choice, after its first sentence: when the
-    rewrite adds or changes tags, run `aletheia tag list` in that turn and tag by the card rules
-    of the `az-aletheia-add` skill, a tag not in use marked `(nuevo)` in the before and after.
+  - **Code**: in the "**Rewrite it in place**" choice, after its first sentence: every
+    rewrite runs `aletheia tag list` in that turn (decision 6) and tags the card by the card
+    rules of the `az-aletheia-add` skill, adding any tag it lacks, a tag not in use marked
+    `(nuevo)` in the before and after.
     In "### Replace, split or merge", after "The new cards follow the card rules of the
     `az-aletheia-add` skill.": their tags come from `aletheia tag list`, run in that turn.
     Section 2 already shows `aletheia tag list` in a `sh` block; no new block.
@@ -155,7 +165,17 @@ toolchain's exit status, and the draft says whether it was checked.
       anyhow, exit 0`), `⚠ ejemplo sin comprobar: <por qué>`
       (`⚠ ejemplo sin comprobar: strace no existe en macOS`), or `⚠ ejemplo falla: <el error>`
       (decision 4). The line is not stored.
-  - **Check**: `pnpm -s vitest run tests/skills`; `pnpm -s format:check`.
+    - Samples (decision 7): rule 8 says a `command` card's answer and a `code` card's snippet
+      are their example. The `docker ps` draft of section 3 gains
+      `✓ ejemplo comprobado: docker ps -a, exit 0` under its header, before its flag. Section
+      4's JSON gains a second card, compiled with `rustc --edition 2024` (exit 0), so its
+      `ids[2]: k7m2,p3x9` line holds:
+
+      ```json
+      {"type":"concept","question":"En Rust, ¿qué te da implementar `From<A> for B`?","answer":"Convierte un `A` en un `B` con `B::from(a)`, y gratis `a.into()` donde se espera un `B`.\n\n```rust\nstruct Celsius(f64);\n\nimpl From<f64> for Celsius {\n    fn from(grados: f64) -> Self {\n        Celsius(grados)\n    }\n}\n\nfn main() {\n    let c: Celsius = 21.5.into();\n    println!(\"{}\", c.0);\n}\n```","keyPoints":["`B::from(a)` convierte `A` en `B`","`.into()` viene gratis"],"situation":"Una función recibe `Celsius` y quieres pasarle un `f64` sin envolverlo a mano.","tags":["rust::traits"],"source":"aletheia"}
+      ```
+  - **Check**: `pnpm -s vitest run tests/skills` (it sends the new card through `card add`);
+    `pnpm -s format:check`.
   - **Run**: quickstart §3, after the release (009-US2-AS1, 009-US2-AS2, 009-US2-AS3,
     009-US2-AS4).
 - [ ] T006 [P] [US2] `aletheia-review` adds an example through a rewrite, in `.claude/skills/aletheia-review/SKILL.md`
@@ -191,7 +211,8 @@ none, unless it changes the area's level.
     bullet, the example ("ya domino Lambda" against "estudiando AWS") becomes ("ya uso Docker a
     diario" against "Docker: aprendiendo").
   - **Check**: `pnpm -s vitest run tests/skills`; `pnpm -s format:check`.
-  - **Run**: at a capture after the release (009-US3-AS1, 009-US3-AS2, 009-US3-AS3).
+  - **Run**: quickstart §5's last bullet, at a capture after the release (009-US3-AS1,
+    009-US3-AS2, 009-US3-AS3).
 - [ ] T008 [P] [US3] `aletheia-review` offers only general profile lines, in `.claude/skills/aletheia-review/SKILL.md`
   - **Code**: the same paragraph and bullet change as T007, in its "## Keep the profile
     current".
@@ -222,7 +243,7 @@ searched against the deck before it is shown, so an overlap is decided before it
     - Set the card itself aside: its own words bring it back.
     - Judge each listed card as the `az-aletheia-add` skill judges a draft's matches (its
       section 2, archived and replaced cards included). Flag a repeat or an overlap on the line
-      after the before and after's header (`⚠ se solapa con #805p: …`).
+      after the before and after's header (`⚠ se solapa con #w2ab: …`).
     - A flagged rewrite offers three choices: drop it, save it anyway, or merge both through
       "### A replacement".
     - A change of tags, situation or type alone runs no search.
