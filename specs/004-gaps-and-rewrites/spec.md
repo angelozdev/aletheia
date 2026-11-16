@@ -84,7 +84,7 @@ Claude proposes clearer wording for #9p3x: the same knowledge, now naming the va
 
 ## Assumptions
 
-- Every card is active in this slice; archive, replace, split and merge arrive with slice 7, and so does a rewrite whose meaning changes.
+- Every card is active in this slice; archive, replace, split and merge arrive with slice 7, and so does a rewrite whose meaning changes; archive arrived with spec 007, and replace, split and merge with spec 008, as `card add` then `card archive`.
 - Claude asks each question as stored; rephrasing it on every review, and voiding a miss caused by the rephrasing, arrive with slice 5 (design §8.2 step 16).
 - The text before a rewrite is not kept; the voided review's rationale records why the card was rewritten.
 - Gap counts, retention and leech detection are read in slices 6 and 7; this slice records the flags they read, and voided reviews stay out of both.

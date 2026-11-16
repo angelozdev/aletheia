@@ -137,7 +137,7 @@ archived by a replacement leads to the card that replaced it.
 
 ## Phase 6: Close
 
-- [ ] T008 Close the slice's docs, in `specs/004-gaps-and-rewrites/spec.md` and `specs/007-prune/spec.md`
+- [X] T008 Close the slice's docs, in `specs/004-gaps-and-rewrites/spec.md` and `specs/007-prune/spec.md`
   - In 004's Assumptions, the line "archive, replace, split and merge arrive with slice 7" gains "; archive arrived with spec 007, and replace, split and merge with spec 008, as `card add` then `card archive`". In 007's Assumptions, "Replace, split and merge, and a rewrite that changes what the key points mean, are slice 8" gains "; they arrived with spec 008, as `card add` then `card archive`".
   - `CLAUDE.md` is unchanged: no command or skill is added.
   - Run quickstart §1 in `test` through `pnpm aletheia`.

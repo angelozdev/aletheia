@@ -111,7 +111,7 @@ Angelo keeps #k7m2: "falla porque es difícil, no porque esté mal escrita". The
 
 - Archive, restore and keep are recorded, never overwritten.
 - `az-aletheia-add` reaches Claude only through a release, so AS7 is seen in `prod` after it.
-- Replace, split and merge, and a rewrite that changes what the key points mean, are slice 8.
+- Replace, split and merge, and a rewrite that changes what the key points mean, are slice 8; they arrived with spec 008, as `card add` then `card archive`.
 - A keep of an overlap covers only that pair: new captures are frequent, and a keep per card would hide a new duplicate for six months.
 - Progress's 30-day window stays a constant.
 - Command names, flags, output fields and the store shape are left to the plan.
