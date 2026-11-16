@@ -42,7 +42,10 @@ public interface (the `aletheia` commands and their output); regression evals th
 headless against a fixture frozen from a real failure. No eval is written ahead of a failure:
 the second time a skill misbehaves in real use, its state, with a frozen copy of the profile,
 becomes a fixture and its eval, and that eval reruns whenever the skill changes. Every acceptance scenario in a spec
-has an id (`NNN-USx-ASy`) and MUST appear in the name of the test or eval that covers it.
+has an id (`NNN-USx-ASy`) and MUST appear in the name of the test or eval that covers it; a
+scenario about a skill's judgment, until its eval exists, in the quickstart step Angelo runs to
+check it. A test over a skill file checks only what code can check (each command it shows is one
+the CLI accepts, it calls the installed `aletheia`, its triggers are its own), never its wording.
 Invariants carry stable ids (`INV-nn`). Tests MUST pass before a Spec Kit task is closed.
 Rationale: the LLM produces, the code verifies. Traceability is a `grep`, not a generator. A
 test written after the code describes what it does, not what it must do.
@@ -170,4 +173,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 1.6.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-10
+**Version**: 1.7.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-16
