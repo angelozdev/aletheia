@@ -34,11 +34,12 @@ describe('traceability', () => {
     expect(missing).toEqual(['999-US1-AS1'])
   })
 
-  it('reads ids from specs/*/spec.md and names from *.test.ts and evals/', () => {
+  it('reads ids from specs/*/spec.md and names from *.test.ts, evals/ and quickstart.md', () => {
     const root = tempTree({
       'specs/999-x/spec.md':
-        '**999-US1-AS1** **999-US1-AS2** **999-US1-AS3** **999-US1-AS4** **INV-99**',
+        '**999-US1-AS1** **999-US1-AS2** **999-US1-AS3** **999-US1-AS4** **999-US1-AS6** **INV-99**',
       'specs/999-x/tasks.md': '**999-US1-AS5**',
+      'specs/999-x/quickstart.md': 'Checks 999-US1-AS6.',
       'src/a/deep/a.test.ts': "it('999-US1-AS2 works')",
       'src/a/a.ts': "export const name = '999-US1-AS4'",
       'tests/b/b.test.ts': "it('999-US1-AS3 works')",
@@ -50,7 +51,7 @@ describe('traceability', () => {
     expect(missingIds(sources)).toEqual(['999-US1-AS1', '999-US1-AS4'])
   })
 
-  it('every scenario and invariant id in specs/*/spec.md is named by a test or eval', () => {
+  it('every scenario and invariant id in specs/*/spec.md is named by a test, an eval or a quickstart step', () => {
     const sources = readTraceabilitySources(REPO_ROOT)
 
     expect(missingIds(sources)).toEqual([])
