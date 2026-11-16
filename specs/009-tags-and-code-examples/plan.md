@@ -49,7 +49,7 @@ _Gate before Phase 0, re-checked after Phase 1. Constitution 2.0.0._
 | I. Daily use over infrastructure | Pass. Each step changes what Angelo sees at capture or in review the day it lands. |
 | II. Facts in code, judgment in Claude | Pass. Topics, "something to run", the example and an area's level are the skills' calls. The tags in use and an exit status are facts Claude reads from the machine. Nothing enters `src/core`. |
 | III. Pure core, single writer, nothing deleted | Pass. Only the CLI writes. Examples run in a `mktemp -d` folder, never near a store (R4). |
-| IV. Test-driven, spec-anchored | Pass, with a note. Committing `quickstart.md` turns `tests/traceability` green before any skill changes: that is ADR-0020's trace, not proof of the judgment; Angelo's prod run is. No source changes, so no failing test leads them. `tests/skills` checks each new `sh` block. No eval: the 2026-11-16 misses were missing rules, not a rule broken twice (R8). |
+| IV. Test-driven, spec-anchored | Pass, with a note. Committing `quickstart.md` turns `tests/traceability` green before any skill changes: that is ADR-0020's trace, not proof of the judgment; Angelo's prod run is. No source changes, so no failing test leads them. `tests/skills` checks each new `sh` block. No eval exists (`evals/` is absent), and none is written: the 2026-11-16 misses were missing rules, not a rule broken twice (R8). |
 | V. Small slices, one-page specs | Pass, with a note. Four stories and 13 scenarios, but each is a paragraph of skill text in files that exist; under a day. The spec runs a little over a page, mostly Clarifications. |
 | VI. Simplicity and YAGNI | Pass. No new command, field, table or setting (R1). No container to check Linux-only examples (R5). |
 | VII. English system, Spanish content | Pass. Skill text in English; draft lines, flags and profile lines in Spanish. |
@@ -87,8 +87,9 @@ skills/az-aletheia-add/SKILL.md            `aletheia tag list` before drafting; 
 .claude/skills/aletheia-review/SKILL.md    a rewrite's and a replacement's tags from
                                            `aletheia tag list`; their search before showing;
                                            the general profile rule
-.claude/skills/aletheia-prune/SKILL.md     a rewrite in place and a replacement searched
-                                           before showing, with its `sh` block
+.claude/skills/aletheia-prune/SKILL.md     a rewrite's and a replacement's tags from
+                                           `aletheia tag list`; their search before showing,
+                                           each with its `sh` block
 specs/002-intake-filter/spec.md            two lines: 009 puts the example outside the 1–3 lines,
                                            and words a changed area line generally
 ```
@@ -99,8 +100,8 @@ specs/002-intake-filter/spec.md            two lines: 009 puts the example outsi
 
 1. **A tag per topic** (009-US1-AS1 to 009-US1-AS4). Add runs `aletheia tag list` before
    drafting, gives one tag per topic with the library form of R3, and marks `(nuevo)` in the
-   draft's header. Review's rewrite and replacement take their tags the same way and show each
-   one added. Run: quickstart §1 in `test`; §2 and §4 after the release.
+   draft's header. Review's and prune's rewrites and replacements take their tags the same way, each
+   with its own `aletheia tag list`, and show each one added. Run: quickstart §1 in `test`; §2 and §4 after the release.
 2. **Code examples** (009-US2-AS1 to 009-US2-AS4). Add's rule 2 keeps the block out of the
    lines, and its rule 8 asks for an example when the card has something to run. A new
    paragraph says how it is checked (R4, R5) and the line the draft carries. Review's "dame un

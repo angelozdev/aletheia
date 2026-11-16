@@ -33,8 +33,8 @@ no ADR. No new dependency.
 
 ## R3. Tags come from the tags in use (Angelo)
 
-- **Decision**: before drafting, the skill runs `aletheia tag list` once per capture, and for a
-  rewrite or replacement once per round. A card gets one tag per topic it rests on: its
+- **Decision**: before drafting, the skill runs `aletheia tag list` in that turn: once per capture, and
+  for each rewrite or replacement, since an earlier one may have added a tag (constitution VIII). A card gets one tag per topic it rests on: its
   subject, the concept it builds on (`rust::ownership` for `String` vs `&str`), and the library
   it is about. A library's tag is `<language>::<ecosystem word>::<name>`: `rust::crates::anyhow`,
   `typescript::packages::zod`, `python::packages::requests`. A tag in use is reused before a new
@@ -55,6 +55,8 @@ no ADR. No new dependency.
     `tsc` at hand or says it was not checked), `python3` for Python, and the command itself for
     a read-only command (`docker ps -a` when Docker is running).
   - It runs in a folder from `mktemp -d`, outside the repo, `data/` and `~/.aletheia/` (INV-01).
+  - The block stored is the code that ran, whole: a complete program (`use` lines, `fn main`), so
+    it runs again as stored (SC-003). A crate it needs is named in the check line.
   - The verdict is the exit status, printed by the same call (`; echo "exit=$?"`), never the
     text the run prints: on 2026-11-16 a check printed `CHECK_DONE` whatever `cargo` answered.
   - An example meant to fail (#d6j6, E0284) passes when it fails with the error the card names.
@@ -64,8 +66,9 @@ no ADR. No new dependency.
     `thiserror`) is the toolchain at work. The example itself never runs when it deletes, writes
     outside the folder, or calls a server.
   - The draft carries one line under its header: `✓ ejemplo comprobado: <herramienta>, exit <n>`
-    or `⚠ ejemplo sin comprobar: <por qué>`. A failing example is fixed and run again; one that
-    cannot be fixed is shown failing, never as checked. The line is not stored.
+    (`✓ ejemplo comprobado: cargo con anyhow, exit 0`) or `⚠ ejemplo sin comprobar: <por qué>`.
+    A failing example is fixed and run again; one that cannot be fixed is shown failing, never
+    as checked. The line is not stored.
 - **Rationale**: the exit status is a fact the machine gives (spec); the example Angelo studies
   is one that ran. The fetch line resolves the two edge cases (#vsgy needed `thiserror` through
   `cargo`).

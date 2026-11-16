@@ -26,7 +26,7 @@ pnpm aletheia tag list
 pnpm aletheia card add <<'JSON'
 [{ "type": "concept",
    "question": "En Rust, ¿qué hace `.context()` de `anyhow` sobre un `Result`?",
-   "answer": "Envuelve el error en un `anyhow::Error` con un mensaje de contexto encima.\n\n```rust\nuse anyhow::Context;\nlet texto = std::fs::read_to_string(\"config.toml\").context(\"leyendo la config\")?;\n```",
+   "answer": "Envuelve el error en un `anyhow::Error` con un mensaje de contexto encima.\n\n```rust\nuse anyhow::{Context, Result};\n\nfn main() -> Result<()> {\n    let texto = std::fs::read_to_string(\"config.toml\").context(\"leyendo la config\")?;\n    println!(\"{texto}\");\n    Ok(())\n}\n```",
    "keyPoints": ["envuelve el error en `anyhow::Error`", "agrega un mensaje de contexto"],
    "situation": "Un error de lectura llega al `main` sin decir qué archivo fallaba.",
    "tags": ["rust::error-handling", "rust::crates::anyhow"], "source": "quickstart 009" }]
@@ -37,7 +37,7 @@ pnpm -s vitest run tests/skills tests/traceability
 ```
 
 Expected: `card show` prints the answer with its block intact, line breaks and backticks
-included; the second `tag list` shows `rust::crates::anyhow`; both test files pass.
+included; the second `tag list` shows `rust::crates::anyhow`; the three test files pass.
 
 ## 2. Tags at capture, in `prod`, after the release
 
@@ -63,18 +63,18 @@ Then a card on `String` vs `&str`:
 - 009-US2-AS4: a card comparing two tools with nothing to run (a VM vs a container) carries no
   example.
 
-## 4. Rewrites in review and prune, in `prod`, after the release
+## 4. Rewrites in review and prune, in `prod`
 
 In "repasemos", on a Rust card saved before the slice:
 
-- "dame un ejemplo en código": the before and after adds the block with its check line
+- After the release, "dame un ejemplo en código": the before and after adds the block with its check line
   (009-US2-AS1, 009-US2-AS2), and every tag the rewrite adds shows in the before and after,
   taken from `aletheia tag list` (009-US1-AS4).
-- Ask to widen a card toward another card in the deck: Claude runs `aletheia card search`
+- No release needed: ask to widen a card toward another card in the deck. Claude runs `aletheia card search`
   first, sets the card itself aside, and the before and after carries `⚠ se solapa con #…` with
   the choice to drop it, save it, or merge both (009-US4-AS1). The same holds for a rewrite in
   place or a replacement in "podemos el mazo".
-- Ask to change only a card's tags: no search runs (009-US4-AS2).
+- No release needed: ask to change only a card's tags. No search runs (009-US4-AS2).
 
 ## 5. The profile in review, in `prod`, no release needed
 
