@@ -10,7 +10,7 @@ written by this slice is a card of 001 with 002's tag format; its example is par
 | A library's tag (R3) | `<language>::<ecosystem word>::<name>` | yes, as a tag | `rust::crates::anyhow`, `typescript::packages::zod`, `python::packages::requests` |
 | A tag not in `aletheia tag list`, in the draft's header (R3) | `<tag> (nuevo)` | no | `1. concept · rust::error-handling, rust::crates::anyhow (nuevo)` |
 | The example (R1) | the answer's lines, a blank line, a fenced block naming its language | yes, in `answer` | #62tw's answer: its lines, then a `rust` block desugaring `?` into a `match` with `From::from(e)` |
-| The check, under the draft's header (R4) | `✓ ejemplo comprobado: <herramienta>, exit <n>` or `⚠ ejemplo sin comprobar: <por qué>` | no | `⚠ ejemplo sin comprobar: strace no existe en macOS` |
+| The check, under the draft's header (R4) | `✓ ejemplo comprobado: <herramienta>, exit <n>`, `⚠ ejemplo sin comprobar: <por qué>`, or `⚠ ejemplo falla: <el error>` for one that cannot be fixed | no | `⚠ ejemplo sin comprobar: strace no existe en macOS` |
 | A rewrite's flag, on the before and after (R7) | add's flags: `⚠ duplica a #<id>`, `⚠ se solapa con #<id>: <qué repite>; agrega <qué es nuevo>` | no | `⚠ se solapa con #805p: los adaptadores son lazy; agrega .filter y .take_while` |
 | A profile line (R6) | one bullet per area, general words | in `PROFILE.md`, after approval | `- **Docker**: uso diario.` |
 
