@@ -124,9 +124,10 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
 - `oxlint` and `oxfmt` lint and format; `knip` finds dead code; `jscpd` finds duplication.
   One lint rule enforces Principle III: `src/core` MUST NOT import `node:*`. Code carries no
   comments; names and extracted functions explain it.
-- Code, specs, `PROFILE.md` and skills live in one directory, `~/me/aletheia`. `PROFILE.md` is
-  ignored by git: it is Angelo's, and the skills read and edit it in place, only with his
-  approval. The installed release is a build artifact outside it and holds no data. Its stores live in
+- Code, specs and skills live in one directory, `~/me/aletheia`. The profile lives outside it,
+  in `~/.config/angelo/PROFILE.md`, shared with Angelo's tutor: it is Angelo's, and the skills
+  read and edit it in place, only with his approval and only the line he approved. The
+  installed release is a build artifact outside the repo and holds no data. Its stores live in
   `~/.aletheia/<env>.sqlite`, outside the repo; the sources keep theirs in the repo's
   `data/<env>.sqlite`, ignored by git. `aletheia backup` exists from slice 0,
   copies the database into `backups/` in the same data folder, and runs before any migration
@@ -140,7 +141,7 @@ works if it acts at entry and at exit, and only Angelo knows what is worth his m
   copies it into `~/.aletheia/skills/`, and
   `~/.claude/skills/az-aletheia-add` is a symlink to that copy, created once. It calls the
   installed binary so it works from any working directory, and both come from the same
-  release; it reads the profile from `~/me/aletheia/PROFILE.md`, the one thing it does not take
+  release; it reads the profile from `~/.config/angelo/PROFILE.md`, the one thing it does not take
   from the release. Review, stats and prune are project-local skills in `.claude/skills/`.
 
 ## Development Workflow
@@ -173,4 +174,4 @@ wording. Every `/speckit-plan` runs the Constitution Check against Principles Iâ
 `accepted` ADRs; a violation is either fixed or justified in the plan's Complexity Tracking
 table.
 
-**Version**: 2.0.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-16
+**Version**: 2.1.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-16
