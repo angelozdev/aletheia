@@ -150,11 +150,12 @@ reason, date. Used so kept cards are not proposed again without new evidence
 **Settings**: session size, new cards per day and new share, one set per store,
 `null` until Angelo changes one; changed only through the CLI.
 
-**Profile**: a `PROFILE.md` at the repo root, ignored by git, that the add and
-prune skills always read, as context for judging usefulness (not a whitelist of
-topics). It is kept current from the conversation: during a capture or a review,
-the moment Angelo states his level, Claude offers the exact line to add or change
-and writes it only if he approves (spec 002, ADR-0015). A line stays general (an
+**Profile**: `~/.config/angelo/PROFILE.md`, outside the repo and shared with
+Angelo's tutor, that the add and prune skills always read, as context for judging
+usefulness (not a whitelist of topics). It is kept current from the conversation:
+during a capture or a review, the moment Angelo states his level, Claude offers
+the exact line to add or change and writes only that line, only if he approves
+(spec 002, ADR-0021). A line stays general (an
 area's level, his role, how he learns), never one crate or one thing he has not
 done yet: those fill the profile without telling what he knows. A narrow fact that
 changes the area's level is offered as the area's new line in general words
