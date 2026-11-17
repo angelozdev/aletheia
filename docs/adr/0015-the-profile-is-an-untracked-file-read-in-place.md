@@ -1,10 +1,10 @@
 # 0015. The profile is an untracked file, read and edited in place
 
-- **Status:** accepted
+- **Status:** superseded
 - **Date:** 2026-11-09
 - **Deciders:** Angelo
 - **Supersedes:** —
-- **Superseded by:** —
+- **Superseded by:** [0021](0021-the-profile-is-a-shared-file-outside-the-repo.md)
 - **Extends:** [0011](0011-the-release-copies-the-global-skill.md)
 
 ## Context and problem statement

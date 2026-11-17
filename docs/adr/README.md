@@ -24,9 +24,10 @@ Product decisions live in `docs/design/` and the Spec Kit specs.
 | 0012 | ts-fsrs 5 with FSRS-6 and one learning step, behind one core module | accepted | 2026-11-09 |
 | 0013 | Cards, tags and reviews, with their rules in the store | accepted | 2026-11-09 |
 | 0014 | Card search with FTS5, terms built in the core | accepted | 2026-11-09 |
-| 0015 | The profile is an untracked file, read and edited in place | accepted | 2026-11-09 |
+| 0015 | The profile is an untracked file, read and edited in place | superseded by 0021 | 2026-11-09 |
 | 0016 | Review settings in one row, with a nullable column each | accepted | 2026-11-10 |
 | 0017 | A review carries one flag and the card it was a prerequisite of | accepted | 2026-11-10 |
 | 0018 | A review keeps the question as asked | accepted | 2026-11-14 |
 | 0019 | Archive, restore and keep as append-only logs | accepted | 2026-11-15 |
 | 0020 | Skills checked by what code can check | accepted | 2026-11-16 |
+| 0021 | The profile is a shared file outside the repo | accepted | 2026-11-16 |
