@@ -2,4 +2,3 @@ data/
 dist/
 .release/
 node_modules/
-/PROFILE.md

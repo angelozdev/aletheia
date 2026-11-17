@@ -35,7 +35,7 @@ Angelo's `PROFILE.md` says what he knows (very strong frontend, working backend,
 **Independent Test**: in another repo, discuss what `useState` returns and in which year Docker came out, say "guarda esto", and see both drafts flagged with their reasons.
 
 1. **002-US2-AS1** Given the `az-aletheia-add` skill file, When it is read, Then it reads `~/me/aletheia/PROFILE.md` before drafting and flags a dubious draft with its reason: `trivia`, `ya lo sabes por tu perfil` or `sin situación creíble`.
-2. **002-US2-AS2** Given the repo, When `PROFILE.md` is created or changed at its root, Then git ignores it.
+2. _Removed 2026-11-16 (ADR-0021): the profile no longer lives in the repo, so git has nothing to ignore._
 
 ### User Story 3 - Profile kept current from the conversation (Priority: P3)
 
