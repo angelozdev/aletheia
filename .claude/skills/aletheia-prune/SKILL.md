@@ -208,7 +208,7 @@ that no longer applies to Angelo, and two cards that ask nearly the same. These 
 judgment, not the CLI's: say so for each one ("es mi juicio, no un dato": my judgment, not a
 fact).
 
-First read Angelo's profile, `~/me/aletheia/PROFILE.md`: his level by area and what he works
+First read Angelo's profile, `~/.config/angelo/PROFILE.md`: his level by area and what he works
 with now. It is read, never edited here. If it cannot be read, say so in a line and propose no
 outdated situation.
 

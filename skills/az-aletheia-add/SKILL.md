@@ -20,7 +20,7 @@ in English; tags are English.
 
 ## 0. Read the profile
 
-Before drafting, read `~/me/aletheia/PROFILE.md`: Angelo's level by area and what counts as
+Before drafting, read `~/.config/angelo/PROFILE.md`: Angelo's level by area and what counts as
 already known. It is context for judging whether a card is useful, not a whitelist of topics.
 If it cannot be read, say so in one line and draft without it, flagging nothing as already
 known.
@@ -319,6 +319,7 @@ back the drafts:
   something else ("ya uso Docker a diario" against "Docker: aprendiendo"): change that line,
   never add a second one.
 
-The profile is `~/me/aletheia/PROFILE.md`, one bullet per area in Spanish
-(`- **Terraform**: uso diario.`). Edit it only after Angelo approves that exact line, and touch
+The profile is `~/.config/angelo/PROFILE.md`, in Spanish, shared with Angelo's tutor. A level or
+role is one bullet per area under `## Nivel por área` (`- **Terraform**: uso diario.`); how he
+learns goes under `## Cómo aprendo`. Edit it only after Angelo approves that exact line, and touch
 nothing else in it. If he ignores the offer or says no, drop it and do not offer it again.

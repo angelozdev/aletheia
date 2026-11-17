@@ -477,6 +477,7 @@ back the question or the grade:
   something else ("ya uso Docker a diario" against "Docker: aprendiendo"): change that line,
   never add a second one.
 
-The profile is `~/me/aletheia/PROFILE.md`, one bullet per area in Spanish
-(`- **Terraform**: uso diario.`). Edit it only after Angelo approves that exact line, and touch
+The profile is `~/.config/angelo/PROFILE.md`, in Spanish, shared with Angelo's tutor. A level or
+role is one bullet per area under `## Nivel por área` (`- **Terraform**: uso diario.`); how he
+learns goes under `## Cómo aprendo`. Edit it only after Angelo approves that exact line, and touch
 nothing else in it. If he ignores the offer or says no, drop it and do not offer it again.
