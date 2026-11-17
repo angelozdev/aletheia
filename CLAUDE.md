@@ -84,8 +84,9 @@ Talk to Angelo in Spanish. Code, identifiers, tests, commits, specs and docs are
 ## Data
 
 - The CLI is the only writer. Never open or edit a store directly.
-- `PROFILE.md` at the repo root is Angelo's and ignored by git (ADR-0015). The skills read it
-  and edit it only after he approves the exact line; no test or eval reads or writes it.
+- The profile, `~/.config/angelo/PROFILE.md`, is Angelo's and shared with his tutor (ADR-0021).
+  The skills read it and edit only the exact line he approves; no test or eval reads or writes
+  it.
 - Environment: `--env` > `ALETHEIA_DB` > `ALETHEIA_ENV` > default by invocation. Every command
   prints `env: <name>` on stderr.
 - INV-01: no test or eval opens a store or writes a backup under `data/` or `~/.aletheia/`,
